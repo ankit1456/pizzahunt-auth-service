@@ -7,5 +7,9 @@
     "dev": "node src/index.js"
   },
   "author": "\"Ankit Tripathi <ankittripathi156@gmail.com>",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "typescript": "^5.3.3"
+  }
 }
