@@ -4,12 +4,15 @@
   "description": "A user management service",
   "main": "index.js",
   "scripts": {
-    "dev": "node src/index.js"
+    "dev": "node dist/server.js",
+    "format:check": "npx prettier . --check",
+    "format:fix": "npx prettier . --write"
   },
   "author": "\"Ankit Tripathi <ankittripathi156@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.10.4",
+    "prettier": "3.1.0",
     "typescript": "^5.3.3"
   }
 }

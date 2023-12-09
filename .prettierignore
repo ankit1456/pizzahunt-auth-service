@@ -1,0 +1,4 @@
+# this is just for example. prettier v3 ignores all file/folders which .gitignore contains
+
+build
+coverage
