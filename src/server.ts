@@ -1,5 +1,5 @@
-function Login(username: string): boolean {
-  return true;
+function Login(username: string): string {
+  return username;
 }
 
 console.log(Login('ankit'));

@@ -5,13 +5,19 @@
   "main": "index.js",
   "scripts": {
     "dev": "node dist/server.js",
-    "format:check": "npx prettier . --check",
-    "format:fix": "npx prettier . --write"
+    "format:check": "prettier . --check",
+    "format:fix": "prettier . --write",
+    "lint:fix": "eslint . --fix",
+    "lint:check": "eslint . "
   },
   "author": "\"Ankit Tripathi <ankittripathi156@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.10.4",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
     "prettier": "3.1.0",
     "typescript": "^5.3.3"
   }
