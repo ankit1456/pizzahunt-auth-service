@@ -7,7 +7,7 @@
     "dev": "node dist/server.js",
     "format:check": "prettier . --check",
     "format:fix": "prettier . --write",
-    "lint": "eslint . ",
+    "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepare": "husky install"
   },
