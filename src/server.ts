@@ -1,5 +1,11 @@
 function Login(username: string): string {
-  return username;
+  const user = {
+    lastName: 'developer'
+  };
+
+  const lastName = user['lastName'];
+
+  return username + lastName;
 }
 
-console.log(Login('ankit'));
+Login('ankit');
