@@ -26,6 +26,6 @@
   },
   "lint-staged": {
     "*.ts": "npm run lint:fix",
-    "*": "npm run format:fix"
+    "*.{json,ts}": "npm run format:fix"
   }
 }
