@@ -1,3 +1,4 @@
+import logger from './config/logger';
 import app from './app';
 import { Config } from './config';
 
@@ -6,13 +7,17 @@ const startServer = () => {
 
   try {
     app.listen(PORT, () =>
-      // eslint-disable-next-line no-console
-      console.log(`Server running on url http://localhost:${PORT}`)
+      logger.info(`Server running on port ${PORT}`, {
+        success: 'Server Started Successfully 😊😊'
+      })
     );
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(error);
-    process.exit(1);
+    if (error instanceof Error) {
+      logger.error(error.message);
+    }
+    setTimeout(() => {
+      process.exit(1);
+    }, 1000);
   }
 };
 
