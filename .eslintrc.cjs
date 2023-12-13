@@ -14,7 +14,10 @@ module.exports = {
   },
   root: true,
   rules: {
-    'no-console': 'error',
-    'no-unused-vars': ['error', { argsIgnorePattern: 'req|res|next' }]
+    'no-console': 'warn',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      { argsIgnorePattern: 'next' }
+    ]
   }
 };
