@@ -23,7 +23,8 @@ const logger = winston.createLogger({
       level: 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
-        winston.format.json()
+        winston.format.json(),
+        winston.format.colorize()
       ),
       silent: Config.NODE_ENV === 'test'
     })
