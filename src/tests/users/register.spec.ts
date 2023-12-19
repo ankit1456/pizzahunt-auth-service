@@ -30,6 +30,18 @@ describe('POST /api/auth/register', () => {
         expect.stringContaining('json')
       );
     });
+
+    it('should persist the user in the database', async () => {
+      // const userData = {
+      //   firstName: 'Ankit',
+      //   lastName: 'Tripahi',
+      //   email: 'ankit@gmail.com',
+      //   password: 'test1234'
+      // };
+      // const response = await request(app)
+      //   .post('/api/auth/register')
+      //   .send(userData);
+    });
   });
   describe('failure cases', () => {});
 });
