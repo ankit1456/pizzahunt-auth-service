@@ -22,28 +22,29 @@ describe('POST /api/auth/register', () => {
   });
 
   describe('success cases', () => {
+    // AAA
+    //   A -> Arrange
+
+    const userData = {
+      firstName: 'Ankit',
+      lastName: 'Tripahi',
+      email: 'ankit@gmail.com',
+      password: 'test1234'
+    };
     it('should return 201 statusCode', async () => {
-      // AAA
-      //   A -> Arrange
-
-      const userData = {
-        firstName: 'Ankit',
-        lastName: 'Tripahi',
-        email: 'ankit@gmail.com',
-        password: 'test1234'
-      };
       //   A -> Act
-
       const response = await request(app)
         .post('/api/auth/register')
         .send(userData);
-      //   A -> Assert
 
+      //   A -> Assert
       expect(response.statusCode).toBe(201);
     });
 
     it('should return a valid json', async () => {
-      const response = await request(app).post('/api/auth/register').send();
+      const response = await request(app)
+        .post('/api/auth/register')
+        .send(userData);
 
       expect(response.headers['content-type']).toEqual(
         expect.stringContaining('json')
@@ -51,18 +52,13 @@ describe('POST /api/auth/register', () => {
     });
 
     it('should persist the user in the database', async () => {
-      const userData = {
-        firstName: 'Ankit',
-        lastName: 'Tripahi',
-        email: 'ankit@gmail.com',
-        password: 'test1234'
-      };
       await request(app).post('/api/auth/register').send(userData);
 
       const userRespository = connection.getRepository(User);
       const users = await userRespository.find();
 
       expect(users).toHaveLength(1);
+      expect(users[0]?.firstName).toBe('Ankit');
     });
   });
   describe('failure cases', () => {});
