@@ -60,6 +60,16 @@ describe('POST /api/auth/register', () => {
       expect(users).toHaveLength(1);
       expect(users[0]?.firstName).toBe('Ankit');
     });
+    it('should return created user', async () => {
+      const response = await request(app)
+        .post('/api/auth/register')
+        .send(userData);
+
+      const userRespository = connection.getRepository(User);
+      const users = await userRespository.find();
+      expect(response.body).toHaveProperty('id');
+      expect((response.body as Record<string, string>).id).toBe(users[0]?.id);
+    });
   });
   describe('failure cases', () => {});
 });
