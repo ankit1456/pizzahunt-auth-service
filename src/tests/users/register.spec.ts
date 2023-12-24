@@ -2,8 +2,8 @@ import request from 'supertest';
 import app from '../../app';
 import { DataSource } from 'typeorm';
 import { AppDataSource } from '../../config/data-source';
-import { truncateTables } from '../utils';
 import { User } from '../../entity/User';
+import { Roles } from '../../types/roles.enum';
 
 describe('POST /api/auth/register', () => {
   let connection: DataSource;
@@ -13,8 +13,8 @@ describe('POST /api/auth/register', () => {
   });
 
   beforeEach(async () => {
-    // Database truncate
-    await truncateTables(connection);
+    await connection.dropDatabase();
+    await connection.synchronize();
   });
 
   afterAll(async () => {
@@ -29,7 +29,8 @@ describe('POST /api/auth/register', () => {
       firstName: 'Ankit',
       lastName: 'Tripahi',
       email: 'ankit@gmail.com',
-      password: 'test1234'
+      password: 'test1234',
+      role: Roles.CUSTOMER
     };
     it('should return 201 statusCode', async () => {
       //   A -> Act
@@ -69,6 +70,15 @@ describe('POST /api/auth/register', () => {
       const users = await userRespository.find();
       expect(response.body).toHaveProperty('id');
       expect((response.body as Record<string, string>).id).toBe(users[0]?.id);
+    });
+
+    it('should assign a customer role', async () => {
+      await request(app).post('/api/auth/register').send(userData);
+
+      const userRespository = connection.getRepository(User);
+      const users = await userRespository.find();
+      expect(users[0]).toHaveProperty('role');
+      expect(users[0]?.role).toBe(Roles.CUSTOMER);
     });
   });
   describe('failure cases', () => {});
