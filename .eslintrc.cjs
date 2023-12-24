@@ -18,6 +18,12 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': [
       'error',
       { argsIgnorePattern: 'next' }
+    ],
+    '@typescript-eslint/no-misused-promises': [
+      'error',
+      {
+        checksVoidReturn: false
+      }
     ]
   }
 };
