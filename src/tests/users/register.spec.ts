@@ -80,6 +80,16 @@ describe('POST /api/auth/register', () => {
       expect(users[0]).toHaveProperty('role');
       expect(users[0]?.role).toBe(Roles.CUSTOMER);
     });
+    it('should store hashed password', async () => {
+      await request(app).post('/api/auth/register').send(userData);
+
+      const userRespository = connection.getRepository(User);
+      const users = await userRespository.find();
+
+      expect(users[0]?.password).not.toBe(userData.password);
+      expect(users[0]?.password).toHaveLength(60);
+      expect(users[0]?.password).toMatch(/^\$2b\$\d+\$/);
+    });
   });
   describe('failure cases', () => {});
 });

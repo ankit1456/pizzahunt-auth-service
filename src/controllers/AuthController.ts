@@ -2,6 +2,7 @@ import { NextFunction, Response } from 'express';
 import { UserService } from '../services/UserService';
 import { RegisterUserRequest } from '../types';
 import { Logger } from 'winston';
+import bcrypt from 'bcrypt';
 
 export class AuthController {
   constructor(
@@ -19,11 +20,14 @@ export class AuthController {
       role
     });
     try {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
       const newUser = await this.userService.create({
         firstName,
         lastName,
         email,
-        password,
+        password: hashedPassword,
         role
       });
       this.logger.info('User has been registered', { id: newUser.id });
