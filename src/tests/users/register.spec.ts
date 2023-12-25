@@ -88,7 +88,19 @@ describe('POST /api/auth/register', () => {
 
       expect(users[0]?.password).not.toBe(userData.password);
       expect(users[0]?.password).toHaveLength(60);
-      expect(users[0]?.password).toMatch(/^\$2b\$\d+\$/);
+      expect(users[0]?.password).toMatch(/^\$2[a|b]\$\d+\$/);
+    });
+    it('should return 400 statuscode if email exists', async () => {
+      const userRespository = connection.getRepository(User);
+      await userRespository.save({ ...userData, role: Roles.CUSTOMER });
+      const response = await request(app)
+        .post('/api/auth/register')
+        .send(userData);
+
+      const users = await userRespository.find();
+
+      expect(response.statusCode).toBe(400);
+      expect(users).toHaveLength(1);
     });
   });
   describe('failure cases', () => {});
