@@ -22,7 +22,7 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
     errors: [
       {
         type: err.name,
-        message: err.message,
+        msg: err.message,
         path: '',
         location: ''
       }

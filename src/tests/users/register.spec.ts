@@ -103,5 +103,24 @@ describe('POST /api/auth/register', () => {
       expect(users).toHaveLength(1);
     });
   });
-  describe('failure cases', () => {});
+  describe('failure cases', () => {
+    it('should return 400 status code if email is missing', async () => {
+      const userData = {
+        firstName: 'Ankit',
+        lastName: 'Tripahi',
+        email: '',
+        password: 'test1234'
+      };
+
+      const userRespository = connection.getRepository(User);
+      const users = await userRespository.find();
+
+      const response = await request(app)
+        .post('/api/auth/register')
+        .send(userData);
+
+      expect(response.statusCode).toBe(400);
+      expect(users.length).toBe(0);
+    });
+  });
 });
