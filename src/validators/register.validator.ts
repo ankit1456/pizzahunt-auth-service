@@ -5,6 +5,7 @@ export default validationSchema({
     notEmpty: {
       errorMessage: 'Email is required'
     },
+    trim: true,
     isEmail: {
       errorMessage: 'Not a valid email'
     }

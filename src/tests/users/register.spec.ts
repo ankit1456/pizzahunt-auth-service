@@ -123,4 +123,21 @@ describe('POST /api/auth/register', () => {
       expect(users.length).toBe(0);
     });
   });
+
+  describe('Input Sanitization', () => {
+    it('should trim email field', async () => {
+      const userData = {
+        firstName: 'Ankit',
+        lastName: 'Tripahi',
+        email: ' ankit@gmail.com ',
+        password: 'test1234'
+      };
+
+      await request(app).post('/api/auth/register').send(userData);
+
+      const userRespository = connection.getRepository(User);
+      const users = await userRespository.find();
+      expect(users[0]?.email).toBe(userData.email.trim());
+    });
+  });
 });
