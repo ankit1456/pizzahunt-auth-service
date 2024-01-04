@@ -122,6 +122,28 @@ describe('POST /api/auth/register', () => {
       expect(response.statusCode).toBe(400);
       expect(users.length).toBe(0);
     });
+    it('should return 400 status code if firstName,lastName or password is missing', async () => {
+      const userData = {
+        firstName: '   ',
+        lastName: '',
+        email: 'ankit@gmail.com',
+        password: ''
+      };
+
+      const userRespository = connection.getRepository(User);
+      const users = await userRespository.find();
+
+      const response = await request(app)
+        .post('/api/auth/register')
+        .send(userData);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body).toHaveProperty('errors');
+      expect(
+        (response.body as Record<string, string>).errors?.length
+      ).toBeGreaterThan(3);
+      expect(users.length).toBe(0);
+    });
   });
 
   describe('Input Sanitization', () => {
@@ -130,7 +152,8 @@ describe('POST /api/auth/register', () => {
         firstName: 'Ankit',
         lastName: 'Tripahi',
         email: ' ankit@gmail.com ',
-        password: 'test1234'
+        password: 'test1234',
+        role: Roles.CUSTOMER
       };
 
       await request(app).post('/api/auth/register').send(userData);
@@ -138,6 +161,70 @@ describe('POST /api/auth/register', () => {
       const userRespository = connection.getRepository(User);
       const users = await userRespository.find();
       expect(users[0]?.email).toBe(userData.email.trim());
+    });
+
+    it('should return 400 status code if email is not a valid email', async () => {
+      const userData = {
+        firstName: 'Ankit',
+        lastName: 'Tripahi',
+        email: 'ankit',
+        password: 'test1234',
+        role: Roles.CUSTOMER
+      };
+
+      const response = await request(app)
+        .post('/api/auth/register')
+        .send(userData);
+
+      const userRespository = connection.getRepository(User);
+      const users = await userRespository.find();
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body).toHaveProperty('errors');
+      expect(users).toHaveLength(0);
+    });
+
+    it('should return 400 status code if password is shorter than chars', async () => {
+      const userData = {
+        firstName: 'Ankit',
+        lastName: 'Tripahi',
+        email: 'ankit',
+        password: 'test12'
+      };
+
+      const response = await request(app)
+        .post('/api/auth/register')
+        .send(userData);
+
+      const userRespository = connection.getRepository(User);
+      const users = await userRespository.find();
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body).toHaveProperty('errors');
+      expect(users).toHaveLength(0);
+    });
+
+    it('should return 400 status code if firstName or lastName exceeds the chars limit', async () => {
+      const userData = {
+        firstName: 'ChristopherMichaelJacksonwefwefwefe',
+        lastName: 'AndersonCooperJohnsonSmithwefwefwefwefwef',
+        email: 'ankit@gmail.com',
+        password: 'test1234'
+      };
+
+      const response = await request(app)
+        .post('/api/auth/register')
+        .send(userData);
+
+      const userRespository = connection.getRepository(User);
+      const users = await userRespository.find();
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body).toHaveProperty('errors');
+      expect(
+        (response.body as Record<string, string>).errors?.length
+      ).toBeGreaterThan(1);
+      expect(users).toHaveLength(0);
     });
   });
 });

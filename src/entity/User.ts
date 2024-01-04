@@ -18,6 +18,6 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ default: Roles.CUSTOMER })
   role: Roles;
 }

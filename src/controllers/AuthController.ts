@@ -15,7 +15,7 @@ export class AuthController {
 
     if (!result.isEmpty()) {
       return res.status(400).json({
-        error: result.array()
+        errors: result.array()
       });
     }
     const { firstName, lastName, email, password, role } = req.body;
