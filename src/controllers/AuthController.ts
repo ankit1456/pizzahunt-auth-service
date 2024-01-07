@@ -62,21 +62,25 @@ export class AuthController {
       };
       const accessToken = sign(payload, privateKey, {
         algorithm: 'RS256',
-        expiresIn: Config.JWT_EXPIRES_IN,
+        expiresIn: Config.ACCESS_TOKEN_EXPIRES_IN,
         issuer: Config.SERVICE_NAME
       });
-      const refreshToken = 'sefwfe';
+      const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
+        algorithm: 'HS256',
+        expiresIn: Config.REFRESH_TOKEN_EXPIRES_IN,
+        issuer: Config.SERVICE_NAME
+      });
 
       res.cookie('accessToken', accessToken, {
         domain: 'localhost',
         sameSite: 'strict',
-        maxAge: 1000 * 60 * 60, //1h
+        maxAge: 1000 * 60 * 60, //1 hour
         httpOnly: true
       });
       res.cookie('refreshToken', refreshToken, {
         domain: 'localhost',
         sameSite: 'strict',
-        maxAge: 1000 * 60 * 60 * 24 * 365,
+        maxAge: 1000 * 60 * 60 * 24 * 365, // 1year
         httpOnly: true
       });
 

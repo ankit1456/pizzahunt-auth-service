@@ -137,7 +137,7 @@ describe('POST /api/auth/register', () => {
       expect(refreshToken).not.toBeNull();
 
       expect(isJwt(accessToken)).toBeTruthy();
-      // expect(isJwt(refreshToken)).toBeTruthy();
+      expect(isJwt(refreshToken)).toBeTruthy();
     });
   });
   describe('failure cases', () => {
