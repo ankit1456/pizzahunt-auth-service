@@ -39,7 +39,14 @@ export class UserService {
     };
 
     if (options?.includePassword) {
-      queryOptions.select = ['password'];
+      queryOptions.select = [
+        'id',
+        'firstName',
+        'lastName',
+        'email',
+        'password',
+        'role'
+      ];
     }
     return await this.userRepository.findOne(queryOptions);
   }
