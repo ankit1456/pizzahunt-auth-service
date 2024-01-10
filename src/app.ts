@@ -4,7 +4,10 @@ import express, { NextFunction, Request, Response } from 'express';
 import logger from './config/logger';
 import { HttpError } from 'http-errors';
 import authRouter from './routes/authRoutes';
+import cookieParser from 'cookie-parser';
+
 const app = express();
+app.use(cookieParser());
 
 app.use(express.json());
 

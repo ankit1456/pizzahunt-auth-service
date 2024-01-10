@@ -5,12 +5,12 @@ import path from 'path';
 import { Repository } from 'typeorm';
 import util from 'util';
 import { Config } from '../config';
-import { AppDataSource } from '../config/data-source';
 import { RefreshToken } from '../entity/RefreshToken';
 import { User } from '../entity/User';
 
 export class TokenService {
   constructor(private refreshTokenRepository: Repository<RefreshToken>) {}
+
   async generateAccessToken(payload: JwtPayload) {
     let privateKey: Buffer;
 
@@ -44,9 +44,8 @@ export class TokenService {
 
   async persistRefreshToken(user: User) {
     const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365; // 1 year
-    const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
 
-    const newRefreshToken = await refreshTokenRepository.save({
+    const newRefreshToken = await this.refreshTokenRepository.save({
       user,
       expiresAt: new Date(Date.now() + MS_IN_YEAR)
     });

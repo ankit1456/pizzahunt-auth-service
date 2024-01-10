@@ -1,12 +1,12 @@
 import { NextFunction, Response } from 'express';
 import { validationResult } from 'express-validator';
+import createHttpError from 'http-errors';
 import { JwtPayload } from 'jsonwebtoken';
 import { Logger } from 'winston';
+import { CredentialService } from '../services/CredentialService';
 import { TokenService } from '../services/TokenService';
 import { UserService } from '../services/UserService';
-import { RegisterUserRequest } from '../types';
-import createHttpError from 'http-errors';
-import { CredentialService } from '../services/CredentialService';
+import { AuthRequest, RegisterUserRequest } from '../types';
 export class AuthController {
   constructor(
     private userService: UserService,
@@ -137,5 +137,11 @@ export class AuthController {
     } catch (error) {
       return next(error);
     }
+  }
+
+  async self(req: AuthRequest, res: Response) {
+    const user = await this.userService.findById(req.auth.sub);
+
+    res.json(user);
   }
 }
