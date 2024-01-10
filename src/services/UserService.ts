@@ -32,4 +32,9 @@ export class UserService {
       }
     }
   }
+
+  async findByEmail(email: string) {
+    const user = await this.userRepository.findOneBy({ email });
+    return user;
+  }
 }
