@@ -77,5 +77,13 @@ describe('GET /api/auth/self', () => {
 
       expect(response.body).not.toHaveProperty('password');
     });
+    it('should return 401 statuscode if token doesn"t exist', async () => {
+      const userRepository = connection.getRepository(User);
+      await userRepository.save(userData);
+
+      const response = await request(app).get('/api/auth/self').send();
+
+      expect(response.statusCode).toBe(401);
+    });
   });
 });
