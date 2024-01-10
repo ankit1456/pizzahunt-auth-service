@@ -41,6 +41,7 @@ describe('POST /api/auth/register', () => {
 
       //   A -> Assert
       expect(response.statusCode).toBe(201);
+      expect(response.body).not.toHaveProperty('password');
     });
 
     it('should return a valid json', async () => {
@@ -85,13 +86,15 @@ describe('POST /api/auth/register', () => {
       await request(app).post('/api/auth/register').send(userData);
 
       const userRespository = connection.getRepository(User);
-      const users = await userRespository.find();
+      const users = await userRespository.find({
+        select: ['password']
+      });
 
       expect(users[0]?.password).not.toBe(userData.password);
       expect(users[0]?.password).toHaveLength(60);
       expect(users[0]?.password).toMatch(/^\$2[a|b]\$\d+\$/);
     });
-    it('should return 400 statuscode if email exists', async () => {
+    it('should return 400 statuscode if email already exists', async () => {
       const userRespository = connection.getRepository(User);
       await userRespository.save({ ...userData, role: Roles.CUSTOMER });
       const response = await request(app)

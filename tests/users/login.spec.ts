@@ -44,6 +44,7 @@ describe('POST /api/auth/login', () => {
       const response = await request(app).post('/api/auth/login').send(creds);
 
       expect(response.statusCode).toBe(200);
+      expect(response.body).not.toHaveProperty('password');
     });
 
     it('should return accessToken and refreshToken and should be jwt', async () => {

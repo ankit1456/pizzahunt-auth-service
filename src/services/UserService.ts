@@ -1,5 +1,5 @@
 import createHttpError, { HttpError } from 'http-errors';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { User } from '../entity/User';
 import { UserData } from '../types';
 import bcrypt from 'bcrypt';
@@ -33,10 +33,17 @@ export class UserService {
     }
   }
 
-  async findByEmail(email: string) {
-    const user = await this.userRepository.findOneBy({ email });
-    return user;
+  async findByEmail(email: string, options?: { includePassword?: boolean }) {
+    const queryOptions: FindOneOptions<User> = {
+      where: { email }
+    };
+
+    if (options?.includePassword) {
+      queryOptions.select = ['password'];
+    }
+    return await this.userRepository.findOne(queryOptions);
   }
+
   async findById(id: string) {
     return await this.userRepository.findOneBy({ id });
   }

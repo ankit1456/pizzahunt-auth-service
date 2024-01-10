@@ -63,5 +63,19 @@ describe('GET /api/auth/self', () => {
 
       expect((response.body as Record<string, string>).id).toBe(user.id);
     });
+
+    it('should not return password', async () => {
+      const userRepository = connection.getRepository(User);
+      const user = await userRepository.save(userData);
+
+      const accessToken = jwks.token({ sub: user.id, role: user.role });
+
+      const response = await request(app)
+        .get('/api/auth/self')
+        .set('Cookie', [`accessToken=${accessToken};`])
+        .send();
+
+      expect(response.body).not.toHaveProperty('password');
+    });
   });
 });

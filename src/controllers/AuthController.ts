@@ -69,7 +69,7 @@ export class AuthController {
         httpOnly: true
       });
 
-      res.status(201).json(newUser);
+      res.status(201).json({ ...newUser, password: undefined });
     } catch (error) {
       return next(error);
     }
@@ -90,7 +90,9 @@ export class AuthController {
       password: '*******'
     });
     try {
-      const user = await this.userService.findByEmail(email);
+      const user = await this.userService.findByEmail(email, {
+        includePassword: true
+      });
 
       if (!user) {
         const err = createHttpError(400, 'Email or Password is incorrect');
@@ -133,7 +135,7 @@ export class AuthController {
 
       this.logger.info('User has been logged in', { id: user.id });
 
-      res.status(200).json(user);
+      res.status(200).json({ ...user, password: undefined });
     } catch (error) {
       return next(error);
     }
@@ -141,7 +143,6 @@ export class AuthController {
 
   async self(req: AuthRequest, res: Response) {
     const user = await this.userService.findById(req.auth.sub);
-
     res.json(user);
   }
 }
