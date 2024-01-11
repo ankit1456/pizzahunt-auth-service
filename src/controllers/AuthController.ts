@@ -145,4 +145,45 @@ export class AuthController {
     const user = await this.userService.findById(req.auth.sub);
     res.json(user);
   }
+
+  async refresh(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const payload: JwtPayload = {
+        sub: req.auth.sub,
+        role: req.auth.role
+      };
+
+      const accessToken = await this.tokenService.generateAccessToken(payload);
+
+      const user = await this.userService.findById(req.auth.sub);
+
+      if (!user) {
+        return next(createHttpError(401, 'You are not authorized'));
+      }
+      const newRefreshToken = await this.tokenService.persistRefreshToken(user);
+
+      await this.tokenService.deleteRefreshToken(req.auth?.id);
+
+      const refreshToken = this.tokenService.generateRefreshToken({
+        ...payload,
+        id: newRefreshToken.id
+      });
+
+      res.cookie('accessToken', accessToken, {
+        domain: 'localhost',
+        sameSite: 'strict',
+        maxAge: 1000 * 60 * 60, //1 hour
+        httpOnly: true
+      });
+      res.cookie('refreshToken', refreshToken, {
+        domain: 'localhost',
+        sameSite: 'strict',
+        maxAge: 1000 * 60 * 60 * 24 * 365, // 1year
+        httpOnly: true
+      });
+      res.json({ id: user.id });
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
