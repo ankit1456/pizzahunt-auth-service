@@ -1,11 +1,14 @@
+import { CredentialService } from './CredentialService';
 import createHttpError, { HttpError } from 'http-errors';
 import { FindOneOptions, Repository } from 'typeorm';
 import { User } from '../entity/User';
 import { UserData } from '../types';
-import bcrypt from 'bcrypt';
 
 export class UserService {
-  constructor(private userRepository: Repository<User>) {}
+  constructor(
+    private userRepository: Repository<User>,
+    private credentialService: CredentialService
+  ) {}
 
   async create(user: UserData) {
     try {
@@ -17,8 +20,8 @@ export class UserService {
         throw createHttpError(400, 'Email already exists');
       }
 
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(user.password, saltRounds);
+      const hashedPassword =
+        await this.credentialService.generateHashedPassword(user.password);
 
       return await this.userRepository.save({
         ...user,

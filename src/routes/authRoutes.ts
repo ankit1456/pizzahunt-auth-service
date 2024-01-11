@@ -15,13 +15,13 @@ import validateRefreshToken from '../middlewares/validateRefreshToken';
 
 const router = express();
 
+const credentialService = new CredentialService();
+
 const userRepository = AppDataSource.getRepository(User);
-const userService = new UserService(userRepository);
+const userService = new UserService(userRepository, credentialService);
 
 const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
 const tokenService = new TokenService(refreshTokenRepository);
-
-const credentialService = new CredentialService();
 
 const authController = new AuthController(
   userService,

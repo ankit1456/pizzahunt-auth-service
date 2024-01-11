@@ -7,6 +7,7 @@ import { CredentialService } from '../services/CredentialService';
 import { TokenService } from '../services/TokenService';
 import { UserService } from '../services/UserService';
 import { AuthRequest, RegisterUserRequest } from '../types';
+import { User } from '../entity/User';
 export class AuthController {
   constructor(
     private userService: UserService,
@@ -47,27 +48,10 @@ export class AuthController {
         role: newUser.role
       };
 
-      const accessToken = await this.tokenService.generateAccessToken(payload);
-      const newRefreshToken =
-        await this.tokenService.persistRefreshToken(newUser);
+      const [accessToken, refreshToken] =
+        await this.generateAccessAndRefreshTokens(payload, newUser);
 
-      const refreshToken = this.tokenService.generateRefreshToken({
-        ...payload,
-        id: newRefreshToken.id
-      });
-
-      res.cookie('accessToken', accessToken, {
-        domain: 'localhost',
-        sameSite: 'strict',
-        maxAge: 1000 * 60 * 60, //1 hour
-        httpOnly: true
-      });
-      res.cookie('refreshToken', refreshToken, {
-        domain: 'localhost',
-        sameSite: 'strict',
-        maxAge: 1000 * 60 * 60 * 24 * 365, // 1year
-        httpOnly: true
-      });
+      this.setTokensInCookie(res, accessToken, refreshToken);
 
       res.status(201).json({ ...newUser, password: undefined });
     } catch (error) {
@@ -112,26 +96,10 @@ export class AuthController {
         sub: user.id,
         role: user.role
       };
-      const accessToken = await this.tokenService.generateAccessToken(payload);
-      const newRefreshToken = await this.tokenService.persistRefreshToken(user);
+      const [accessToken, refreshToken] =
+        await this.generateAccessAndRefreshTokens(payload, user);
 
-      const refreshToken = this.tokenService.generateRefreshToken({
-        ...payload,
-        id: newRefreshToken.id
-      });
-
-      res.cookie('accessToken', accessToken, {
-        domain: 'localhost',
-        sameSite: 'strict',
-        maxAge: 1000 * 60 * 60, //1 hour
-        httpOnly: true
-      });
-      res.cookie('refreshToken', refreshToken, {
-        domain: 'localhost',
-        sameSite: 'strict',
-        maxAge: 1000 * 60 * 60 * 24 * 365, // 1year
-        httpOnly: true
-      });
+      this.setTokensInCookie(res, accessToken, refreshToken);
 
       this.logger.info('User has been logged in', { id: user.id });
 
@@ -153,37 +121,51 @@ export class AuthController {
         role: req.auth.role
       };
 
-      const accessToken = await this.tokenService.generateAccessToken(payload);
-
       const user = await this.userService.findById(req.auth.sub);
 
       if (!user) {
         return next(createHttpError(401, 'You are not authorized'));
       }
-      const newRefreshToken = await this.tokenService.persistRefreshToken(user);
+      const [accessToken, refreshToken] =
+        await this.generateAccessAndRefreshTokens(payload, user);
 
       await this.tokenService.deleteRefreshToken(req.auth?.id);
 
-      const refreshToken = this.tokenService.generateRefreshToken({
-        ...payload,
-        id: newRefreshToken.id
-      });
-
-      res.cookie('accessToken', accessToken, {
-        domain: 'localhost',
-        sameSite: 'strict',
-        maxAge: 1000 * 60 * 60, //1 hour
-        httpOnly: true
-      });
-      res.cookie('refreshToken', refreshToken, {
-        domain: 'localhost',
-        sameSite: 'strict',
-        maxAge: 1000 * 60 * 60 * 24 * 365, // 1year
-        httpOnly: true
-      });
+      this.setTokensInCookie(res, accessToken, refreshToken);
       res.json({ id: user.id });
     } catch (error) {
       return next(error);
     }
+  }
+
+  async generateAccessAndRefreshTokens(
+    payload: JwtPayload,
+    user: User
+  ): Promise<[string, string]> {
+    const accessToken = await this.tokenService.generateAccessToken(payload);
+
+    const newRefreshToken = await this.tokenService.persistRefreshToken(user);
+
+    const refreshToken = this.tokenService.generateRefreshToken({
+      ...payload,
+      id: newRefreshToken.id
+    });
+
+    return [accessToken, refreshToken];
+  }
+
+  setTokensInCookie(res: Response, accessToken: string, refreshToken: string) {
+    res.cookie('accessToken', accessToken, {
+      domain: 'localhost',
+      sameSite: 'strict',
+      maxAge: 1000 * 60 * 60, //1 hour
+      httpOnly: true
+    });
+    res.cookie('refreshToken', refreshToken, {
+      domain: 'localhost',
+      sameSite: 'strict',
+      maxAge: 1000 * 60 * 60 * 24 * 365, // 1year
+      httpOnly: true
+    });
   }
 }
