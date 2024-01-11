@@ -3,3 +3,6 @@
 <!-- docker run --rm --name some-postgres -e POSTGRES_USER=root -e POSTGRES_PASSWORD=postgres -v pgdata:/var/lib/postgresql/data -p 5432:5432 postgres  -->
 
 <!-- psql -U root -> in docker container-->
+
+<!-- npm run migration:generate -- src/migration/migration -d src/config/data-source.ts -->
+<!-- npm run migration:run -- -d src/config/data-source.ts -->
