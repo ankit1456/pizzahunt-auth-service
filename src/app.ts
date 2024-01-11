@@ -20,14 +20,20 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRouter);
 
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
-  logger.error(err.message);
+  logger.error(err.message, {
+    name: err.name
+  });
   const statusCode = err.statusCode || err.status || 500;
 
+  let errMessage = err.message;
+  if (err.name === 'UnauthorizedError') {
+    errMessage = 'You are not authorized';
+  }
   res.status(statusCode).json({
     errors: [
       {
         type: err.name,
-        msg: err.message,
+        msg: errMessage,
         path: '',
         location: ''
       }

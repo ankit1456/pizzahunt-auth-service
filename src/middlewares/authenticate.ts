@@ -17,6 +17,7 @@ export default expressjwt({
 
     if (authHeader && authHeader.split(' ')[1] !== 'undefined') {
       const token = authHeader.split(' ')[1];
+
       if (token) {
         return token;
       }
