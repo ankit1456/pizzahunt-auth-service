@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Roles } from '../types/roles.enum';
+import { Tenant } from './Tenant';
 
 @Entity('users')
 export class User {
@@ -20,4 +21,7 @@ export class User {
 
   @Column({ default: Roles.CUSTOMER })
   role: Roles;
+
+  @ManyToOne(() => Tenant)
+  tenant: Tenant;
 }
