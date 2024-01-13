@@ -3,17 +3,33 @@ import { AppDataSource } from '../../src/config/data-source';
 import request from 'supertest';
 import app from '../../src/app';
 import { Tenant } from '../../src/entity/Tenant';
+import createJWKSMock from 'mock-jwks';
+import { Roles } from '../../src/types/roles.enum';
 
 describe('POST /api/tenants', () => {
   let connection: DataSource;
+  let jwks: ReturnType<typeof createJWKSMock>;
+  let adminToken: string;
 
   beforeAll(async () => {
+    jwks = createJWKSMock('http://localhost:5000');
     connection = await AppDataSource.initialize();
   });
 
   beforeEach(async () => {
+    jwks.start();
+
+    adminToken = jwks.token({
+      sub: 'fa72c1dc-00d1-42f4-9e87-fe03afab0560',
+      role: Roles.ADMIN
+    });
+
     await connection.dropDatabase();
     await connection.synchronize();
+  });
+
+  afterEach(() => {
+    jwks.stop();
   });
 
   afterAll(async () => {
@@ -27,11 +43,17 @@ describe('POST /api/tenants', () => {
     };
 
     it('should return 201 status code', async () => {
-      const response = await request(app).post('/api/tenants').send(tenantData);
+      const response = await request(app)
+        .post('/api/tenants')
+        .set('Cookie', [`accessToken=${adminToken};`])
+        .send(tenantData);
       expect(response.statusCode).toBe(201);
     });
     it('should create tenant in the database', async () => {
-      await request(app).post('/api/tenants').send(tenantData);
+      await request(app)
+        .post('/api/tenants')
+        .set('Cookie', [`accessToken=${adminToken};`])
+        .send(tenantData);
 
       const tenantRepository = connection.getRepository(Tenant);
       const tanants = await tenantRepository.find();
@@ -42,5 +64,20 @@ describe('POST /api/tenants', () => {
     });
   });
 
-  describe('failure cases', () => {});
+  describe('failure cases', () => {
+    const tenantData = {
+      name: 'Tenant name',
+      address: 'Tenant address'
+    };
+
+    it('should return 401 if user is not authenticaetd', async () => {
+      const response = await request(app).post('/api/tenants').send(tenantData);
+
+      const tenantRepository = connection.getRepository(Tenant);
+      const tanants = await tenantRepository.find();
+
+      expect(response.statusCode).toBe(401);
+      expect(tanants).toHaveLength(0);
+    });
+  });
 });
