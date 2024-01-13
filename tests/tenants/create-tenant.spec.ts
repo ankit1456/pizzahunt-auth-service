@@ -70,13 +70,31 @@ describe('POST /api/tenants', () => {
       address: 'Tenant address'
     };
 
-    it('should return 401 if user is not authenticaetd', async () => {
+    it('should return 401 if user is not authenticated', async () => {
       const response = await request(app).post('/api/tenants').send(tenantData);
 
       const tenantRepository = connection.getRepository(Tenant);
       const tanants = await tenantRepository.find();
 
       expect(response.statusCode).toBe(401);
+      expect(tanants).toHaveLength(0);
+    });
+
+    it('should return 403 if user is not authorized (not admin)', async () => {
+      const managerToken = jwks.token({
+        sub: 'fa72c1dc-00d1-42f4-9e87-fe03afab0560',
+        role: Roles.MANAGER
+      });
+
+      const response = await request(app)
+        .post('/api/tenants')
+        .set('Cookie', [`accessToken=${managerToken};`])
+        .send(tenantData);
+
+      const tenantRepository = connection.getRepository(Tenant);
+      const tanants = await tenantRepository.find();
+
+      expect(response.statusCode).toBe(403);
       expect(tanants).toHaveLength(0);
     });
   });
