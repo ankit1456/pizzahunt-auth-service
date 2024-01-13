@@ -1,7 +1,34 @@
-import { Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
+import { TenantService } from '../services/TenantService';
+import { Logger } from 'winston';
+import { CreateTenantRequest } from '../types/tenant.types';
 
 export class TenantController {
-  createTenant(req: Request, res: Response) {
-    res.status(201).json({});
+  constructor(
+    private tenantService: TenantService,
+    private logger: Logger
+  ) {}
+
+  async createTenant(
+    req: CreateTenantRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    this.logger.debug('Request for creating a tenant', req.body);
+
+    try {
+      const { name, address } = req.body;
+
+      const newTenant = await this.tenantService.createTenant({
+        name,
+        address
+      });
+      this.logger.info('Tenant has been created', {
+        id: newTenant.id
+      });
+      res.status(201).json(newTenant);
+    } catch (error) {
+      return next(error);
+    }
   }
 }
