@@ -25,6 +25,7 @@ export class UserService {
 
       return await this.userRepository.save({
         ...user,
+        tenantId: user.tenantId ? { id: user.tenantId } : undefined,
         password: hashedPassword
       });
     } catch (err) {
