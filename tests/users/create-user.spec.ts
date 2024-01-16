@@ -85,7 +85,7 @@ describe('POST /api/users', () => {
     });
   });
   describe('failure cases', () => {
-    it('should return 401 statuscode if token doesn"t exist', async () => {
+    it("should return 401 statuscode if token doesn't exist", async () => {
       const tenant = await createTenant(connection.getRepository(Tenant));
 
       const userData = {

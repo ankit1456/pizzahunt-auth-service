@@ -37,9 +37,12 @@ describe('GET /api/auth/self', () => {
 
   describe('success cases', () => {
     it('should return 200 status code', async () => {
+      const userRepository = connection.getRepository(User);
+      const user = await userRepository.save(userData);
+
       const accessToken = jwks.token({
-        sub: 'a9ef7318-c4b3-4ee6-95c0-d4cb102673e9',
-        role: 'customer'
+        sub: user.id,
+        role: user.role
       });
 
       const response = await request(app)
@@ -77,13 +80,27 @@ describe('GET /api/auth/self', () => {
 
       expect(response.body).not.toHaveProperty('password');
     });
-    it('should return 401 statuscode if token doesn"t exist', async () => {
+    it("should return 401 statuscode if token doesn't exist", async () => {
       const userRepository = connection.getRepository(User);
       await userRepository.save(userData);
 
       const response = await request(app).get('/api/auth/self').send();
 
       expect(response.statusCode).toBe(401);
+    });
+    it("should return 404 statuscode if user doesn't exists", async () => {
+      const accessToken = jwks.token({
+        sub: 'a9ef7318-c4b3-4ee6-95c0-d4cb102673e9',
+        role: 'customer'
+      });
+
+      const response = await request(app)
+        .get('/api/auth/self')
+        .set('Cookie', [`accessToken=${accessToken};`])
+        .send();
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toHaveProperty('errors');
     });
   });
 });
