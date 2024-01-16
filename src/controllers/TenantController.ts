@@ -3,7 +3,10 @@ import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { Logger } from 'winston';
 import { TenantService } from '../services/TenantService';
-import { CreateTenantRequest } from '../types/tenant.types';
+import {
+  CreateTenantRequest,
+  UpdateTenantRequest
+} from '../types/tenant.types';
 
 export class TenantController {
   constructor(
@@ -72,6 +75,39 @@ export class TenantController {
     }
   }
 
+  async updateTenant(
+    req: UpdateTenantRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      return res.status(400).json({
+        errors: result.array()
+      });
+    }
+    try {
+      const { tenantId } = req.params;
+
+      const isExists = await this.tenantService.getTenantById(tenantId);
+
+      if (!isExists) {
+        throw createHttpError(404, 'Tenant not found');
+      }
+      const { name, address } = req.body;
+
+      const updatedTenant = await this.tenantService.updateTenant(tenantId, {
+        name,
+        address
+      });
+
+      res.json(updatedTenant);
+    } catch (error) {
+      return next(error);
+    }
+  }
+
   async deleteTenant(req: Request, res: Response, next: NextFunction) {
     const result = validationResult(req);
 
@@ -84,9 +120,9 @@ export class TenantController {
     try {
       const { tenantId } = req.params;
 
-      const tenant = await this.tenantService.getTenantById(tenantId);
+      const isExists = await this.tenantService.getTenantById(tenantId);
 
-      if (!tenant) {
+      if (!isExists) {
         throw createHttpError(404, `Tenant not found`);
       }
 

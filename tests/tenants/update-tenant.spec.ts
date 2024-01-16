@@ -7,7 +7,7 @@ import { Tenant } from '../../src/entity/Tenant';
 import { Roles } from '../../src/types/roles.enum';
 import { createTenant } from '../utils';
 
-describe('DELETE /api/tenants', () => {
+describe('PATCH /api/tenants', () => {
   let connection: DataSource;
   let jwks: ReturnType<typeof createJWKSMock>;
   let adminToken: string;
@@ -37,28 +37,32 @@ describe('DELETE /api/tenants', () => {
     await connection.destroy();
   });
 
+  const tenantData = {
+    name: 'New tenant name'
+  };
+
   describe('success cases', () => {
-    it('should return 200 status code with success message', async () => {
+    it('should return 200 status code', async () => {
       const tenantRepository = connection.getRepository(Tenant);
 
       const { id } = await createTenant(tenantRepository);
 
       const response = await request(app)
-        .delete(`/api/tenants/${id}`)
+        .patch(`/api/tenants/${id}`)
         .set('Cookie', [`accessToken=${adminToken};`])
-        .send();
+        .send(tenantData);
 
       const tenants = await tenantRepository.find();
 
-      expect(tenants).toHaveLength(0);
+      expect(tenants[0]?.name).toBe(tenantData.name);
       expect(response.statusCode).toBe(200);
-      expect((response.body as Record<string, string>).message).toBeTruthy();
     });
+
     it('should return 404 status code if tenant not found', async () => {
       const response = await request(app)
-        .delete('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
+        .patch('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
         .set('Cookie', [`accessToken=${adminToken};`])
-        .send();
+        .send(tenantData);
 
       expect(response.statusCode).toBe(404);
     });
@@ -67,8 +71,8 @@ describe('DELETE /api/tenants', () => {
   describe('failure cases', () => {
     it('should return 401 if user is not logged in', async () => {
       const response = await request(app)
-        .delete('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
-        .send();
+        .patch('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
+        .send(tenantData);
 
       expect(response.statusCode).toBe(401);
       expect(response.body).toHaveProperty('errors');
@@ -81,9 +85,9 @@ describe('DELETE /api/tenants', () => {
       });
 
       const response = await request(app)
-        .delete('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
+        .patch('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
         .set('Cookie', [`accessToken=${nonAdminToken}`])
-        .send();
+        .send(tenantData);
 
       expect(response.statusCode).toBe(403);
       expect(response.body).toHaveProperty('errors');
@@ -91,9 +95,22 @@ describe('DELETE /api/tenants', () => {
 
     it('should return 400 if id is not a valid uuid', async () => {
       const response = await request(app)
-        .delete(`/api/tenants/fwef`)
+        .patch(`/api/tenants/fwef`)
         .set('Cookie', [`accessToken=${adminToken}`])
-        .send();
+        .send(tenantData);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body).toHaveProperty('errors');
+    });
+
+    it('should return 400 name or address is not valid', async () => {
+      const tenantData = {
+        name: ''
+      };
+      const response = await request(app)
+        .patch(`/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`)
+        .set('Cookie', [`accessToken=${adminToken}`])
+        .send(tenantData);
 
       expect(response.statusCode).toBe(400);
       expect(response.body).toHaveProperty('errors');

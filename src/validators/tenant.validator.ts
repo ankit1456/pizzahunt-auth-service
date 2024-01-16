@@ -12,3 +12,26 @@ export default checkSchema({
     errorMessage: 'Tenant address is required!'
   }
 });
+
+export const updateTenantValidator = checkSchema({
+  name: {
+    optional: true,
+    trim: true,
+    isLength: {
+      options: {
+        min: 3
+      },
+      errorMessage: 'Tenant name is too short'
+    }
+  },
+  address: {
+    optional: true,
+    trim: true,
+    isLength: {
+      options: {
+        min: 3
+      },
+      errorMessage: 'Tenant address is too short'
+    }
+  }
+});

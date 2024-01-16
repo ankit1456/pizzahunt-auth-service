@@ -1,11 +1,11 @@
 import { Repository } from 'typeorm';
 import { Tenant } from '../entity/Tenant';
-import { CreateTenantDto } from '../types/tenant.types';
+import { ITenant } from '../types/tenant.types';
 
 export class TenantService {
   constructor(private tenantRepository: Repository<Tenant>) {}
 
-  createTenant(tenant: CreateTenantDto) {
+  createTenant(tenant: ITenant) {
     return this.tenantRepository.save(tenant);
   }
 
@@ -14,6 +14,10 @@ export class TenantService {
   }
   getTenantById(tenantId: string | undefined) {
     return this.tenantRepository.findOneBy({ id: tenantId });
+  }
+
+  updateTenant(tenantId: string | undefined, tenant: ITenant) {
+    return this.tenantRepository.update({ id: tenantId }, tenant);
   }
 
   deleteTenant(tenantId: string | undefined) {

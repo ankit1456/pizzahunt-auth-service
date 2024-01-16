@@ -5,7 +5,7 @@ import { AppDataSource } from '../../src/config/data-source';
 import { Tenant } from '../../src/entity/Tenant';
 import { createTenant } from '../utils';
 
-describe('POST /api/tenants', () => {
+describe('GET /api/tenants', () => {
   let connection: DataSource;
 
   beforeAll(async () => {
