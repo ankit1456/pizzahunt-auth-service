@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import { JwtPayload } from 'jsonwebtoken';
 import createJWKSMock from 'mock-jwks';
 import request from 'supertest';
@@ -8,7 +7,7 @@ import { AppDataSource } from '../../src/config/data-source';
 import { RefreshToken } from '../../src/entity/RefreshToken';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/types/roles.enum';
-import { generateRefreshToken } from '../utils';
+import { createUser, generateRefreshToken } from '../utils';
 
 describe('POST /api/auth/refresh', () => {
   let connection: DataSource;
@@ -37,22 +36,9 @@ describe('POST /api/auth/refresh', () => {
 
   describe('success cases', () => {
     it('should clear the cookies and return success message', async () => {
-      const userData = {
-        firstName: 'Ankit',
-        lastName: 'Tripahi',
-        email: ' ankit@gmail.com ',
-        password: 'test1234',
-        role: Roles.CUSTOMER
-      };
-
-      const userRepository = connection.getRepository(User);
       const refreshTokenRepository = connection.getRepository(RefreshToken);
 
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
-      const user = await userRepository.save({
-        ...userData,
-        password: hashedPassword
-      });
+      const user = await createUser(connection.getRepository(User));
 
       const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365; // 1 year
 

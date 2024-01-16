@@ -5,6 +5,7 @@ import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/types/roles.enum';
+import { createUser } from '../utils';
 
 describe('PATCH /api/users/:userId', () => {
   let connection: DataSource;
@@ -35,18 +36,11 @@ describe('PATCH /api/users/:userId', () => {
     await connection.destroy();
   });
 
-  const userData = {
-    firstName: 'Ankit',
-    lastName: 'Tripahi',
-    email: 'ankit@gmail.com',
-    password: 'test1234',
-    role: Roles.MANAGER
-  };
   describe('success cases', () => {
     it('should update a user and return 200 status code', async () => {
       const userRepository = connection.getRepository(User);
 
-      const { id } = await userRepository.save(userData);
+      const { id } = await createUser(userRepository);
 
       const response = await request(app)
         .patch(`/api/users/${id}`)

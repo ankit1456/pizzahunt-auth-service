@@ -5,7 +5,7 @@ import { AppDataSource } from '../../src/config/data-source';
 import { RefreshToken } from '../../src/entity/RefreshToken';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/types/roles.enum';
-import { isJwt } from '../utils';
+import { createUser, isJwt } from '../utils';
 
 describe('POST /api/auth/register', () => {
   let connection: DataSource;
@@ -97,7 +97,8 @@ describe('POST /api/auth/register', () => {
     });
     it('should return 400 statuscode if email already exists', async () => {
       const userRespository = connection.getRepository(User);
-      await userRespository.save({ ...userData, role: Roles.CUSTOMER });
+      await createUser(userRespository);
+
       const response = await request(app)
         .post('/api/auth/register')
         .send(userData);

@@ -1,7 +1,10 @@
+import bcrypt from 'bcrypt';
 import { JwtPayload, sign } from 'jsonwebtoken';
 import { DataSource, Repository } from 'typeorm';
 import { Config } from '../../src/config';
 import { Tenant } from '../../src/entity/Tenant';
+import { User } from '../../src/entity/User';
+import { Roles } from '../../src/types/roles.enum';
 
 export const truncateTables = async (connection: DataSource) => {
   const entities = connection.entityMetadatas;
@@ -39,6 +42,19 @@ export const createTenant = async (repository: Repository<Tenant>) => {
   });
 
   return tenant;
+};
+export const createUser = async (repository: Repository<User>) => {
+  const hashedPassword = await bcrypt.hash('test1234', 10);
+
+  const user = await repository.save({
+    firstName: 'Ankit',
+    lastName: 'Tripahi',
+    email: 'ankit@gmail.com',
+    password: hashedPassword,
+    role: Roles.CUSTOMER
+  });
+
+  return user;
 };
 
 export const generateRefreshToken = (payload: JwtPayload) => {

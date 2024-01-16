@@ -1,10 +1,10 @@
-import { DataSource } from 'typeorm';
-import { AppDataSource } from '../../src/config/data-source';
-import request from 'supertest';
-import app from '../../src/app';
-import { User } from '../../src/entity/User';
 import createJWKSMock from 'mock-jwks';
-import { Roles } from '../../src/types/roles.enum';
+import request from 'supertest';
+import { DataSource } from 'typeorm';
+import app from '../../src/app';
+import { AppDataSource } from '../../src/config/data-source';
+import { User } from '../../src/entity/User';
+import { createUser } from '../utils';
 
 describe('GET /api/auth/self', () => {
   let connection: DataSource;
@@ -29,18 +29,9 @@ describe('GET /api/auth/self', () => {
     await connection.destroy();
   });
 
-  const userData = {
-    firstName: 'Ankit',
-    lastName: 'Tripahi',
-    email: 'ankit@gmail.com',
-    password: 'test1234',
-    role: Roles.CUSTOMER
-  };
-
   describe('success cases', () => {
     it('should return 200 status code', async () => {
-      const userRepository = connection.getRepository(User);
-      const user = await userRepository.save(userData);
+      const user = await createUser(connection.getRepository(User));
 
       const accessToken = jwks.token({
         sub: user.id,
@@ -56,8 +47,7 @@ describe('GET /api/auth/self', () => {
     });
 
     it('should return the user data', async () => {
-      const userRepository = connection.getRepository(User);
-      const user = await userRepository.save(userData);
+      const user = await createUser(connection.getRepository(User));
 
       const accessToken = jwks.token({ sub: user.id, role: user.role });
 
@@ -70,8 +60,7 @@ describe('GET /api/auth/self', () => {
     });
 
     it('should not return password', async () => {
-      const userRepository = connection.getRepository(User);
-      const user = await userRepository.save(userData);
+      const user = await createUser(connection.getRepository(User));
 
       const accessToken = jwks.token({ sub: user.id, role: user.role });
 
@@ -83,13 +72,11 @@ describe('GET /api/auth/self', () => {
       expect(response.body).not.toHaveProperty('password');
     });
     it("should return 401 statuscode if token doesn't exist", async () => {
-      const userRepository = connection.getRepository(User);
-      await userRepository.save(userData);
-
       const response = await request(app).get('/api/auth/self').send();
 
       expect(response.statusCode).toBe(401);
     });
+
     it("should return 404 statuscode if user doesn't exists", async () => {
       const accessToken = jwks.token({
         sub: 'a9ef7318-c4b3-4ee6-95c0-d4cb102673e9',
