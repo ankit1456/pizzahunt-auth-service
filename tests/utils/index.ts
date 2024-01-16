@@ -1,4 +1,6 @@
+import { JwtPayload, sign } from 'jsonwebtoken';
 import { DataSource, Repository } from 'typeorm';
+import { Config } from '../../src/config';
 import { Tenant } from '../../src/entity/Tenant';
 
 export const truncateTables = async (connection: DataSource) => {
@@ -37,4 +39,15 @@ export const createTenant = async (repository: Repository<Tenant>) => {
   });
 
   return tenant;
+};
+
+export const generateRefreshToken = (payload: JwtPayload) => {
+  const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
+    algorithm: 'HS256',
+    expiresIn: Config.REFRESH_TOKEN_EXPIRES_IN,
+    issuer: Config.SERVICE_NAME,
+    jwtid: String(payload.id)
+  });
+
+  return refreshToken;
 };
