@@ -38,5 +38,13 @@ router.post(
   (req: Request, res: Response, next: NextFunction) =>
     tenantController.createTenant(req, res, next)
 );
+router.delete(
+  '/:tenantId',
+  authenticate,
+  canAccess(Roles.ADMIN),
+  validateUUID,
+  (req: Request, res: Response, next: NextFunction) =>
+    tenantController.deleteTenant(req, res, next)
+);
 
 export default router;

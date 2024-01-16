@@ -15,4 +15,8 @@ export class TenantService {
   getTenantById(tenantId: string | undefined) {
     return this.tenantRepository.findOneBy({ id: tenantId });
   }
+
+  deleteTenant(tenantId: string | undefined) {
+    return this.tenantRepository.delete({ id: tenantId });
+  }
 }
