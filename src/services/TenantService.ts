@@ -12,4 +12,7 @@ export class TenantService {
   getAllTenants() {
     return this.tenantRepository.find();
   }
+  getTenantById(tenantId: string | undefined) {
+    return this.tenantRepository.findOneBy({ id: tenantId });
+  }
 }
