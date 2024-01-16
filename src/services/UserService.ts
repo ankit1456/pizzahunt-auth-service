@@ -1,8 +1,8 @@
-import { CredentialService } from './CredentialService';
 import createHttpError, { HttpError } from 'http-errors';
 import { FindOneOptions, Repository } from 'typeorm';
 import { User } from '../entity/User';
 import { UserData } from '../types';
+import { CredentialService } from './CredentialService';
 
 export class UserService {
   constructor(
@@ -30,7 +30,7 @@ export class UserService {
       });
     } catch (err) {
       if (!(err instanceof HttpError)) {
-        throw createHttpError(500, 'Failed to register user');
+        throw createHttpError(500, 'Failed to create user');
       } else {
         throw err;
       }
@@ -57,5 +57,9 @@ export class UserService {
 
   async findById(id: string) {
     return await this.userRepository.findOneBy({ id });
+  }
+
+  getAllUsers() {
+    return this.userRepository.find();
   }
 }

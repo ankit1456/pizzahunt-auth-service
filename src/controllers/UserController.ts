@@ -1,7 +1,7 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import { validationResult } from 'express-validator';
 import { UserService } from '../services/UserService';
 import { CreateUserRequest } from '../types';
-import { validationResult } from 'express-validator';
 
 export class UserController {
   constructor(private userService: UserService) {}
@@ -26,6 +26,16 @@ export class UserController {
         tenantId
       });
       res.status(201).json(user);
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async getAllUsers(req: Request, res: Response, next: NextFunction) {
+    try {
+      const users = await this.userService.getAllUsers();
+
+      res.json(users);
     } catch (error) {
       return next(error);
     }
