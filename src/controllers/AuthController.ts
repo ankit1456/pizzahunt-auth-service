@@ -8,6 +8,7 @@ import { TokenService } from '../services/TokenService';
 import { UserService } from '../services/UserService';
 import { AuthRequest, RegisterUserRequest } from '../types';
 import { User } from '../entity/User';
+import { Roles } from '../types/roles.enum';
 export class AuthController {
   constructor(
     private userService: UserService,
@@ -24,14 +25,14 @@ export class AuthController {
         errors: result.array()
       });
     }
-    const { firstName, lastName, email, password, role } = req.body;
+    const { firstName, lastName, email, password } = req.body;
 
     this.logger.debug('Request initiated for registering user', {
       firstName,
       lastName,
       email,
       password: '*******',
-      role
+      role: Roles.CUSTOMER
     });
     try {
       const newUser = await this.userService.create({
@@ -39,7 +40,7 @@ export class AuthController {
         lastName,
         email,
         password,
-        role
+        role: Roles.CUSTOMER
       });
       this.logger.info('User has been registered', { id: newUser.id });
 
