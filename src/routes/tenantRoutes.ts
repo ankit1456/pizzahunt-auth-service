@@ -6,6 +6,7 @@ import { Tenant } from '../entity/Tenant';
 import authenticate from '../middlewares/authenticate';
 import { canAccess } from '../middlewares/canAccess';
 import { Roles } from '../types/roles.enum';
+import tenantValidator from '../validators/tenant.validator';
 import { validateUUID } from '../validators/uuid.validator';
 import { TenantService } from './../services/TenantService';
 
@@ -33,6 +34,7 @@ router.post(
   '/',
   authenticate,
   canAccess(Roles.ADMIN),
+  tenantValidator,
   (req: Request, res: Response, next: NextFunction) =>
     tenantController.createTenant(req, res, next)
 );

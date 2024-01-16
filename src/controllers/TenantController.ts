@@ -19,6 +19,12 @@ export class TenantController {
     this.logger.debug('Request for creating a tenant', req.body);
 
     try {
+      const result = validationResult(req);
+
+      if (!result.isEmpty()) {
+        return res.status(400).json({ errors: result.array() });
+      }
+
       const { name, address } = req.body;
 
       const newTenant = await this.tenantService.createTenant({

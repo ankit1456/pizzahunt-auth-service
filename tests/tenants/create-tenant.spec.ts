@@ -1,9 +1,9 @@
-import { DataSource } from 'typeorm';
-import { AppDataSource } from '../../src/config/data-source';
-import request from 'supertest';
-import app from '../../src/app';
-import { Tenant } from '../../src/entity/Tenant';
 import createJWKSMock from 'mock-jwks';
+import request from 'supertest';
+import { DataSource } from 'typeorm';
+import app from '../../src/app';
+import { AppDataSource } from '../../src/config/data-source';
+import { Tenant } from '../../src/entity/Tenant';
 import { Roles } from '../../src/types/roles.enum';
 
 describe('POST /api/tenants', () => {
@@ -95,6 +95,24 @@ describe('POST /api/tenants', () => {
       const tanants = await tenantRepository.find();
 
       expect(response.statusCode).toBe(403);
+      expect(tanants).toHaveLength(0);
+    });
+    it('should return 400 status code if name or address is missing', async () => {
+      const tenantData = {
+        name: '',
+        address: ''
+      };
+
+      const response = await request(app)
+        .post('/api/tenants')
+        .set('Cookie', [`accessToken=${adminToken};`])
+        .send(tenantData);
+
+      const tenantRepository = connection.getRepository(Tenant);
+      const tanants = await tenantRepository.find();
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body).toHaveProperty('errors');
       expect(tanants).toHaveLength(0);
     });
   });
