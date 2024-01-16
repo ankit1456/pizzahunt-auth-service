@@ -37,7 +37,7 @@ export class UserService {
     }
   }
 
-  async findByEmail(email: string, options?: { includePassword?: boolean }) {
+  findByEmail(email: string, options?: { includePassword?: boolean }) {
     const queryOptions: FindOneOptions<User> = {
       where: { email }
     };
@@ -52,14 +52,17 @@ export class UserService {
         'role'
       ];
     }
-    return await this.userRepository.findOne(queryOptions);
+    return this.userRepository.findOne(queryOptions);
   }
 
-  async findById(id: string | undefined) {
-    return await this.userRepository.findOneBy({ id });
+  findById(id: string | undefined) {
+    return this.userRepository.findOneBy({ id });
   }
 
   getAllUsers() {
     return this.userRepository.find();
+  }
+  deleteUser(userId: string | undefined) {
+    return this.userRepository.delete({ id: userId });
   }
 }

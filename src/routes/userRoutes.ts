@@ -48,4 +48,13 @@ router.post(
     userController.createUser(req, res, next)
 );
 
+router.delete(
+  '/:userId',
+  authenticate as RequestHandler,
+  canAccess(Roles.ADMIN),
+  validateUserId,
+  (req: Request, res: Response, next: NextFunction) =>
+    userController.deleteUser(req, res, next)
+);
+
 export default router;
