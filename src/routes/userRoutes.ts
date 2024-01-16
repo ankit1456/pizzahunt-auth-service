@@ -12,7 +12,10 @@ import { canAccess } from '../middlewares/canAccess';
 import { CredentialService } from '../services/CredentialService';
 import { UserService } from '../services/UserService';
 import { Roles } from '../types/roles.enum';
-import userValidator, { validateUserId } from '../validators/user.validator';
+import userValidator, {
+  updateUserValidator,
+  validateUserId
+} from '../validators/user.validator';
 
 const router = express();
 
@@ -48,6 +51,15 @@ router.post(
     userController.createUser(req, res, next)
 );
 
+router.patch(
+  '/:userId',
+  authenticate as RequestHandler,
+  canAccess(Roles.ADMIN),
+  validateUserId,
+  updateUserValidator,
+  (req: Request, res: Response, next: NextFunction) =>
+    userController.updateUser(req, res, next)
+);
 router.delete(
   '/:userId',
   authenticate as RequestHandler,

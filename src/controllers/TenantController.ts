@@ -97,12 +97,12 @@ export class TenantController {
       }
       const { name, address } = req.body;
 
-      const updatedTenant = await this.tenantService.updateTenant(tenantId, {
+      await this.tenantService.updateTenant(tenantId, {
         name,
         address
       });
 
-      res.json(updatedTenant);
+      res.json({ id: isExists.id });
     } catch (error) {
       return next(error);
     }

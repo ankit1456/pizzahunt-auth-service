@@ -87,4 +87,37 @@ export class UserController {
       return next(error);
     }
   }
+
+  async updateUser(req: CreateUserRequest, res: Response, next: NextFunction) {
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      return res.status(400).json({
+        errors: result.array()
+      });
+    }
+    try {
+      const { userId } = req.params;
+
+      const user = await this.userService.findById(userId);
+
+      if (!user) {
+        throw createHttpError(404, 'User not found');
+      }
+      const { firstName, lastName, email, password, role, tenantId } = req.body;
+
+      await this.userService.updateUser(userId, {
+        firstName,
+        lastName,
+        email,
+        password,
+        role,
+        tenantId
+      });
+
+      res.json({ id: user.id });
+    } catch (error) {
+      return next(error);
+    }
+  }
 }

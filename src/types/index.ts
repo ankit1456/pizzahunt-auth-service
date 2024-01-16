@@ -35,3 +35,6 @@ export interface IRefreshTokenPayload {
 export interface CreateUserRequest extends Request {
   body: UserData;
 }
+export interface UpdateUserRequest extends Request {
+  body: UserData;
+}

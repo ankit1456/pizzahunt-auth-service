@@ -53,6 +53,56 @@ export default validationSchema({
   }
 });
 
+export const updateUserValidator = validationSchema({
+  email: {
+    optional: true,
+    trim: true,
+    isEmail: {
+      errorMessage: 'Not a valid email'
+    }
+  },
+
+  firstName: {
+    optional: true,
+    trim: true,
+    notEmpty: true,
+    isLength: {
+      options: {
+        max: 30
+      },
+      errorMessage: 'First name should not exceed 30 characters'
+    }
+  },
+  lastName: {
+    optional: true,
+    trim: true,
+    notEmpty: true,
+    isLength: {
+      options: {
+        max: 30
+      },
+      errorMessage: 'Last name should not exceed 30 characters'
+    }
+  },
+
+  password: {
+    optional: true,
+    trim: true,
+    notEmpty: true,
+    isLength: {
+      options: {
+        min: 8
+      },
+      errorMessage: 'Password length should be at least 8 chars long'
+    }
+  },
+  role: {
+    optional: true,
+    trim: true,
+    notEmpty: true
+  }
+});
+
 export const validateUserId = validationSchema({
   userId: {
     in: ['params'],

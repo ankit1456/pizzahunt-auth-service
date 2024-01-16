@@ -65,4 +65,8 @@ export class UserService {
   deleteUser(userId: string | undefined) {
     return this.userRepository.delete({ id: userId });
   }
+
+  updateUser(userId: string | undefined, user: UserData) {
+    return this.userRepository.update({ id: userId }, user);
+  }
 }
