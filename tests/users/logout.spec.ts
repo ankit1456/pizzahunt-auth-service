@@ -113,7 +113,7 @@ describe('POST /api/auth/refresh', () => {
       const accessToken = jwks.token(payload);
 
       const response = await request(app)
-        .post('/api/auth/refresh')
+        .post('/api/auth/logout')
         .set('Cookie', [`accessToken=${accessToken}`])
         .send();
 
