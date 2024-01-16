@@ -15,6 +15,13 @@ const tenantRepository = AppDataSource.getRepository(Tenant);
 const tenantService = new TenantService(tenantRepository);
 const tenantController = new TenantController(tenantService, logger);
 
+router.get(
+  '/',
+  authenticate,
+  (req: Request, res: Response, next: NextFunction) =>
+    tenantController.getAllTenants(req, res, next)
+);
+
 router.post(
   '/',
   authenticate,

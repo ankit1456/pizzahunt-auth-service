@@ -8,4 +8,8 @@ export class TenantService {
   createTenant(tenant: CreateTenantDto) {
     return this.tenantRepository.save(tenant);
   }
+
+  getAllTenants() {
+    return this.tenantRepository.find();
+  }
 }
