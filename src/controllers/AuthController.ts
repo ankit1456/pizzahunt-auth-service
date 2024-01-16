@@ -109,9 +109,18 @@ export class AuthController {
     }
   }
 
-  async self(req: AuthRequest, res: Response) {
-    const user = await this.userService.findById(req.auth.sub);
-    res.json(user);
+  async self(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const user = await this.userService.findById(req.auth.sub);
+
+      if (!user) {
+        throw createHttpError(404, 'User not found');
+      }
+
+      res.json(user);
+    } catch (error) {
+      return next(error);
+    }
   }
 
   async refresh(req: AuthRequest, res: Response, next: NextFunction) {

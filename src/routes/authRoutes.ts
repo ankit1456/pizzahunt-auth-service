@@ -48,7 +48,7 @@ router.get(
   '/self',
   authenticate,
   (req: Request, res: Response, next: NextFunction) =>
-    authController.self(req as AuthRequest, res)
+    authController.self(req as AuthRequest, res, next)
 );
 
 router.post(
