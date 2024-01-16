@@ -99,10 +99,7 @@ describe('POST /api/users', () => {
       const userRepository = connection.getRepository(User);
       const users = await userRepository.find();
 
-      const response = await request(app)
-        .post('/api/users')
-
-        .send(userData);
+      const response = await request(app).post('/api/users').send(userData);
 
       expect(response.statusCode).toBe(401);
       expect((response.body as Record<string, string>).errors).toHaveLength(1);

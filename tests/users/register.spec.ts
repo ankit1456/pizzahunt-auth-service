@@ -6,6 +6,7 @@ import { RefreshToken } from '../../src/entity/RefreshToken';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/types/roles.enum';
 import { isJwt } from '../utils';
+
 describe('POST /api/auth/register', () => {
   let connection: DataSource;
 
@@ -112,7 +113,8 @@ describe('POST /api/auth/register', () => {
         firstName: 'Ankit',
         lastName: 'Tripathi',
         email: 'ankit@gmail.com',
-        password: 'test1234'
+        password: 'test1234',
+        role: Roles.CUSTOMER
       };
 
       const response = await request(app)
@@ -148,7 +150,8 @@ describe('POST /api/auth/register', () => {
         firstName: 'Ankit',
         lastName: 'Tripahi',
         email: ' ankit@gmail.com ',
-        password: 'test1234'
+        password: 'test1234',
+        role: Roles.CUSTOMER
       };
 
       const respose = await request(app)

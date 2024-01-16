@@ -55,7 +55,7 @@ export class UserService {
     return await this.userRepository.findOne(queryOptions);
   }
 
-  async findById(id: string) {
+  async findById(id: string | undefined) {
     return await this.userRepository.findOneBy({ id });
   }
 

@@ -6,7 +6,7 @@ import { AppDataSource } from '../../src/config/data-source';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/types/roles.enum';
 
-describe('GET /api/users', () => {
+describe('GET /api/users/:userId', () => {
   let connection: DataSource;
   let jwks: ReturnType<typeof createJWKSMock>;
   let adminToken: string;
@@ -41,25 +41,27 @@ describe('GET /api/users', () => {
       lastName: 'Tripahi',
       email: 'ankit@gmail.com',
       password: 'test1234',
-      role: Roles.CUSTOMER
+      role: Roles.MANAGER
     };
-    it('should return all users with 200 status code', async () => {
+    it('should return a user with 200 status code', async () => {
       const userRepository = connection.getRepository(User);
 
-      await userRepository.save(userData);
+      const { id } = await userRepository.save(userData);
 
       const response = await request(app)
-        .get('/api/users')
+        .get(`/api/users/${id}`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send();
 
       expect(response.statusCode).toBe(200);
-      expect(response.body).toHaveLength(1);
+      expect((response.body as Record<string, string>).id).toBe(id);
     });
   });
   describe('failure cases', () => {
     it('should return 401 if user is not authenticated', async () => {
-      const response = await request(app).get('/api/users').send();
+      const response = await request(app)
+        .get('/api/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560')
+        .send();
 
       expect(response.statusCode).toBe(401);
       expect(response.body).toHaveProperty('errors');
@@ -77,6 +79,25 @@ describe('GET /api/users', () => {
         .send();
 
       expect(response.statusCode).toBe(403);
+      expect(response.body).toHaveProperty('errors');
+    });
+
+    it('should return 400 if id is not a valid uuid', async () => {
+      const response = await request(app)
+        .get('/api/users/wfwef')
+        .set('Cookie', [`accessToken=${adminToken};`])
+        .send();
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body).toHaveProperty('errors');
+    });
+    it('should return 404 if user not found', async () => {
+      const response = await request(app)
+        .get('/api/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560')
+        .set('Cookie', [`accessToken=${adminToken};`])
+        .send();
+
+      expect(response.statusCode).toBe(404);
       expect(response.body).toHaveProperty('errors');
     });
   });

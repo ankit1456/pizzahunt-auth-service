@@ -4,6 +4,7 @@ import request from 'supertest';
 import app from '../../src/app';
 import { User } from '../../src/entity/User';
 import createJWKSMock from 'mock-jwks';
+import { Roles } from '../../src/types/roles.enum';
 
 describe('GET /api/auth/self', () => {
   let connection: DataSource;
@@ -32,7 +33,8 @@ describe('GET /api/auth/self', () => {
     firstName: 'Ankit',
     lastName: 'Tripahi',
     email: 'ankit@gmail.com',
-    password: 'test1234'
+    password: 'test1234',
+    role: Roles.CUSTOMER
   };
 
   describe('success cases', () => {

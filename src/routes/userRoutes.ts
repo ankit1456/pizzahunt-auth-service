@@ -12,7 +12,7 @@ import { canAccess } from '../middlewares/canAccess';
 import { CredentialService } from '../services/CredentialService';
 import { UserService } from '../services/UserService';
 import { Roles } from '../types/roles.enum';
-import userValidator from '../validators/user.validator';
+import userValidator, { validateUserId } from '../validators/user.validator';
 
 const router = express();
 
@@ -28,6 +28,15 @@ router.get(
   canAccess(Roles.ADMIN),
   (req: Request, res: Response, next: NextFunction) =>
     userController.getAllUsers(req, res, next)
+);
+
+router.get(
+  '/:userId',
+  authenticate as RequestHandler,
+  canAccess(Roles.ADMIN),
+  validateUserId,
+  (req: Request, res: Response, next: NextFunction) =>
+    userController.getUser(req, res, next)
 );
 
 router.post(

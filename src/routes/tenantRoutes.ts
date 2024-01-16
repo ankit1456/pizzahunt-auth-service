@@ -8,9 +8,9 @@ import { canAccess } from '../middlewares/canAccess';
 import { Roles } from '../types/roles.enum';
 import { UpdateTenantRequest } from '../types/tenant.types';
 import tenantValidator, {
-  updateTenantValidator
+  updateTenantValidator,
+  validateTenantID
 } from '../validators/tenant.validator';
-import { validateUUID } from '../validators/uuid.validator';
 import { TenantService } from './../services/TenantService';
 
 const router = express();
@@ -28,7 +28,7 @@ router.get(
   '/:tenantId',
   authenticate,
   canAccess(Roles.ADMIN),
-  validateUUID,
+  validateTenantID,
   (req: Request, res: Response, next: NextFunction) =>
     tenantController.getTenantById(req, res, next)
 );
@@ -46,7 +46,7 @@ router.patch(
   '/:tenantId',
   authenticate,
   canAccess(Roles.ADMIN),
-  validateUUID,
+  validateTenantID,
   updateTenantValidator,
   (req: Request, res: Response, next: NextFunction) =>
     tenantController.updateTenant(req as UpdateTenantRequest, res, next)
@@ -56,7 +56,7 @@ router.delete(
   '/:tenantId',
   authenticate,
   canAccess(Roles.ADMIN),
-  validateUUID,
+  validateTenantID,
   (req: Request, res: Response, next: NextFunction) =>
     tenantController.deleteTenant(req, res, next)
 );

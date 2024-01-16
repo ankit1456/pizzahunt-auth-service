@@ -52,3 +52,12 @@ export default validationSchema({
     errorMessage: 'Role is required!'
   }
 });
+
+export const validateUserId = validationSchema({
+  userId: {
+    in: ['params'],
+    isUUID: {
+      errorMessage: 'Not a valid uuid'
+    }
+  }
+});

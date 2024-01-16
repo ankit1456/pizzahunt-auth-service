@@ -35,3 +35,12 @@ export const updateTenantValidator = checkSchema({
     }
   }
 });
+
+export const validateTenantID = checkSchema({
+  tenantId: {
+    in: ['params'],
+    isUUID: {
+      errorMessage: 'Not a valid uuid'
+    }
+  }
+});

@@ -5,6 +5,7 @@ import { AppDataSource } from '../../src/config/data-source';
 import { User } from '../../src/entity/User';
 import bcrypt from 'bcrypt';
 import { isJwt } from '../utils';
+import { Roles } from '../../src/types/roles.enum';
 
 describe('POST /api/auth/login', () => {
   let connection: DataSource;
@@ -31,7 +32,8 @@ describe('POST /api/auth/login', () => {
     firstName: 'Ankit',
     lastName: 'Tripahi',
     email: 'ankit@gmail.com',
-    password: 'test1234'
+    password: 'test1234',
+    role: Roles.CUSTOMER
   };
 
   describe('success cases', () => {
