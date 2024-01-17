@@ -152,7 +152,7 @@ export class AuthController {
     payload: JwtPayload,
     user: User
   ): Promise<[string, string]> {
-    const accessToken = await this.tokenService.generateAccessToken(payload);
+    const accessToken = this.tokenService.generateAccessToken(payload);
 
     const newRefreshToken = await this.tokenService.persistRefreshToken(user);
 

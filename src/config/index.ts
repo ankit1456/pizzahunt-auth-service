@@ -3,7 +3,7 @@ import path from 'path';
 
 // jest automatically sets NODE_ENV as test
 config({
-  path: path.join(__dirname, `../../.env.${process.env.NODE_ENV || 'dev'}`)
+  path: path.join(__dirname, `../../.env.${process.env.NODE_ENV ?? 'dev'}`)
 });
 
 const {
@@ -18,7 +18,8 @@ const {
   ACCESS_TOKEN_EXPIRES_IN,
   REFRESH_TOKEN_EXPIRES_IN,
   REFRESH_TOKEN_SECRET,
-  JWKS_URI
+  JWKS_URI,
+  PRIVATE_KEY
 } = process.env;
 
 export const Config = {
@@ -33,5 +34,6 @@ export const Config = {
   ACCESS_TOKEN_EXPIRES_IN,
   REFRESH_TOKEN_EXPIRES_IN,
   REFRESH_TOKEN_SECRET,
-  JWKS_URI
+  JWKS_URI,
+  PRIVATE_KEY
 };
