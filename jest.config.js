@@ -3,5 +3,8 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  verbose: true
+  verbose: true,
+  collectCoverage: true,
+  coverageProvider: 'v8',
+  collectCoverageFrom: ['src/**/*.ts', '!tests/**', '!**/node_modules/**']
 };
