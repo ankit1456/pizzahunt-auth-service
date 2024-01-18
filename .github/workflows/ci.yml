@@ -47,7 +47,7 @@ jobs:
     needs: build-and-test
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: ankit1456/food_delivery_auth_service #ankit1456/food_delivery_auth_service:build-2
+      IMAGE_NAME: ankit1456/pizzahunt-auth-service #ankit1456/pizzahunt-auth-service:build-2
       IMAGE_TAG: build-${{ github.run_number }}
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     steps:
