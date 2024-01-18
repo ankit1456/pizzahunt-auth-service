@@ -4,7 +4,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   verbose: true,
-  testTimeout: 7000,
+  testTimeout: 6000,
   collectCoverage: true,
   coverageProvider: 'v8',
   collectCoverageFrom: ['src/**/*.ts', '!tests/**', '!**/node_modules/**']
