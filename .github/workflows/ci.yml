@@ -25,9 +25,12 @@ jobs:
         env:
           DB_HOST: ${{ secrets.TEST_DB_HOST }}
           DB_PORT: ${{ secrets.TEST_DB_PORT }}
-          DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
+          DB_USER: ${{ secrets.TEST_DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
           DB_NAME: ${{ secrets.TEST_DB_NAME }}
+          SERVICE_NAME: ${{ secrets.TEST_SERVICE_NAME }}
+          ACCESS_TOKEN_EXPIRES_IN: ${{ secrets.TEST_ACCESS_TOKEN_EXPIRES_IN }}
+          REFRESH_TOKEN_EXPIRES_IN: ${{ secrets.TEST_REFRESH_TOKEN_EXPIRES_IN }}
           REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
           JWKS_URI: ${{ secrets.JWKS_URI }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
