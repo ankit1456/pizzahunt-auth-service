@@ -6,3 +6,7 @@
 
 <!-- npm run migration:generate -- src/migration/migration -d src/config/data-source.ts -->
 <!-- npm run migration:run -- -d src/config/data-source.ts -->
+
+# Pizzahunt Auth Service
+
+Authentication service for this full stack food delivery app(pizzahunt).
