@@ -25,21 +25,19 @@ const credentialService = new CredentialService();
 const userService = new UserService(userRepository, credentialService);
 const userController = new UserController(userService);
 
-router.get(
-  '/',
-  authenticate as RequestHandler,
-  canAccess(Roles.ADMIN),
-  (req: Request, res: Response, next: NextFunction) =>
-    userController.getAllUsers(req, res, next)
-);
+router.get('/', authenticate as RequestHandler, canAccess(Roles.ADMIN), (async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => userController.getAllUsers(req, res, next)) as RequestHandler);
 
 router.get(
   '/:userId',
   authenticate as RequestHandler,
   canAccess(Roles.ADMIN),
   validateUserId,
-  (req: Request, res: Response, next: NextFunction) =>
-    userController.getUser(req, res, next)
+  (async (req: Request, res: Response, next: NextFunction) =>
+    userController.getUser(req, res, next)) as RequestHandler
 );
 
 router.post(
@@ -47,8 +45,8 @@ router.post(
   authenticate as RequestHandler,
   canAccess(Roles.ADMIN),
   userValidator,
-  (req: Request, res: Response, next: NextFunction) =>
-    userController.createUser(req, res, next)
+  (async (req: Request, res: Response, next: NextFunction) =>
+    userController.createUser(req, res, next)) as RequestHandler
 );
 
 router.patch(
@@ -57,16 +55,16 @@ router.patch(
   canAccess(Roles.ADMIN),
   validateUserId,
   updateUserValidator,
-  (req: Request, res: Response, next: NextFunction) =>
-    userController.updateUser(req, res, next)
+  (async (req: Request, res: Response, next: NextFunction) =>
+    userController.updateUser(req, res, next)) as RequestHandler
 );
 router.delete(
   '/:userId',
   authenticate as RequestHandler,
   canAccess(Roles.ADMIN),
   validateUserId,
-  (req: Request, res: Response, next: NextFunction) =>
-    userController.deleteUser(req, res, next)
+  (async (req: Request, res: Response, next: NextFunction) =>
+    userController.deleteUser(req, res, next)) as RequestHandler
 );
 
 export default router;
