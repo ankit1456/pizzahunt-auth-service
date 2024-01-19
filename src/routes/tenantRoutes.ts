@@ -1,4 +1,9 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, {
+  NextFunction,
+  Request,
+  RequestHandler,
+  Response
+} from 'express';
 import { AppDataSource } from '../config/data-source';
 import logger from '../config/logger';
 import { TenantController } from '../controllers/TenantController';
@@ -20,45 +25,48 @@ const tenantRepository = AppDataSource.getRepository(Tenant);
 const tenantService = new TenantService(tenantRepository);
 const tenantController = new TenantController(tenantService, logger);
 
-router.get('/', (req: Request, res: Response, next: NextFunction) =>
-  tenantController.getAllTenants(req, res, next)
-);
+router.get('/', (async (req: Request, res: Response, next: NextFunction) =>
+  tenantController.getAllTenants(req, res, next)) as RequestHandler);
 
 router.get(
   '/:tenantId',
-  authenticate,
+  authenticate as RequestHandler,
   canAccess(Roles.ADMIN),
   validateTenantID,
-  (req: Request, res: Response, next: NextFunction) =>
-    tenantController.getTenantById(req, res, next)
+  (async (req: Request, res: Response, next: NextFunction) =>
+    tenantController.getTenantById(req, res, next)) as RequestHandler
 );
 
 router.post(
   '/',
-  authenticate,
+  authenticate as RequestHandler,
   canAccess(Roles.ADMIN),
   tenantValidator,
-  (req: Request, res: Response, next: NextFunction) =>
-    tenantController.createTenant(req, res, next)
+  (async (req: Request, res: Response, next: NextFunction) =>
+    tenantController.createTenant(req, res, next)) as RequestHandler
 );
 
 router.patch(
   '/:tenantId',
-  authenticate,
+  authenticate as RequestHandler,
   canAccess(Roles.ADMIN),
   validateTenantID,
   updateTenantValidator,
-  (req: Request, res: Response, next: NextFunction) =>
-    tenantController.updateTenant(req as UpdateTenantRequest, res, next)
+  (async (req: Request, res: Response, next: NextFunction) =>
+    tenantController.updateTenant(
+      req as UpdateTenantRequest,
+      res,
+      next
+    )) as RequestHandler
 );
 
 router.delete(
   '/:tenantId',
-  authenticate,
+  authenticate as RequestHandler,
   canAccess(Roles.ADMIN),
   validateTenantID,
-  (req: Request, res: Response, next: NextFunction) =>
-    tenantController.deleteTenant(req, res, next)
+  (async (req: Request, res: Response, next: NextFunction) =>
+    tenantController.deleteTenant(req, res, next)) as RequestHandler
 );
 
 export default router;
