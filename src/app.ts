@@ -7,8 +7,17 @@ import authRouter from './routes/authRoutes';
 import tenantRouter from './routes/tenantRoutes';
 import userRouter from './routes/userRoutes';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import { Config } from './config';
 
 const app = express();
+
+app.use(
+  cors({
+    origin: [Config.WHITELIST_ORIGIN!],
+    credentials: true
+  })
+);
 
 app.use(express.static('public'));
 
