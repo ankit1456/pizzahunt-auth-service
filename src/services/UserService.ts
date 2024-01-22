@@ -49,7 +49,9 @@ export class UserService {
         'lastName',
         'email',
         'password',
-        'role'
+        'role',
+        'createdAt',
+        'updatedAt'
       ];
     }
     return this.userRepository.findOne(queryOptions);
