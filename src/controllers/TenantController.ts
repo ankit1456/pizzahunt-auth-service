@@ -7,6 +7,7 @@ import {
   CreateTenantRequest,
   UpdateTenantRequest
 } from '../types/tenant.types';
+import { logError } from '../utils/logError';
 
 export class TenantController {
   constructor(
@@ -19,7 +20,7 @@ export class TenantController {
     res: Response,
     next: NextFunction
   ) {
-    this.logger.debug('Request for creating a tenant', req.body);
+    this.logger.debug('Creating a tenant', req.body);
 
     try {
       const result = validationResult(req);
@@ -39,6 +40,7 @@ export class TenantController {
       });
       res.status(201).json(newTenant);
     } catch (error) {
+      logError(error, "Couldn't create tenant");
       return next(error);
     }
   }
@@ -46,9 +48,11 @@ export class TenantController {
   async getAllTenants(req: Request, res: Response, next: NextFunction) {
     try {
       const tenants = await this.tenantService.getAllTenants();
+      this.logger.info('All tenants fetched');
 
       res.json(tenants);
     } catch (error) {
+      logError(error, "Couldn't fetch tenants");
       return next(error);
     }
   }
@@ -69,8 +73,13 @@ export class TenantController {
         throw createHttpError(404, `Tenant not found`);
       }
 
+      this.logger.debug('Tenant fetched', {
+        id: tenant.id
+      });
+
       res.json(tenant);
     } catch (error) {
+      logError(error, "Couldn't fetch tenant");
       return next(error);
     }
   }
@@ -102,8 +111,13 @@ export class TenantController {
         address
       });
 
-      res.json({ id: isExists.id });
+      this.logger.info('Tenant updated', {
+        id: tenantId
+      });
+
+      res.json({ id: tenantId });
     } catch (error) {
+      logError(error, "Couldn't update tenant");
       return next(error);
     }
   }
@@ -128,10 +142,14 @@ export class TenantController {
 
       const result = await this.tenantService.deleteTenant(tenantId);
 
+      this.logger.info('Tenant deleted', {
+        id: tenantId
+      });
       if (result.affected) {
         res.json({ message: 'Tenant deleted' });
       }
     } catch (error) {
+      logError(error, "Couln't delete tenant");
       return next(error);
     }
   }

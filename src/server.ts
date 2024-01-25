@@ -6,7 +6,7 @@ import { Server } from 'http';
 
 process.on('uncaughtException', (err) => {
   logger.info('UNCAUGHT EXCEPTION! 💥 Shutting down...');
-  logger.error(err.name, { message: err.message });
+  logger.error(err.message, { errorName: err.name });
   process.exit(1);
 });
 
@@ -19,12 +19,20 @@ const startServer = async () => {
     logger.info('Database connected successfully 😊');
     server = app.listen(PORT, () =>
       logger.info(`Server running on port ${PORT}`, {
-        success: 'Server Started Successfully 😊😊'
+        success: 'Server started successfully 😊😊'
       })
     );
   } catch (error) {
     if (error instanceof Error) {
-      logger.error(error.message);
+      if (error.name === 'AggregateError') {
+        logger.error('Database connection failed 😟😟', {
+          errorName: error.name
+        });
+      } else {
+        logger.error(error.message, {
+          errorName: error.name
+        });
+      }
     }
     setTimeout(() => {
       process.exit(1);
@@ -35,7 +43,7 @@ const startServer = async () => {
 void startServer();
 
 process.on('unhandledRejection', (err: Error) => {
-  logger.error(err.name, { message: err.message });
+  logger.error(err.message, { errorName: err.name });
   logger.info('UnhandledRejection , shutting down 😶');
   server.close(() => {
     process.exit(1);
@@ -43,8 +51,10 @@ process.on('unhandledRejection', (err: Error) => {
 });
 
 process.on('SIGTERM', () => {
-  logger.info('SIGTERM RECIEVED ,Shutting down gracefully 👋');
-  server.close(() => {
-    logger.error('💥 Process Terminated');
+  logger.info('SIGTERM RECIEVED, shutting down gracefully 👋');
+  server.close((error) => {
+    logger.error('💥 Process Terminated', {
+      errorName: error?.name
+    });
   });
 });

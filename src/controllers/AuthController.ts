@@ -9,6 +9,8 @@ import { UserService } from '../services/UserService';
 import { AuthRequest, RegisterUserRequest } from '../types';
 import { User } from '../entity/User';
 import { Roles } from '../types/roles.enum';
+import { logError } from '../utils/logError';
+
 export class AuthController {
   constructor(
     private userService: UserService,
@@ -27,7 +29,7 @@ export class AuthController {
     }
     const { firstName, lastName, email, password } = req.body;
 
-    this.logger.debug('Request initiated for registering user', {
+    this.logger.debug('Registering user', {
       firstName,
       lastName,
       email,
@@ -56,6 +58,7 @@ export class AuthController {
 
       res.status(201).json({ ...newUser, password: undefined });
     } catch (error) {
+      logError(error, 'User registration failed');
       return next(error);
     }
   }
@@ -70,7 +73,7 @@ export class AuthController {
     }
     const { email, password } = req.body;
 
-    this.logger.debug('Request initiated for logging user in', {
+    this.logger.debug('Logging user in', {
       email,
       password: '*******'
     });
@@ -106,6 +109,7 @@ export class AuthController {
 
       res.status(200).json({ ...user, password: undefined });
     } catch (error) {
+      logError(error, 'User login failed');
       return next(error);
     }
   }
@@ -120,6 +124,7 @@ export class AuthController {
 
       res.json(user);
     } catch (error) {
+      logError(error, "Coundn't find user");
       return next(error);
     }
   }
@@ -144,6 +149,7 @@ export class AuthController {
       this.setTokensInCookie(res, accessToken, refreshToken);
       res.json({ id: user.id });
     } catch (error) {
+      logError(error, "Couldn't refresh the token");
       return next(error);
     }
   }
@@ -177,6 +183,8 @@ export class AuthController {
       maxAge: 1000 * 60 * 60 * 24 * 365, // 1year
       httpOnly: true
     });
+
+    this.logger.info('tokens has been set in cookies');
   }
 
   async logout(req: AuthRequest, res: Response, next: NextFunction) {
@@ -193,8 +201,9 @@ export class AuthController {
       res.clearCookie('accessToken');
       res.clearCookie('refreshToken');
 
-      res.json({ message: 'Logged out' });
+      res.json({ message: 'You have been logged out' });
     } catch (error) {
+      logError(error, "Couldn't logout the user");
       return next(error);
     }
   }

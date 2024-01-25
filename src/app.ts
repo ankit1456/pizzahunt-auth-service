@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('Welcome to Auth Service');
+  res.send('Auth Service is running');
 });
 
 app.use('/api/auth', authRouter);
@@ -34,7 +34,7 @@ app.use('/api/users', userRouter);
 
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
   logger.error(err.message, {
-    name: err.name
+    errorName: err.name
   });
   const statusCode = err.statusCode || err.status || 500;
 
