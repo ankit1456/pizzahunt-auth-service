@@ -3,6 +3,7 @@ import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { UserService } from '../services/UserService';
 import { CreateUserRequest } from '../types';
+import { Roles } from '../types/roles.enum';
 
 export class UserController {
   constructor(private userService: UserService) {}
@@ -23,10 +24,10 @@ export class UserController {
         lastName,
         email,
         password,
-        role,
+        role: role ?? Roles.CUSTOMER,
         tenantId
       });
-      res.status(201).json(user);
+      res.status(201).json({ ...user, password: undefined });
     } catch (error) {
       return next(error);
     }

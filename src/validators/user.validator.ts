@@ -1,4 +1,5 @@
 import { checkSchema as validationSchema } from 'express-validator';
+import { roles } from '../types';
 
 export default validationSchema({
   email: {
@@ -47,9 +48,13 @@ export default validationSchema({
   },
 
   role: {
+    optional: true,
     trim: true,
     notEmpty: true,
-    errorMessage: 'Role is required!'
+    isIn: {
+      options: [roles],
+      errorMessage: `Role must be one of: ${roles.join(',')}`
+    }
   }
 });
 
@@ -99,7 +104,12 @@ export const updateUserValidator = validationSchema({
   role: {
     optional: true,
     trim: true,
-    notEmpty: true
+    notEmpty: true,
+    errorMessage: `Role must be one of: ${roles.join(', ')}`,
+    isIn: {
+      options: [roles],
+      errorMessage: `Role must be one of: ${roles.join(', ')}`
+    }
   }
 });
 
