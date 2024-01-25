@@ -5,6 +5,7 @@ import { AuthCookies, IRefreshTokenPayload } from '../types';
 import { AppDataSource } from '../config/data-source';
 import { RefreshToken } from '../entity/RefreshToken';
 import logger from '../config/logger';
+import { MoreThan } from 'typeorm';
 
 export default expressjwt({
   secret: Config.REFRESH_TOKEN_SECRET!,
@@ -24,7 +25,8 @@ export default expressjwt({
           id: (token?.payload as IRefreshTokenPayload).id,
           user: {
             id: (token?.payload as IRefreshTokenPayload).sub
-          }
+          },
+          expiresAt: MoreThan(new Date())
         }
       });
 
