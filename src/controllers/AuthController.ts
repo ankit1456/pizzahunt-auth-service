@@ -3,12 +3,13 @@ import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { JwtPayload } from 'jsonwebtoken';
 import { Logger } from 'winston';
+import { User } from '../entity/User';
 import { CredentialService } from '../services/CredentialService';
 import { TokenService } from '../services/TokenService';
 import { UserService } from '../services/UserService';
 import { AuthRequest, RegisterUserRequest } from '../types';
-import { User } from '../entity/User';
 import { Roles } from '../types/roles.enum';
+
 export class AuthController {
   constructor(
     private userService: UserService,
@@ -27,11 +28,10 @@ export class AuthController {
     }
     const { firstName, lastName, email, password } = req.body;
 
-    this.logger.debug('Request initiated for registering user', {
+    this.logger.debug('Registering user', {
       firstName,
       lastName,
       email,
-      password: '*******',
       role: Roles.CUSTOMER
     });
     try {
@@ -70,9 +70,8 @@ export class AuthController {
     }
     const { email, password } = req.body;
 
-    this.logger.debug('Request initiated for logging user in', {
-      email,
-      password: '*******'
+    this.logger.debug('Logging user in', {
+      email
     });
     try {
       const user = await this.userService.findByEmail(email, {
@@ -177,6 +176,8 @@ export class AuthController {
       maxAge: 1000 * 60 * 60 * 24 * 365, // 1year
       httpOnly: true
     });
+
+    this.logger.info('tokens has been set in cookies');
   }
 
   async logout(req: AuthRequest, res: Response, next: NextFunction) {
@@ -193,7 +194,7 @@ export class AuthController {
       res.clearCookie('accessToken');
       res.clearCookie('refreshToken');
 
-      res.json({ message: 'Logged out' });
+      res.json({ message: 'You have been logged out' });
     } catch (error) {
       return next(error);
     }
