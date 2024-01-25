@@ -16,6 +16,7 @@ import userValidator, {
   updateUserValidator,
   validateUserId
 } from '../validators/user.validator';
+import logger from '../config/logger';
 
 const router = express();
 
@@ -23,7 +24,7 @@ const userRepository = AppDataSource.getRepository(User);
 
 const credentialService = new CredentialService();
 const userService = new UserService(userRepository, credentialService);
-const userController = new UserController(userService);
+const userController = new UserController(userService, logger);
 
 router.get('/', authenticate as RequestHandler, canAccess(Roles.ADMIN), (async (
   req: Request,

@@ -126,21 +126,21 @@ describe('POST /api/auth/register', () => {
         ['set-cookie']: string[];
       }
 
-      let accessToken = null;
-      let refreshToken = null;
+      let accessToken = '';
+      let refreshToken = '';
       const cookies =
         (response.headers as unknown as Headers)['set-cookie'] || [];
       cookies.forEach((cookie) => {
         if (cookie.startsWith('accessToken=')) {
-          accessToken = cookie.split(';')[0]?.split('=')[1];
+          accessToken = cookie.split(';')[0]?.split('=')[1] as string;
         }
         if (cookie.startsWith('refreshToken=')) {
-          refreshToken = cookie.split(';')[0]?.split('=')[1];
+          refreshToken = cookie.split(';')[0]?.split('=')[1] as string;
         }
       });
 
-      expect(accessToken).not.toBeNull();
-      expect(refreshToken).not.toBeNull();
+      expect(accessToken).not.toBeFalsy();
+      expect(refreshToken).not.toBeFalsy();
 
       expect(isJwt(accessToken)).toBeTruthy();
       expect(isJwt(refreshToken)).toBeTruthy();

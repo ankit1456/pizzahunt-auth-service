@@ -15,7 +15,7 @@ export const truncateTables = async (connection: DataSource) => {
   }
 };
 
-export const isJwt = (token: string | null): boolean => {
+export const isJwt = (token: string): boolean => {
   if (!token) return false;
 
   const parts = token.split('.');

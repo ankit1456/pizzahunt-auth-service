@@ -38,3 +38,5 @@ export interface CreateUserRequest extends Request {
 export interface UpdateUserRequest extends Request {
   body: UserData;
 }
+
+export const roles = ['admin', 'manager', 'customer'];

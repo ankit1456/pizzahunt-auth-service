@@ -106,7 +106,7 @@ describe('POST /api/users', () => {
       expect(users).toHaveLength(0);
     });
 
-    it('should return 400 status code if firstName, lastName, email, password or role is missing', async () => {
+    it('should return 400 status code if firstName, lastName, email or password is missing', async () => {
       const userData = {
         firstName: '',
         lastName: '',
@@ -122,7 +122,7 @@ describe('POST /api/users', () => {
       const userRepository = connection.getRepository(User);
       const users = await userRepository.find();
 
-      expect((response.body as Record<string, string>).errors?.length).toBe(7);
+      expect((response.body as Record<string, string>).errors?.length).toBe(6);
 
       expect(response.statusCode).toBe(400);
       expect(users).toHaveLength(0);
