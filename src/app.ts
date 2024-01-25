@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('Auth Service is running');
+  res.json({ status: 'ok', message: 'Auth Service is running' });
 });
 
 app.use('/api/auth', authRouter);
