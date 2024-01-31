@@ -1,37 +1,57 @@
 import { checkSchema } from 'express-validator';
 
+const commonNameLengthOptions = {
+  options: {
+    min: 3,
+    max: 50
+  }
+};
+const commonAddressLengthOptions = {
+  options: {
+    min: 3,
+    max: 100
+  }
+};
+
 export default checkSchema({
   name: {
     trim: true,
     notEmpty: true,
-    errorMessage: 'Tenant name is required!'
+    errorMessage: 'Tenant name is required',
+    isLength: {
+      ...commonNameLengthOptions,
+      errorMessage: 'Tenant name should be between 3 and 50 characters'
+    }
   },
   address: {
     trim: true,
     notEmpty: true,
-    errorMessage: 'Tenant address is required!'
+    errorMessage: 'Tenant address is required',
+    isLength: {
+      ...commonAddressLengthOptions,
+      errorMessage: 'Tenant address should be between 3 and 100 characters'
+    }
   }
 });
 
+const commonOptions = {
+  optional: true,
+  trim: true
+};
+
 export const updateTenantValidator = checkSchema({
   name: {
-    optional: true,
-    trim: true,
+    ...commonOptions,
     isLength: {
-      options: {
-        min: 3
-      },
-      errorMessage: 'Tenant name is too short'
+      ...commonNameLengthOptions,
+      errorMessage: 'Tenant name should be between 3 and 50 characters'
     }
   },
   address: {
-    optional: true,
-    trim: true,
+    ...commonOptions,
     isLength: {
-      options: {
-        min: 3
-      },
-      errorMessage: 'Tenant address is too short'
+      ...commonAddressLengthOptions,
+      errorMessage: 'Tenant address should be between 3 and 100 characters'
     }
   }
 });

@@ -4,8 +4,8 @@ import createHttpError from 'http-errors';
 import { Logger } from 'winston';
 import { TenantService } from '../services/TenantService';
 import {
-  CreateTenantRequest,
-  UpdateTenantRequest
+  ICreateTenantRequest,
+  IUpdateTenantRequest
 } from '../types/tenant.types';
 
 export class TenantController {
@@ -15,7 +15,7 @@ export class TenantController {
   ) {}
 
   async createTenant(
-    req: CreateTenantRequest,
+    req: ICreateTenantRequest,
     res: Response,
     next: NextFunction
   ) {
@@ -81,7 +81,7 @@ export class TenantController {
   }
 
   async updateTenant(
-    req: UpdateTenantRequest,
+    req: IUpdateTenantRequest,
     res: Response,
     next: NextFunction
   ) {

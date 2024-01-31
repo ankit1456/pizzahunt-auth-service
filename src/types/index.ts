@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import { Roles } from './roles.enum';
 
-export interface UserData {
+export interface IUser {
   firstName: string;
   lastName: string;
   email: string;
@@ -10,8 +10,8 @@ export interface UserData {
   tenantId?: string;
 }
 
-export interface RegisterUserRequest extends Request {
-  body: UserData;
+export interface IRegisterUserRequest extends Request {
+  body: IUser;
 }
 
 export interface AuthRequest extends Request {
@@ -32,11 +32,11 @@ export interface IRefreshTokenPayload {
   sub: string;
 }
 
-export interface CreateUserRequest extends Request {
-  body: UserData;
+export interface ICreateUserRequest extends Request {
+  body: IUser;
 }
-export interface UpdateUserRequest extends Request {
-  body: UserData;
+export interface IUpdateUserRequest extends Request {
+  body: IUser;
 }
 
 export const roles = ['admin', 'manager', 'customer'];

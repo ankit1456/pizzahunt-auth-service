@@ -1,44 +1,46 @@
 import { checkSchema as validationSchema } from 'express-validator';
 import { roles } from '../types';
 
+const commonOptions = {
+  trim: true,
+  notEmpty: true
+};
+
 export default validationSchema({
   email: {
-    trim: true,
-    notEmpty: {
-      errorMessage: 'Email is required'
-    },
+    ...commonOptions,
+    errorMessage: 'Email is required',
     isEmail: {
       errorMessage: 'Not a valid email'
     }
   },
 
   firstName: {
-    trim: true,
+    ...commonOptions,
     errorMessage: 'First name is required!',
-    notEmpty: true,
     isLength: {
       options: {
-        max: 30
+        max: 30,
+        min: 2
       },
-      errorMessage: 'First name should not exceed 30 characters'
+      errorMessage: 'First name should be between 2 and 30 characters'
     }
   },
   lastName: {
-    trim: true,
+    ...commonOptions,
     errorMessage: 'Last name is required!',
-    notEmpty: true,
     isLength: {
       options: {
-        max: 30
+        max: 30,
+        min: 2
       },
-      errorMessage: 'Last name should not exceed 30 characters'
+      errorMessage: 'Last name should be between 2 and 30 characters'
     }
   },
 
   password: {
-    trim: true,
+    ...commonOptions,
     errorMessage: 'Password is required!',
-    notEmpty: true,
     isLength: {
       options: {
         min: 8
@@ -49,8 +51,7 @@ export default validationSchema({
 
   role: {
     optional: true,
-    trim: true,
-    notEmpty: true,
+    ...commonOptions,
     isIn: {
       options: [roles],
       errorMessage: `Role must be one of: ${roles.join(',')}`
@@ -58,54 +59,51 @@ export default validationSchema({
   }
 });
 
+const commonUpdationOptions = {
+  optional: true,
+  trim: true
+};
+
 export const updateUserValidator = validationSchema({
   email: {
-    optional: true,
-    trim: true,
+    ...commonUpdationOptions,
     isEmail: {
       errorMessage: 'Not a valid email'
     }
   },
 
   firstName: {
-    optional: true,
-    trim: true,
-    notEmpty: true,
+    ...commonUpdationOptions,
     isLength: {
       options: {
-        max: 30
+        max: 30,
+        min: 2
       },
-      errorMessage: 'First name should not exceed 30 characters'
+      errorMessage: 'First name should be between 2 and 30 characters'
     }
   },
   lastName: {
-    optional: true,
-    trim: true,
-    notEmpty: true,
+    ...commonUpdationOptions,
     isLength: {
       options: {
-        max: 30
+        max: 30,
+        min: 2
       },
-      errorMessage: 'Last name should not exceed 30 characters'
+      errorMessage: 'Last name should be between 2 and 30 characters'
     }
   },
 
   password: {
-    optional: true,
-    trim: true,
-    notEmpty: true,
+    ...commonUpdationOptions,
     isLength: {
       options: {
         min: 8
       },
-      errorMessage: 'Password length should be at least 8 chars long'
+      errorMessage: 'Password length should be at least 8 characters long'
     }
   },
   role: {
-    optional: true,
-    trim: true,
-    notEmpty: true,
-    errorMessage: `Role must be one of: ${roles.join(', ')}`,
+    ...commonUpdationOptions,
     isIn: {
       options: [roles],
       errorMessage: `Role must be one of: ${roles.join(', ')}`

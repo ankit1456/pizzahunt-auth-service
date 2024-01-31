@@ -11,7 +11,7 @@ import { Tenant } from '../entity/Tenant';
 import authenticate from '../middlewares/authenticate';
 import { canAccess } from '../middlewares/canAccess';
 import { Roles } from '../types/roles.enum';
-import { UpdateTenantRequest } from '../types/tenant.types';
+import { IUpdateTenantRequest } from '../types/tenant.types';
 import tenantValidator, {
   updateTenantValidator,
   validateTenantID
@@ -54,7 +54,7 @@ router.patch(
   updateTenantValidator,
   (async (req: Request, res: Response, next: NextFunction) =>
     tenantController.updateTenant(
-      req as UpdateTenantRequest,
+      req as IUpdateTenantRequest,
       res,
       next
     )) as RequestHandler
