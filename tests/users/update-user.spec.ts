@@ -110,7 +110,7 @@ describe('PATCH /api/users/:userId', () => {
         .send(userData);
 
       expect(response.statusCode).toBe(400);
-      expect((response.body as Record<string, string>).errors).toHaveLength(2);
+      expect((response.body as Record<string, string>).errors).toHaveLength(3);
     });
   });
 });

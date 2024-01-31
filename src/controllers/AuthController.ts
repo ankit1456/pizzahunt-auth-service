@@ -36,7 +36,7 @@ export class AuthController {
       role: Roles.CUSTOMER
     });
     try {
-      const newUser = await this.userService.create({
+      const newUser = await this.userService.createUser({
         firstName,
         lastName,
         email,

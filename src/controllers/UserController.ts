@@ -30,7 +30,7 @@ export class UserController {
         role
       });
 
-      const user = await this.userService.create({
+      const user = await this.userService.createUser({
         firstName,
         lastName,
         email,

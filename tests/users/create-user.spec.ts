@@ -122,7 +122,7 @@ describe('POST /api/users', () => {
       const userRepository = connection.getRepository(User);
       const users = await userRepository.find();
 
-      expect((response.body as Record<string, string>).errors?.length).toBe(6);
+      expect((response.body as Record<string, string>).errors?.length).toBe(8);
 
       expect(response.statusCode).toBe(400);
       expect(users).toHaveLength(0);

@@ -10,7 +10,7 @@ export class UserService {
     private credentialService: CredentialService
   ) {}
 
-  async create(user: IUser) {
+  async createUser(user: IUser) {
     try {
       const userExists = await this.userRepository.findOneBy({
         email: user.email
