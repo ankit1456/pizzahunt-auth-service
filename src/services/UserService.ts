@@ -1,7 +1,7 @@
 import createHttpError, { HttpError } from 'http-errors';
 import { FindOneOptions, Repository } from 'typeorm';
 import { User } from '../entity/User';
-import { UserData } from '../types';
+import { IUser } from '../types';
 import { CredentialService } from './CredentialService';
 
 export class UserService {
@@ -10,7 +10,7 @@ export class UserService {
     private credentialService: CredentialService
   ) {}
 
-  async create(user: UserData) {
+  async createUser(user: IUser) {
     try {
       const userExists = await this.userRepository.findOneBy({
         email: user.email
@@ -58,7 +58,14 @@ export class UserService {
   }
 
   findById(id: string | undefined) {
-    return this.userRepository.findOneBy({ id });
+    return this.userRepository.findOne({
+      where: {
+        id
+      },
+      relations: {
+        tenant: true
+      }
+    });
   }
 
   getAllUsers() {
@@ -68,7 +75,7 @@ export class UserService {
     return this.userRepository.delete({ id: userId });
   }
 
-  updateUser(userId: string | undefined, user: UserData) {
+  updateUser(userId: string | undefined, user: IUser) {
     return this.userRepository.update({ id: userId }, user);
   }
 }

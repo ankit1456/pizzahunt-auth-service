@@ -3,7 +3,7 @@ import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { Logger } from 'winston';
 import { UserService } from '../services/UserService';
-import { CreateUserRequest } from '../types';
+import { ICreateUserRequest, IUpdateUserRequest } from '../types';
 import { Roles } from '../types/roles.enum';
 
 export class UserController {
@@ -12,7 +12,7 @@ export class UserController {
     private logger: Logger
   ) {}
 
-  async createUser(req: CreateUserRequest, res: Response, next: NextFunction) {
+  async createUser(req: ICreateUserRequest, res: Response, next: NextFunction) {
     const result = validationResult(req);
 
     if (!result.isEmpty()) {
@@ -30,7 +30,7 @@ export class UserController {
         role
       });
 
-      const user = await this.userService.create({
+      const user = await this.userService.createUser({
         firstName,
         lastName,
         email,
@@ -112,7 +112,7 @@ export class UserController {
     }
   }
 
-  async updateUser(req: CreateUserRequest, res: Response, next: NextFunction) {
+  async updateUser(req: IUpdateUserRequest, res: Response, next: NextFunction) {
     const result = validationResult(req);
 
     if (!result.isEmpty()) {

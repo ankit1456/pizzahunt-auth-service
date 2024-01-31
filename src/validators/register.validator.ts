@@ -13,31 +13,36 @@ export default validationSchema({
 
   firstName: {
     trim: true,
-    errorMessage: 'First name is required!',
-    notEmpty: true,
+    notEmpty: {
+      errorMessage: 'First name is required'
+    },
     isLength: {
       options: {
-        max: 30
+        max: 30,
+        min: 2
       },
-      errorMessage: 'First name should not exceed 30 characters'
+      errorMessage: 'First name should be between 2 and 30 characters'
     }
   },
   lastName: {
     trim: true,
-    errorMessage: 'Last name is required!',
-    notEmpty: true,
+    notEmpty: {
+      errorMessage: 'Last name is required!'
+    },
     isLength: {
       options: {
-        max: 30
+        max: 30,
+        min: 2
       },
-      errorMessage: 'Last name should not exceed 30 characters'
+      errorMessage: 'Last name should be between 2 and 30 characters'
     }
   },
 
   password: {
     trim: true,
-    errorMessage: 'Password is required!',
-    notEmpty: true,
+    notEmpty: {
+      errorMessage: 'Password is required!'
+    },
     isLength: {
       options: {
         min: 8

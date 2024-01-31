@@ -7,7 +7,8 @@ import { User } from '../entity/User';
 import { CredentialService } from '../services/CredentialService';
 import { TokenService } from '../services/TokenService';
 import { UserService } from '../services/UserService';
-import { AuthRequest, RegisterUserRequest } from '../types';
+import { AuthRequest, IRegisterUserRequest } from '../types';
+
 import { Roles } from '../types/roles.enum';
 
 export class AuthController {
@@ -18,7 +19,7 @@ export class AuthController {
     private logger: Logger
   ) {}
 
-  async register(req: RegisterUserRequest, res: Response, next: NextFunction) {
+  async register(req: IRegisterUserRequest, res: Response, next: NextFunction) {
     const result = validationResult(req);
 
     if (!result.isEmpty()) {
@@ -35,7 +36,7 @@ export class AuthController {
       role: Roles.CUSTOMER
     });
     try {
-      const newUser = await this.userService.create({
+      const newUser = await this.userService.createUser({
         firstName,
         lastName,
         email,
@@ -60,7 +61,7 @@ export class AuthController {
     }
   }
 
-  async login(req: RegisterUserRequest, res: Response, next: NextFunction) {
+  async login(req: IRegisterUserRequest, res: Response, next: NextFunction) {
     const result = validationResult(req);
 
     if (!result.isEmpty()) {

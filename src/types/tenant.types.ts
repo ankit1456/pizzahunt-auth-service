@@ -5,9 +5,9 @@ export interface ITenant {
   address: string;
 }
 
-export interface CreateTenantRequest extends Request {
+export interface ICreateTenantRequest extends Request {
   body: ITenant;
 }
-export interface UpdateTenantRequest extends Request {
+export interface IUpdateTenantRequest extends Request {
   body: ITenant;
 }
