@@ -4,11 +4,8 @@ import createHttpError from 'http-errors';
 import { JwtPayload } from 'jsonwebtoken';
 import { Logger } from 'winston';
 import { User } from '../entity/User';
-import { CredentialService } from '../services/CredentialService';
-import { TokenService } from '../services/TokenService';
-import { UserService } from '../services/UserService';
-import { AuthRequest, IRegisterUserRequest } from '../types';
-
+import { CredentialService, TokenService, UserService } from '../services';
+import { IAuthRequest, IRegisterUserRequest } from '../types';
 import { Roles } from '../types/roles.enum';
 
 export class AuthController {
@@ -110,7 +107,7 @@ export class AuthController {
     }
   }
 
-  async self(req: AuthRequest, res: Response, next: NextFunction) {
+  async self(req: IAuthRequest, res: Response, next: NextFunction) {
     try {
       const user = await this.userService.findById(req.auth.sub);
 
@@ -124,7 +121,7 @@ export class AuthController {
     }
   }
 
-  async refresh(req: AuthRequest, res: Response, next: NextFunction) {
+  async refresh(req: IAuthRequest, res: Response, next: NextFunction) {
     try {
       const payload: JwtPayload = {
         sub: req.auth.sub,
@@ -181,7 +178,7 @@ export class AuthController {
     this.logger.info('tokens has been set in cookies');
   }
 
-  async logout(req: AuthRequest, res: Response, next: NextFunction) {
+  async logout(req: IAuthRequest, res: Response, next: NextFunction) {
     try {
       await this.tokenService.deleteRefreshToken(req.auth.id);
 

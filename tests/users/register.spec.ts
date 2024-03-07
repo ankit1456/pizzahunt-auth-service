@@ -23,7 +23,7 @@ describe('POST /api/auth/register', () => {
     await connection.destroy();
   });
 
-  describe('success cases', () => {
+  describe('Success cases', () => {
     // AAA
     //   A -> Arrange
 
@@ -64,6 +64,7 @@ describe('POST /api/auth/register', () => {
       expect(users).toHaveLength(1);
       expect(users[0]?.firstName).toBe('Ankit');
     });
+
     it('should return created user', async () => {
       const response = await request(app)
         .post('/api/auth/register')
@@ -83,6 +84,7 @@ describe('POST /api/auth/register', () => {
       expect(users[0]).toHaveProperty('role');
       expect(users[0]?.role).toBe(Roles.CUSTOMER);
     });
+
     it('should store hashed password', async () => {
       await request(app).post('/api/auth/register').send(userData);
 
@@ -95,6 +97,7 @@ describe('POST /api/auth/register', () => {
       expect(users[0]?.password).toHaveLength(60);
       expect(users[0]?.password).toMatch(/^\$2[a|b]\$\d+\$/);
     });
+
     it('should return 400 statuscode if email already exists', async () => {
       const userRespository = connection.getRepository(User);
       await createUser(userRespository);
@@ -110,14 +113,6 @@ describe('POST /api/auth/register', () => {
     });
 
     it('should return the access token and refresh token inside a cookie', async () => {
-      const userData = {
-        firstName: 'Ankit',
-        lastName: 'Tripathi',
-        email: 'ankit@gmail.com',
-        password: 'test1234',
-        role: Roles.CUSTOMER
-      };
-
       const response = await request(app)
         .post('/api/auth/register')
         .send(userData);
@@ -147,14 +142,6 @@ describe('POST /api/auth/register', () => {
     });
 
     it('should store the refresh token in the database', async () => {
-      const userData = {
-        firstName: 'Ankit',
-        lastName: 'Tripahi',
-        email: ' ankit@gmail.com ',
-        password: 'test1234',
-        role: Roles.CUSTOMER
-      };
-
       const respose = await request(app)
         .post('/api/auth/register')
         .send(userData);
@@ -171,7 +158,8 @@ describe('POST /api/auth/register', () => {
       expect(tokens).toHaveLength(1);
     });
   });
-  describe('failure cases', () => {
+
+  describe('Failure cases', () => {
     it('should return 400 status code if email is missing', async () => {
       const userData = {
         firstName: 'Ankit',
@@ -214,7 +202,7 @@ describe('POST /api/auth/register', () => {
     });
   });
 
-  describe('Input Sanitization', () => {
+  describe('Input sanitization', () => {
     it('should trim email field', async () => {
       const userData = {
         firstName: 'Ankit',

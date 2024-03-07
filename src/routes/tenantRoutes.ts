@@ -8,17 +8,16 @@ import { AppDataSource } from '../config/data-source';
 import logger from '../config/logger';
 import { TenantController } from '../controllers/TenantController';
 import { Tenant } from '../entity/Tenant';
-import authenticate from '../middlewares/authenticate';
-import { canAccess } from '../middlewares/canAccess';
+import { authenticate, canAccess } from '../middlewares';
 import { Roles } from '../types/roles.enum';
 import { IUpdateTenantRequest } from '../types/tenant.types';
 import tenantValidator, {
   updateTenantValidator,
   validateTenantID
 } from '../validators/tenant.validator';
-import { TenantService } from './../services/TenantService';
+import { TenantService } from './../services';
 
-const router = express();
+const router = express.Router();
 
 const tenantRepository = AppDataSource.getRepository(Tenant);
 

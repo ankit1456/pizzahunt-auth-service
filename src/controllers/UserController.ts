@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { Logger } from 'winston';
-import { UserService } from '../services/UserService';
+import { UserService } from '../services';
 import { ICreateUserRequest, IUpdateUserRequest } from '../types';
 import { Roles } from '../types/roles.enum';
 

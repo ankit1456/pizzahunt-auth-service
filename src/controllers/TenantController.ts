@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { Logger } from 'winston';
-import { TenantService } from '../services/TenantService';
+import { TenantService } from '../services';
 import {
   ICreateTenantRequest,
   IUpdateTenantRequest

@@ -9,22 +9,22 @@ import logger from '../config/logger';
 import { AuthController } from '../controllers/AuthController';
 import { RefreshToken } from '../entity/RefreshToken';
 import { User } from '../entity/User';
-import authenticate from '../middlewares/authenticate';
-import { CredentialService } from '../services/CredentialService';
-import { TokenService } from '../services/TokenService';
-import { UserService } from '../services/UserService';
+import {
+  authenticate,
+  parseRefreshToken,
+  validateRefreshToken
+} from '../middlewares';
+import { CredentialService, TokenService, UserService } from '../services';
+import { IAuthRequest } from '../types';
 import loginValidator from '../validators/login.validator';
 import registerValidator from '../validators/register.validator';
-import { AuthRequest } from '../types';
-import validateRefreshToken from '../middlewares/validateRefreshToken';
-import parseRefreshToken from '../middlewares/parseRefreshToken';
 
-const router = express();
+const router = express.Router();
 
 const credentialService = new CredentialService();
 
 const userRepository = AppDataSource.getRepository(User);
-const userService = new UserService(userRepository, credentialService);
+const userService = new UserService(userRepository, credentialService, logger);
 
 const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
 const tokenService = new TokenService(refreshTokenRepository);
@@ -52,14 +52,14 @@ router.get(
   '/self',
   authenticate as RequestHandler,
   (async (req: Request, res: Response, next: NextFunction) =>
-    authController.self(req as AuthRequest, res, next)) as RequestHandler
+    authController.self(req as IAuthRequest, res, next)) as RequestHandler
 );
 
 router.post(
   '/refresh',
   validateRefreshToken as RequestHandler,
   (async (req: Request, res: Response, next: NextFunction) =>
-    authController.refresh(req as AuthRequest, res, next)) as RequestHandler
+    authController.refresh(req as IAuthRequest, res, next)) as RequestHandler
 );
 
 router.post(
@@ -67,7 +67,7 @@ router.post(
   authenticate as RequestHandler,
   parseRefreshToken as RequestHandler,
   (async (req: Request, res: Response, next: NextFunction) =>
-    authController.logout(req as AuthRequest, res, next)) as RequestHandler
+    authController.logout(req as IAuthRequest, res, next)) as RequestHandler
 );
 
 export default router;

@@ -14,7 +14,7 @@ export interface IRegisterUserRequest extends Request {
   body: IUser;
 }
 
-export interface AuthRequest extends Request {
+export interface IAuthRequest extends Request {
   auth: {
     id?: string;
     sub: string;
@@ -22,7 +22,7 @@ export interface AuthRequest extends Request {
   };
 }
 
-export type AuthCookies = {
+export type TAuthCookies = {
   accessToken: string;
   refreshToken: string;
 };
