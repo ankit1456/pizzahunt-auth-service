@@ -17,7 +17,10 @@ module.exports = {
     'no-console': 'warn',
     '@typescript-eslint/no-unused-vars': [
       'error',
-      { argsIgnorePattern: 'next|req,res' }
+      {
+        argsIgnorePattern: '^(req|res|next)$',
+        varsIgnorePattern: '^(req|res|next)$'
+      }
     ]
   }
 };

@@ -1,5 +1,5 @@
 {
-  "name": "auth-service",
+  "name": "pizzahunt-auth-service",
   "version": "1.0.0",
   "description": "A user management service",
   "main": "server.ts",

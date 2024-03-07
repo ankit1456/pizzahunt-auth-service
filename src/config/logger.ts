@@ -25,7 +25,7 @@ const logger = winston.createLogger({
       silent: Config.NODE_ENV === 'test'
     }),
     new winston.transports.Console({
-      level: 'info',
+      level: 'debug',
       silent: Config.NODE_ENV === 'test'
     })
   ]

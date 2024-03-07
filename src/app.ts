@@ -25,7 +25,18 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.json({ status: 'ok', message: 'Auth Service is running' });
+  const healthcheck = {
+    message: 'OK',
+    timestamp: Date.now()
+  };
+  try {
+    res.send(healthcheck);
+  } catch (error) {
+    if (error instanceof Error) {
+      healthcheck.message = error.message;
+    }
+    res.status(503).send();
+  }
 });
 
 app.use('/api/auth', authRouter);
@@ -46,7 +57,7 @@ app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
     errors: [
       {
         type: err.name,
-        msg: errMessage,
+        message: errMessage,
         path: '',
         location: ''
       }
