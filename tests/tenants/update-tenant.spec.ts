@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
 import { Tenant } from '../../src/entity/Tenant';
-import { Roles } from '../../src/types/roles.enum';
+import { Roles } from '../../src/types';
 import { createTenant } from '../utils';
 
 describe('PATCH /api/tenants', () => {

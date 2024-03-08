@@ -4,7 +4,7 @@ import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
 import { RefreshToken } from '../../src/entity/RefreshToken';
 import { User } from '../../src/entity/User';
-import { Roles } from '../../src/types/roles.enum';
+import { Roles } from '../../src/types';
 import { createUser, isJwt } from '../utils';
 
 describe('POST /api/auth/register', () => {

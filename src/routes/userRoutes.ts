@@ -10,8 +10,7 @@ import { UserController } from '../controllers/UserController';
 import { User } from '../entity/User';
 import { authenticate, canAccess } from '../middlewares';
 import { CredentialService, UserService } from '../services';
-
-import { Roles } from '../types/roles.enum';
+import { IUpdateUserRequest, Roles } from '../types';
 import userValidator, {
   updateUserValidator,
   validateUserId
@@ -56,7 +55,11 @@ router.patch(
   validateUserId,
   updateUserValidator,
   (async (req: Request, res: Response, next: NextFunction) =>
-    userController.updateUser(req, res, next)) as RequestHandler
+    userController.updateUser(
+      req as IUpdateUserRequest,
+      res,
+      next
+    )) as RequestHandler
 );
 router.delete(
   '/:userId',

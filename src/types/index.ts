@@ -1,5 +1,4 @@
 import { Request } from 'express';
-import { Roles } from './roles.enum';
 
 export interface IUser {
   firstName: string;
@@ -37,6 +36,17 @@ export interface ICreateUserRequest extends Request {
 }
 export interface IUpdateUserRequest extends Request {
   body: IUser;
+  auth: {
+    id?: string;
+    sub: string;
+    role: string;
+  };
 }
 
-export const roles = ['admin', 'manager', 'customer'];
+export const enum Roles {
+  CUSTOMER = 'customer',
+  MANAGER = 'manager',
+  ADMIN = 'admin'
+}
+
+export const roles = ['customer', 'manager', 'admin'];

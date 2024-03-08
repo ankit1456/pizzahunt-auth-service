@@ -9,8 +9,7 @@ import logger from '../config/logger';
 import { TenantController } from '../controllers/TenantController';
 import { Tenant } from '../entity/Tenant';
 import { authenticate, canAccess } from '../middlewares';
-import { Roles } from '../types/roles.enum';
-import { IUpdateTenantRequest } from '../types/tenant.types';
+import { Roles } from '../types';
 import tenantValidator, {
   updateTenantValidator,
   validateTenantID
@@ -52,11 +51,7 @@ router.patch(
   validateTenantID,
   updateTenantValidator,
   (async (req: Request, res: Response, next: NextFunction) =>
-    tenantController.updateTenant(
-      req as IUpdateTenantRequest,
-      res,
-      next
-    )) as RequestHandler
+    tenantController.updateTenant(req, res, next)) as RequestHandler
 );
 
 router.delete(
