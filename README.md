@@ -2,7 +2,7 @@
 
 <!-- docker run  --name auth-service-db -e POSTGRES_USER=root -e POSTGRES_PASSWORD=postgres -v auth-service-data:/var/lib/postgresql/data -p 5432:5432 -d postgres  -->
 
-<!-- psql -U root -> in docker container-->
+<!--docker exec -it <container_name> psql -U root -> in docker container-->
 
 <!-- npm run migration:generate -- src/migration/migration -d src/config/data-source.ts -->
 <!-- npm run migration:run -- -d src/config/data-source.ts -->

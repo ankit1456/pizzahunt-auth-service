@@ -5,25 +5,23 @@ import express, {
   Response
 } from 'express';
 import { AppDataSource } from '../config/data-source';
+import logger from '../config/logger';
 import { UserController } from '../controllers/UserController';
 import { User } from '../entity/User';
-import authenticate from '../middlewares/authenticate';
-import { canAccess } from '../middlewares/canAccess';
-import { CredentialService } from '../services/CredentialService';
-import { UserService } from '../services/UserService';
-import { Roles } from '../types/roles.enum';
+import { authenticate, canAccess } from '../middlewares';
+import { CredentialService, UserService } from '../services';
+import { IUpdateUserRequest, Roles } from '../types';
 import userValidator, {
   updateUserValidator,
   validateUserId
 } from '../validators/user.validator';
-import logger from '../config/logger';
 
-const router = express();
+const router = express.Router();
 
 const userRepository = AppDataSource.getRepository(User);
 
 const credentialService = new CredentialService();
-const userService = new UserService(userRepository, credentialService);
+const userService = new UserService(userRepository, credentialService, logger);
 const userController = new UserController(userService, logger);
 
 router.get('/', authenticate as RequestHandler, canAccess(Roles.ADMIN), (async (
@@ -57,7 +55,11 @@ router.patch(
   validateUserId,
   updateUserValidator,
   (async (req: Request, res: Response, next: NextFunction) =>
-    userController.updateUser(req, res, next)) as RequestHandler
+    userController.updateUser(
+      req as IUpdateUserRequest,
+      res,
+      next
+    )) as RequestHandler
 );
 router.delete(
   '/:userId',

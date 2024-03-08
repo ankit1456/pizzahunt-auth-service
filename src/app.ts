@@ -1,14 +1,13 @@
-import 'reflect-metadata';
-
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import express, { NextFunction, Request, Response } from 'express';
-import logger from './config/logger';
 import { HttpError } from 'http-errors';
+import 'reflect-metadata';
+import { Config } from './config';
+import logger from './config/logger';
 import authRouter from './routes/authRoutes';
 import tenantRouter from './routes/tenantRoutes';
 import userRouter from './routes/userRoutes';
-import cookieParser from 'cookie-parser';
-import cors from 'cors';
-import { Config } from './config';
 
 const app = express();
 

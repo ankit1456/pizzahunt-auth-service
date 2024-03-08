@@ -2,9 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { Logger } from 'winston';
-import { UserService } from '../services/UserService';
-import { ICreateUserRequest, IUpdateUserRequest } from '../types';
-import { Roles } from '../types/roles.enum';
+import { UserService } from '../services';
+import { ICreateUserRequest, IUpdateUserRequest, Roles } from '../types';
 
 export class UserController {
   constructor(
@@ -131,7 +130,10 @@ export class UserController {
       if (!user) {
         throw createHttpError(404, 'User not found');
       }
-      const { firstName, lastName, email, password, role, tenantId } = req.body;
+
+      const role = user.id === req.auth.sub ? Roles.ADMIN : req.body.role;
+
+      const { firstName, lastName, email, password, tenantId } = req.body;
 
       await this.userService.updateUser(userId, {
         firstName,

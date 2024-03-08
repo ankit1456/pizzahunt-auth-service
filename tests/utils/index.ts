@@ -4,7 +4,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Config } from '../../src/config';
 import { Tenant } from '../../src/entity/Tenant';
 import { User } from '../../src/entity/User';
-import { Roles } from '../../src/types/roles.enum';
+import { Roles } from '../../src/types';
 
 export const truncateTables = async (connection: DataSource) => {
   const entities = connection.entityMetadatas;

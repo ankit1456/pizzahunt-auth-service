@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { Roles } from '../types/roles.enum';
-import { AuthRequest } from '../types';
 import createHttpError from 'http-errors';
+import { IAuthRequest, Roles } from '../types';
 
-export const canAccess = (...roles: Roles[]) => {
+export default function canAccess(...roles: Roles[]) {
   return (req: Request, res: Response, next: NextFunction) => {
-    const _req = req as AuthRequest;
+    const _req = req as IAuthRequest;
 
     const userRole = _req.auth.role as Roles;
 
@@ -17,4 +16,4 @@ export const canAccess = (...roles: Roles[]) => {
 
     next();
   };
-};
+}

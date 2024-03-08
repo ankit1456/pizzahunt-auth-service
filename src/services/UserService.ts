@@ -1,5 +1,6 @@
 import createHttpError, { HttpError } from 'http-errors';
 import { FindOneOptions, Repository } from 'typeorm';
+import { Logger } from 'winston';
 import { User } from '../entity/User';
 import { IUser } from '../types';
 import { CredentialService } from './CredentialService';
@@ -7,7 +8,8 @@ import { CredentialService } from './CredentialService';
 export class UserService {
   constructor(
     private userRepository: Repository<User>,
-    private credentialService: CredentialService
+    private credentialService: CredentialService,
+    private logger: Logger
   ) {}
 
   async createUser(user: IUser) {
@@ -29,10 +31,13 @@ export class UserService {
         password: hashedPassword
       });
     } catch (err) {
-      if (!(err instanceof HttpError)) {
-        throw createHttpError(500, 'Failed to create user');
-      } else {
+      if (err instanceof HttpError) {
         throw err;
+      } else {
+        this.logger.error((err as Error).message, {
+          errorName: (err as Error).name
+        });
+        throw createHttpError(500, 'Failed to create user');
       }
     }
   }
