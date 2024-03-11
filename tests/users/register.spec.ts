@@ -5,7 +5,7 @@ import { AppDataSource } from '../../src/config/data-source';
 import { RefreshToken } from '../../src/entity/RefreshToken';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/types';
-import { createUser, isJwt } from '../utils';
+import { createUser, getUsers, isJwt } from '../utils';
 
 describe('POST /api/auth/register', () => {
   let connection: DataSource;
@@ -58,30 +58,22 @@ describe('POST /api/auth/register', () => {
     it('should persist the user in the database', async () => {
       await request(app).post('/api/auth/register').send(userData);
 
-      const userRespository = connection.getRepository(User);
-      const users = await userRespository.find();
+      const users = await getUsers(connection);
 
       expect(users).toHaveLength(1);
       expect(users[0]?.firstName).toBe('Ankit');
     });
 
-    it('should return created user', async () => {
+    it('should return created user and role should be customer', async () => {
       const response = await request(app)
         .post('/api/auth/register')
         .send(userData);
 
-      const userRespository = connection.getRepository(User);
-      const users = await userRespository.find();
+      const users = await getUsers(connection);
+
       expect(response.body).toHaveProperty('id');
-      expect((response.body as Record<string, string>).id).toBe(users[0]?.id);
-    });
-
-    it('should assign a customer role', async () => {
-      await request(app).post('/api/auth/register').send(userData);
-
-      const userRespository = connection.getRepository(User);
-      const users = await userRespository.find();
       expect(users[0]).toHaveProperty('role');
+      expect((response.body as Record<string, string>).id).toBe(users[0]?.id);
       expect(users[0]?.role).toBe(Roles.CUSTOMER);
     });
 
@@ -109,6 +101,7 @@ describe('POST /api/auth/register', () => {
       const users = await userRespository.find();
 
       expect(response.statusCode).toBe(400);
+      expect(response.body.errors).toHaveLength(1);
       expect(users).toHaveLength(1);
     });
 
@@ -168,14 +161,14 @@ describe('POST /api/auth/register', () => {
         password: 'test1234'
       };
 
-      const userRespository = connection.getRepository(User);
-      const users = await userRespository.find();
+      const users = await getUsers(connection);
 
       const response = await request(app)
         .post('/api/auth/register')
         .send(userData);
 
       expect(response.statusCode).toBe(400);
+      expect(response.body).toHaveProperty('errors');
       expect(users.length).toBe(0);
     });
     it('should return 400 status code if firstName,lastName or password is missing', async () => {
@@ -186,8 +179,7 @@ describe('POST /api/auth/register', () => {
         password: ''
       };
 
-      const userRespository = connection.getRepository(User);
-      const users = await userRespository.find();
+      const users = await getUsers(connection);
 
       const response = await request(app)
         .post('/api/auth/register')
@@ -195,18 +187,16 @@ describe('POST /api/auth/register', () => {
 
       expect(response.statusCode).toBe(400);
       expect(response.body).toHaveProperty('errors');
-      expect(
-        (response.body as Record<string, string>).errors?.length
-      ).toBeGreaterThan(3);
+      expect(response.body.errors.length).toBeGreaterThan(3);
       expect(users.length).toBe(0);
     });
   });
 
   describe('Input sanitization', () => {
-    it('should trim email field', async () => {
+    it('should trim all the fields', async () => {
       const userData = {
-        firstName: 'Ankit',
-        lastName: 'Tripahi',
+        firstName: ' Ankit ',
+        lastName: ' Tripahi  ',
         email: ' ankit@gmail.com ',
         password: 'test1234',
         role: Roles.CUSTOMER
@@ -214,12 +204,14 @@ describe('POST /api/auth/register', () => {
 
       await request(app).post('/api/auth/register').send(userData);
 
-      const userRespository = connection.getRepository(User);
-      const users = await userRespository.find();
+      const users = await getUsers(connection);
+
       expect(users[0]?.email).toBe(userData.email.trim());
+      expect(users[0]?.firstName).toBe(userData.firstName.trim());
+      expect(users[0]?.lastName).toBe(userData.lastName.trim());
     });
 
-    it('should return 400 status code if email is not a valid email', async () => {
+    it('should return 400 status code if email is not valid', async () => {
       const userData = {
         firstName: 'Ankit',
         lastName: 'Tripahi',
@@ -232,15 +224,14 @@ describe('POST /api/auth/register', () => {
         .post('/api/auth/register')
         .send(userData);
 
-      const userRespository = connection.getRepository(User);
-      const users = await userRespository.find();
+      const users = await getUsers(connection);
 
       expect(response.statusCode).toBe(400);
       expect(response.body).toHaveProperty('errors');
       expect(users).toHaveLength(0);
     });
 
-    it('should return 400 status code if password is shorter than chars', async () => {
+    it('should return 400 status code if password is shorter than 8 chars', async () => {
       const userData = {
         firstName: 'Ankit',
         lastName: 'Tripahi',
@@ -252,8 +243,7 @@ describe('POST /api/auth/register', () => {
         .post('/api/auth/register')
         .send(userData);
 
-      const userRespository = connection.getRepository(User);
-      const users = await userRespository.find();
+      const users = await getUsers(connection);
 
       expect(response.statusCode).toBe(400);
       expect(response.body).toHaveProperty('errors');
@@ -272,14 +262,11 @@ describe('POST /api/auth/register', () => {
         .post('/api/auth/register')
         .send(userData);
 
-      const userRespository = connection.getRepository(User);
-      const users = await userRespository.find();
+      const users = await getUsers(connection);
 
       expect(response.statusCode).toBe(400);
       expect(response.body).toHaveProperty('errors');
-      expect(
-        (response.body as Record<string, string>).errors?.length
-      ).toBeGreaterThan(1);
+      expect(response.body.errors.length).toBeGreaterThan(1);
       expect(users).toHaveLength(0);
     });
   });

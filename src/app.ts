@@ -1,10 +1,9 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express, { NextFunction, Request, Response } from 'express';
-import { HttpError } from 'http-errors';
+import express from 'express';
 import 'reflect-metadata';
 import { Config } from './config';
-import logger from './config/logger';
+import { globalErrorHandler } from './middlewares';
 import authRouter from './routes/authRoutes';
 import tenantRouter from './routes/tenantRoutes';
 import userRouter from './routes/userRoutes';
@@ -42,26 +41,6 @@ app.use('/api/auth', authRouter);
 app.use('/api/tenants', tenantRouter);
 app.use('/api/users', userRouter);
 
-app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
-  logger.error(err.message, {
-    errorName: err.name
-  });
-  const statusCode = err.statusCode || err.status || 500;
-
-  let errMessage = err.message;
-  if (err.name === 'UnauthorizedError') {
-    errMessage = 'You are not authorized';
-  }
-  res.status(statusCode).json({
-    errors: [
-      {
-        type: err.name,
-        message: errMessage,
-        path: '',
-        location: ''
-      }
-    ]
-  });
-});
+app.use(globalErrorHandler);
 
 export default app;

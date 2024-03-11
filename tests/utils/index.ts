@@ -67,3 +67,8 @@ export const generateRefreshToken = (payload: JwtPayload) => {
 
   return refreshToken;
 };
+
+export const getUsers = async (connection: DataSource) => {
+  const userRespository = connection.getRepository(User);
+  return await userRespository.find();
+};
