@@ -15,7 +15,7 @@ import {
   validateRefreshToken
 } from '../middlewares';
 import { CredentialService, TokenService, UserService } from '../services';
-import { IAuthRequest } from '../types';
+import { IAuthRequest } from '../types/auth.types';
 import loginValidator from '../validators/login.validator';
 import registerValidator from '../validators/register.validator';
 

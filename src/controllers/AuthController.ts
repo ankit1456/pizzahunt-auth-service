@@ -5,7 +5,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import { Logger } from 'winston';
 import { User } from '../entity/User';
 import { CredentialService, TokenService, UserService } from '../services';
-import { IAuthRequest, IRegisterUserRequest, Roles } from '../types';
+import { IAuthRequest, IRegisterUserRequest, Roles } from '../types/auth.types';
 
 export class AuthController {
   constructor(

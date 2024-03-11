@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { Roles } from '../types';
+import { Roles } from '../types/auth.types';
 import { Tenant } from './Tenant';
 
 @Entity('users')

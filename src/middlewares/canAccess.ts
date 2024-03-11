@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
-import { IAuthRequest, Roles } from '../types';
+import { IAuthRequest, Roles } from '../types/auth.types';
 
 export default function canAccess(...roles: Roles[]) {
   return (req: Request, res: Response, next: NextFunction) => {

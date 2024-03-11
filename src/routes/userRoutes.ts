@@ -10,7 +10,7 @@ import { UserController } from '../controllers/UserController';
 import { User } from '../entity/User';
 import { authenticate, canAccess } from '../middlewares';
 import { CredentialService, UserService } from '../services';
-import { IUpdateUserRequest, Roles } from '../types';
+import { IUpdateUserRequest, Roles } from '../types/auth.types';
 import userValidator, {
   updateUserValidator,
   validateUserId

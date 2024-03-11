@@ -5,7 +5,7 @@ import { Config } from '../config';
 import { AppDataSource } from '../config/data-source';
 import logger from '../config/logger';
 import { RefreshToken } from '../entity/RefreshToken';
-import { IRefreshTokenPayload, TAuthCookies } from '../types';
+import { IRefreshTokenPayload, TAuthCookies } from '../types/auth.types';
 
 export default expressjwt({
   secret: Config.REFRESH_TOKEN_SECRET!,

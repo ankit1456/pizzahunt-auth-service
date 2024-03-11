@@ -9,7 +9,7 @@ import logger from '../config/logger';
 import { TenantController } from '../controllers/TenantController';
 import { Tenant } from '../entity/Tenant';
 import { authenticate, canAccess } from '../middlewares';
-import { Roles } from '../types';
+import { Roles } from '../types/auth.types';
 import tenantValidator, {
   updateTenantValidator,
   validateTenantID

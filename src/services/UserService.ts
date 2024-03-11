@@ -2,7 +2,7 @@ import createHttpError, { HttpError } from 'http-errors';
 import { FindOneOptions, Repository } from 'typeorm';
 import { Logger } from 'winston';
 import { User } from '../entity/User';
-import { IUser } from '../types';
+import { IUser } from '../types/auth.types';
 import { CredentialService } from './CredentialService';
 
 export class UserService {

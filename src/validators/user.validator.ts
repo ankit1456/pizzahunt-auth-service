@@ -1,5 +1,5 @@
 import { checkSchema as validationSchema } from 'express-validator';
-import { roles } from '../types';
+import { roles } from '../types/auth.types';
 
 const commonOptions = {
   trim: true,

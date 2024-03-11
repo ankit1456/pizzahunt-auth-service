@@ -4,7 +4,7 @@ import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
 import { RefreshToken } from '../../src/entity/RefreshToken';
 import { User } from '../../src/entity/User';
-import { Roles } from '../../src/types';
+import { Roles } from '../../src/types/auth.types';
 import { createUser, getUsers, isJwt } from '../utils';
 
 describe('POST /api/auth/register', () => {
@@ -72,8 +72,9 @@ describe('POST /api/auth/register', () => {
       const users = await getUsers(connection);
 
       expect(response.body).toHaveProperty('id');
+      expect(response.body.id).toBe(users[0]?.id);
+
       expect(users[0]).toHaveProperty('role');
-      expect((response.body as Record<string, string>).id).toBe(users[0]?.id);
       expect(users[0]?.role).toBe(Roles.CUSTOMER);
     });
 
@@ -144,7 +145,7 @@ describe('POST /api/auth/register', () => {
       const tokens = await refreshTokenRepository
         .createQueryBuilder('refreshToken')
         .where('refreshToken.userId = :userId', {
-          userId: (respose.body as Record<string, string>).id
+          userId: respose.body.id
         })
         .getMany();
 
