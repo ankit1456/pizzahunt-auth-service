@@ -31,8 +31,7 @@ describe('POST /api/auth/register', () => {
       firstName: 'Ankit',
       lastName: 'Tripahi',
       email: 'ankit@gmail.com',
-      password: 'test1234',
-      role: Roles.CUSTOMER
+      password: 'test1234'
     };
     it('should return 201 statusCode', async () => {
       //   A -> Act
@@ -193,14 +192,13 @@ describe('POST /api/auth/register', () => {
     });
   });
 
-  describe('Input sanitization', () => {
+  describe('Input validation', () => {
     it('should trim all the fields', async () => {
       const userData = {
         firstName: ' Ankit ',
         lastName: ' Tripahi  ',
         email: ' ankit@gmail.com ',
-        password: 'test1234',
-        role: Roles.CUSTOMER
+        password: 'test1234'
       };
 
       await request(app).post('/api/auth/register').send(userData);
@@ -217,8 +215,7 @@ describe('POST /api/auth/register', () => {
         firstName: 'Ankit',
         lastName: 'Tripahi',
         email: 'ankit',
-        password: 'test1234',
-        role: Roles.CUSTOMER
+        password: 'test1234'
       };
 
       const response = await request(app)
