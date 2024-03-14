@@ -111,19 +111,20 @@ describe('POST /api/auth/register', () => {
         .send(userData);
 
       interface Headers {
-        ['set-cookie']: string[];
+        'set-cookie': string[];
       }
 
       let accessToken = '';
       let refreshToken = '';
       const cookies =
         (response.headers as unknown as Headers)['set-cookie'] || [];
+
       cookies.forEach((cookie) => {
         if (cookie.startsWith('accessToken=')) {
-          accessToken = cookie.split(';')[0]?.split('=')[1] as string;
+          accessToken = cookie.split(';')[0]?.split('=')[1];
         }
         if (cookie.startsWith('refreshToken=')) {
-          refreshToken = cookie.split(';')[0]?.split('=')[1] as string;
+          refreshToken = cookie.split(';')[0]?.split('=')[1];
         }
       });
 

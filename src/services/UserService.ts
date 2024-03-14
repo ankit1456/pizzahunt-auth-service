@@ -37,7 +37,7 @@ export class UserService {
         this.logger.error((err as Error).message, {
           errorName: (err as Error).name
         });
-        throw createHttpError(500, 'Failed to create user');
+        throw createHttpError(500, 'Could not create the user');
       }
     }
   }

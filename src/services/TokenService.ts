@@ -11,8 +11,7 @@ export class TokenService {
   generateAccessToken(payload: JwtPayload) {
     const privateKey = Config.PRIVATE_KEY;
 
-    if (!privateKey)
-      throw createHttpError(500, 'Exception while reading private key');
+    if (!privateKey) throw createHttpError(500, 'Could not create the user');
 
     const accessToken = sign(payload, privateKey, {
       algorithm: 'RS256',

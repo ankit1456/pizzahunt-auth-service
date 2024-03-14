@@ -15,14 +15,12 @@ export const truncateTables = async (connection: DataSource) => {
   }
 };
 
-export const isJwt = (token: string): boolean => {
+export const isJwt = (token: string) => {
   if (!token) return false;
 
   const parts = token.split('.');
 
-  if (parts.length !== 3) {
-    return false;
-  }
+  if (parts.length !== 3) return false;
 
   try {
     for (const part of parts) {

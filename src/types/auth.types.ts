@@ -49,4 +49,4 @@ export const enum Roles {
   ADMIN = 'admin'
 }
 
-export const roles = ['customer', 'manager', 'admin'];
+export const roles = [Roles.CUSTOMER, Roles.MANAGER, Roles.ADMIN];
