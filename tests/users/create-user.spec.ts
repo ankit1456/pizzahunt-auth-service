@@ -85,6 +85,35 @@ describe('POST /api/users', () => {
     });
   });
   describe('failure cases', () => {
+    it('should return 500 on unexpected error', async () => {
+      const tenant = await createTenant(connection.getRepository(Tenant));
+
+      const userData = {
+        firstName: 'Ankit',
+        lastName: 'Tripahi',
+        email: 'ankit@gmail.com',
+        password: 'test1234',
+        role: Roles.MANAGER,
+        tenantId: tenant.id
+      };
+
+      const userRepository = connection.getRepository(User);
+
+      userRepository.findOneBy = jest
+        .fn()
+        .mockRejectedValue(new Error('Unexpected error'));
+
+      const users = await userRepository.find();
+
+      const response = await request(app)
+        .post('/api/users')
+        .set('Cookie', [`accessToken=${adminToken};`])
+        .send(userData);
+
+      expect(response.statusCode).toBe(500);
+      expect(response.body.errors).toHaveLength(1);
+      expect(users).toHaveLength(0);
+    });
     it("should return 401 statuscode if token doesn't exist", async () => {
       const tenant = await createTenant(connection.getRepository(Tenant));
 
