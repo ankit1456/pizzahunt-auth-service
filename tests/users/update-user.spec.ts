@@ -53,6 +53,27 @@ describe('PATCH /api/users/:userId', () => {
       expect(users[0]?.firstName).toBe('Ankit Kumar');
       expect(users[0]?.role).toBe(Roles.CUSTOMER);
     });
+
+    it('should not update admin user role', async () => {
+      const userRepository = connection.getRepository(User);
+
+      const { id } = await createUser(userRepository);
+
+      adminToken = jwks.token({
+        sub: id,
+        role: Roles.ADMIN
+      });
+
+      const response = await request(app)
+        .patch(`/api/users/${id}`)
+        .set('Cookie', [`accessToken=${adminToken};`])
+        .send({ role: Roles.CUSTOMER });
+
+      const users = await userRepository.find();
+
+      expect(response.statusCode).toBe(200);
+      expect(users[0]?.role).toBe(Roles.ADMIN);
+    });
   });
   describe('failure cases', () => {
     it('should return 401 if user is not authenticated', async () => {
