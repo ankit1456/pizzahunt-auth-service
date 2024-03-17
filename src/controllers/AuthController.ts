@@ -5,7 +5,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import { Logger } from 'winston';
 import { User } from '../entity/User';
 import { CredentialService, TokenService, UserService } from '../services';
-import { IAuthRequest, IRegisterUserRequest, Roles } from '../types';
+import { IAuthRequest, IRegisterUserRequest, Roles } from '../types/auth.types';
 
 export class AuthController {
   constructor(
@@ -39,7 +39,6 @@ export class AuthController {
         password,
         role: Roles.CUSTOMER
       });
-      this.logger.info('User has been registered', { id: newUser.id });
 
       const payload: JwtPayload = {
         sub: newUser.id,
@@ -50,6 +49,8 @@ export class AuthController {
         await this.generateAccessAndRefreshTokens(payload, newUser);
 
       this.setTokensInCookie(res, accessToken, refreshToken);
+
+      this.logger.info('User has been registered', { id: newUser.id });
 
       res.status(201).json({ ...newUser, password: undefined });
     } catch (error) {

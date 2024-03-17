@@ -5,7 +5,7 @@ import { Config } from '../config';
 import { AppDataSource } from '../config/data-source';
 import logger from '../config/logger';
 import { RefreshToken } from '../entity/RefreshToken';
-import { IRefreshTokenPayload, TAuthCookies } from '../types';
+import { TRefreshTokenPayload, TAuthCookies } from '../types/auth.types';
 
 export default expressjwt({
   secret: Config.REFRESH_TOKEN_SECRET!,
@@ -22,9 +22,9 @@ export default expressjwt({
       const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
       const refreshToken = await refreshTokenRepository.findOne({
         where: {
-          id: (token?.payload as IRefreshTokenPayload).id,
+          id: (token?.payload as TRefreshTokenPayload).id,
           user: {
-            id: (token?.payload as IRefreshTokenPayload).sub
+            id: (token?.payload as TRefreshTokenPayload).sub
           },
           expiresAt: MoreThan(new Date())
         }
@@ -33,7 +33,7 @@ export default expressjwt({
       return refreshToken === null;
     } catch (error) {
       logger.error('Error while getting the refresh token', {
-        id: (token?.payload as IRefreshTokenPayload).id
+        id: (token?.payload as TRefreshTokenPayload).id
       });
     }
     return true;

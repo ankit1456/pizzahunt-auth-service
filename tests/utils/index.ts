@@ -4,7 +4,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Config } from '../../src/config';
 import { Tenant } from '../../src/entity/Tenant';
 import { User } from '../../src/entity/User';
-import { Roles } from '../../src/types';
+import { Roles } from '../../src/types/auth.types';
 
 export const truncateTables = async (connection: DataSource) => {
   const entities = connection.entityMetadatas;
@@ -15,14 +15,12 @@ export const truncateTables = async (connection: DataSource) => {
   }
 };
 
-export const isJwt = (token: string): boolean => {
+export const isJwt = (token: string) => {
   if (!token) return false;
 
   const parts = token.split('.');
 
-  if (parts.length !== 3) {
-    return false;
-  }
+  if (parts.length !== 3) return false;
 
   try {
     for (const part of parts) {
@@ -66,4 +64,9 @@ export const generateRefreshToken = (payload: JwtPayload) => {
   });
 
   return refreshToken;
+};
+
+export const getUsers = async (connection: DataSource) => {
+  const userRespository = connection.getRepository(User);
+  return await userRespository.find();
 };

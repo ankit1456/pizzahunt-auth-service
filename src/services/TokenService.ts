@@ -1,4 +1,3 @@
-import createHttpError from 'http-errors';
 import { JwtPayload, sign } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 import { Config } from '../config';
@@ -9,10 +8,7 @@ export class TokenService {
   constructor(private refreshTokenRepository: Repository<RefreshToken>) {}
 
   generateAccessToken(payload: JwtPayload) {
-    const privateKey = Config.PRIVATE_KEY;
-
-    if (!privateKey)
-      throw createHttpError(500, 'Exception while reading private key');
+    const privateKey = Config.PRIVATE_KEY!;
 
     const accessToken = sign(payload, privateKey, {
       algorithm: 'RS256',

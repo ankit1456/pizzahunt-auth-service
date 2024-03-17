@@ -3,7 +3,11 @@ import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { Logger } from 'winston';
 import { UserService } from '../services';
-import { ICreateUserRequest, IUpdateUserRequest, Roles } from '../types';
+import {
+  ICreateUserRequest,
+  IUpdateUserRequest,
+  Roles
+} from '../types/auth.types';
 
 export class UserController {
   constructor(
