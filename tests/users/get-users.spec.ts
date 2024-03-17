@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
 import { User } from '../../src/entity/User';
-import { Roles } from '../../src/types';
+import { Roles } from '../../src/types/auth.types';
 
 describe('GET /api/users', () => {
   let connection: DataSource;

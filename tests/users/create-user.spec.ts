@@ -5,7 +5,7 @@ import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
 import { Tenant } from '../../src/entity/Tenant';
 import { User } from '../../src/entity/User';
-import { Roles } from '../../src/types';
+import { Roles } from '../../src/types/auth.types';
 import { createTenant } from '../utils';
 
 describe('POST /api/users', () => {

@@ -121,10 +121,10 @@ describe('POST /api/auth/register', () => {
 
       cookies.forEach((cookie) => {
         if (cookie.startsWith('accessToken=')) {
-          accessToken = cookie.split(';')[0]?.split('=')[1];
+          accessToken = cookie.split(';')[0]?.split('=')[1] as string;
         }
         if (cookie.startsWith('refreshToken=')) {
-          refreshToken = cookie.split(';')[0]?.split('=')[1];
+          refreshToken = cookie.split(';')[0]?.split('=')[1] as string;
         }
       });
 

@@ -1,24 +1,26 @@
 import { Request } from 'express';
 
-export interface IUser {
+export type TUser = {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
   role: Roles;
   tenantId?: string;
-}
+};
 
 export interface IRegisterUserRequest extends Request {
-  body: IUser;
+  body: TUser;
 }
 
+type TRequestAuth = {
+  id?: string;
+  sub: string;
+  role: string;
+};
+
 export interface IAuthRequest extends Request {
-  auth: {
-    id?: string;
-    sub: string;
-    role: string;
-  };
+  auth: TRequestAuth;
 }
 
 export type TAuthCookies = {
@@ -26,21 +28,17 @@ export type TAuthCookies = {
   refreshToken: string;
 };
 
-export interface IRefreshTokenPayload {
+export type TRefreshTokenPayload = {
   id: string;
   sub: string;
-}
+};
 
 export interface ICreateUserRequest extends Request {
-  body: IUser;
+  body: TUser;
 }
 export interface IUpdateUserRequest extends Request {
-  body: IUser;
-  auth: {
-    id?: string;
-    sub: string;
-    role: string;
-  };
+  body: TUser;
+  auth: TRequestAuth;
 }
 
 export const enum Roles {
@@ -49,4 +47,4 @@ export const enum Roles {
   ADMIN = 'admin'
 }
 
-export const roles = [Roles.CUSTOMER, Roles.MANAGER, Roles.ADMIN];
+export const roles: Roles[] = [Roles.CUSTOMER, Roles.MANAGER, Roles.ADMIN];
