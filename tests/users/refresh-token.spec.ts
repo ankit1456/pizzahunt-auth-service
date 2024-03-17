@@ -79,6 +79,41 @@ describe('POST /api/auth/refresh', () => {
     });
   });
   describe('failure cases', () => {
+    it('should return exception for unexpected error', async () => {
+      const refreshTokenRepository = connection.getRepository(RefreshToken);
+
+      const user = await createUser(connection.getRepository(User));
+
+      const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365; // 1 year
+
+      const payload: JwtPayload = {
+        sub: user.id,
+        role: user.role
+      };
+
+      const newRefreshToken = await refreshTokenRepository.save({
+        user,
+        expiresAt: new Date(Date.now() + MS_IN_YEAR)
+      });
+
+      const refreshToken = generateRefreshToken({
+        ...payload,
+        id: newRefreshToken.id
+      });
+
+      refreshTokenRepository.findOne = jest
+        .fn()
+        .mockRejectedValue(new Error('unexpected error'));
+
+      const response = await request(app)
+        .post('/api/auth/refresh')
+        .set('Cookie', [`refreshToken=${refreshToken};`])
+        .send();
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body.errors).toHaveLength(1);
+    });
+
     it('should return 401 if refresh token is missing', async () => {
       const response = await request(app).post('/api/auth/refresh').send();
 
