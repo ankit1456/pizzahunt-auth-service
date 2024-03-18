@@ -32,9 +32,9 @@ export class User {
   @ManyToOne(() => Tenant)
   tenant: Tenant;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 }

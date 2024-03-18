@@ -17,9 +17,9 @@ export class Tenant {
   @Column('varchar', { length: 255 })
   address: string;
 
-  @UpdateDateColumn()
-  updatedAt: number;
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 
-  @CreateDateColumn()
-  createdAt: number;
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 }
