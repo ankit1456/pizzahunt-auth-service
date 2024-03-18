@@ -19,9 +19,9 @@ export class RefreshToken {
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   user: User;
 
-  @UpdateDateColumn()
-  updatedAt: number;
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 
-  @CreateDateColumn()
-  createdAt: number;
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 }

@@ -42,7 +42,8 @@ export const createTenant = async (repository: Repository<Tenant>) => {
   return tenant;
 };
 export const createUser = async (repository: Repository<User>) => {
-  const hashedPassword = await bcrypt.hash('test1234', 10);
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash('test1234', saltRounds);
 
   const user = await repository.save({
     firstName: 'Ankit',

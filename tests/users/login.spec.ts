@@ -1,11 +1,9 @@
-import bcrypt from 'bcryptjs';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
 import { User } from '../../src/entity/User';
-import { Roles } from '../../src/types/auth.types';
-import { isJwt } from '../utils';
+import { createUser, isJwt } from '../utils';
 
 describe('POST /api/auth/login', () => {
   let connection: DataSource;
@@ -19,24 +17,14 @@ describe('POST /api/auth/login', () => {
     await connection.synchronize();
 
     // create a user before each test
-    const userRepository = connection.getRepository(User);
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-    await userRepository.save({ ...userData, password: hashedPassword });
+    await createUser(connection.getRepository(User));
   });
 
   afterAll(async () => {
     await connection.destroy();
   });
 
-  const userData = {
-    firstName: 'Ankit',
-    lastName: 'Tripahi',
-    email: 'ankit@gmail.com',
-    password: 'test1234',
-    role: Roles.CUSTOMER
-  };
-
-  describe('success cases', () => {
+  describe('Success cases', () => {
     const creds = {
       email: 'ankit@gmail.com',
       password: 'test1234'
@@ -53,7 +41,7 @@ describe('POST /api/auth/login', () => {
       const response = await request(app).post('/api/auth/login').send(creds);
 
       interface Headers {
-        ['set-cookie']: string[];
+        'set-cookie': string[];
       }
 
       let accessToken = '';
@@ -77,7 +65,7 @@ describe('POST /api/auth/login', () => {
     });
   });
 
-  describe('failure cases', () => {
+  describe('Failure cases', () => {
     it('should return error if email or password is missing', async () => {
       const creds = {
         email: '',
@@ -87,7 +75,7 @@ describe('POST /api/auth/login', () => {
       const response = await request(app).post('/api/auth/login').send(creds);
 
       expect(response.statusCode).toBe(400);
-      expect((response.body as Record<string, string>).errors).toHaveLength(3);
+      expect(response.body.errors).toHaveLength(3);
     });
 
     it('should return error if email is not valid', async () => {
@@ -99,7 +87,7 @@ describe('POST /api/auth/login', () => {
       const response = await request(app).post('/api/auth/login').send(creds);
 
       expect(response.statusCode).toBe(400);
-      expect((response.body as Record<string, string>).errors).toHaveLength(1);
+      expect(response.body.errors).toHaveLength(1);
     });
 
     it('should return error if email or password is incorrect', async () => {
@@ -111,7 +99,7 @@ describe('POST /api/auth/login', () => {
       const response = await request(app).post('/api/auth/login').send(creds);
 
       expect(response.statusCode).toBe(400);
-      expect((response.body as Record<string, string>).errors).toHaveLength(1);
+      expect(response.body.errors).toHaveLength(1);
     });
   });
 });

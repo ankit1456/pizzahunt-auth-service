@@ -13,7 +13,7 @@ export default validationSchema({
   password: {
     trim: true,
     notEmpty: {
-      errorMessage: 'Password is required!'
+      errorMessage: 'Password is required'
     }
   }
 });
