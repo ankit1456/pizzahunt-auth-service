@@ -1,4 +1,4 @@
-import createJWKSMock from 'mock-jwks';
+import createJWKSMock, { JWKSMock } from 'mock-jwks';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
@@ -8,7 +8,7 @@ import { createUser } from '../utils';
 
 describe('GET /api/auth/self', () => {
   let connection: DataSource;
-  let jwks: ReturnType<typeof createJWKSMock>;
+  let jwks: JWKSMock;
 
   beforeAll(async () => {
     jwks = createJWKSMock('http://localhost:5000');
@@ -29,24 +29,8 @@ describe('GET /api/auth/self', () => {
     await connection.destroy();
   });
 
-  describe('success cases', () => {
-    it('should return 200 status code', async () => {
-      const user = await createUser(connection.getRepository(User));
-
-      const accessToken = jwks.token({
-        sub: user.id,
-        role: user.role
-      });
-
-      const response = await request(app)
-        .get('/api/auth/self')
-        .set('Cookie', [`accessToken=${accessToken};`])
-        .send();
-
-      expect(response.statusCode).toBe(200);
-    });
-
-    it('should return the user data', async () => {
+  describe('Success cases', () => {
+    it('should return the user data with 200 status code', async () => {
       const user = await createUser(connection.getRepository(User));
 
       const accessToken = jwks.token({ sub: user.id, role: user.role });
@@ -56,7 +40,8 @@ describe('GET /api/auth/self', () => {
         .set('Cookie', [`accessToken=${accessToken};`])
         .send();
 
-      expect((response.body as Record<string, string>).id).toBe(user.id);
+      expect(response.statusCode).toBe(200);
+      expect(response.body.id).toBe(user.id);
     });
 
     it('should not return password', async () => {
@@ -71,6 +56,9 @@ describe('GET /api/auth/self', () => {
 
       expect(response.body).not.toHaveProperty('password');
     });
+  });
+
+  describe('Failure cases', () => {
     it("should return 401 statuscode if token doesn't exist", async () => {
       const response = await request(app).get('/api/auth/self').send();
 
