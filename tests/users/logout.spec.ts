@@ -1,5 +1,5 @@
 import { JwtPayload } from 'jsonwebtoken';
-import createJWKSMock from 'mock-jwks';
+import createJWKSMock, { JWKSMock } from 'mock-jwks';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
@@ -11,7 +11,7 @@ import { createUser, generateRefreshToken } from '../utils';
 
 describe('POST /api/auth/logout', () => {
   let connection: DataSource;
-  let jwks: ReturnType<typeof createJWKSMock>;
+  let jwks: JWKSMock;
 
   beforeAll(async () => {
     jwks = createJWKSMock('http://localhost:5000');

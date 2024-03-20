@@ -4,8 +4,8 @@ import createHttpError from 'http-errors';
 import { Logger } from 'winston';
 import { TenantService } from '../services';
 import {
-  ICreateTenantRequest,
-  IUpdateTenantRequest
+  TCreateTenantRequest,
+  TUpdateTenantRequest
 } from '../types/tenant.types';
 
 export class TenantController {
@@ -15,7 +15,7 @@ export class TenantController {
   ) {}
 
   async createTenant(
-    req: ICreateTenantRequest,
+    req: TCreateTenantRequest,
     res: Response,
     next: NextFunction
   ) {
@@ -46,7 +46,7 @@ export class TenantController {
   async getAllTenants(req: Request, res: Response, next: NextFunction) {
     try {
       const tenants = await this.tenantService.getAllTenants();
-      this.logger.info('All tenants fetched');
+      this.logger.info('Fetched all tenants');
 
       res.json(tenants);
     } catch (error) {
@@ -81,7 +81,7 @@ export class TenantController {
   }
 
   async updateTenant(
-    req: IUpdateTenantRequest,
+    req: TUpdateTenantRequest,
     res: Response,
     next: NextFunction
   ) {

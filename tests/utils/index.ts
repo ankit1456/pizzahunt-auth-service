@@ -71,3 +71,8 @@ export const getUsers = async (connection: DataSource) => {
   const userRespository = connection.getRepository(User);
   return await userRespository.find();
 };
+
+export const getTenants = async (connection: DataSource) => {
+  const tenantRepository = connection.getRepository(Tenant);
+  return await tenantRepository.find();
+};

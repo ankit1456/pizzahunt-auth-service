@@ -4,9 +4,9 @@ import createHttpError from 'http-errors';
 import { Logger } from 'winston';
 import { UserService } from '../services';
 import {
-  ICreateUserRequest,
-  IUpdateUserRequest,
-  Roles
+  Roles,
+  TCreateUserRequest,
+  TUpdateUserRequest
 } from '../types/auth.types';
 
 export class UserController {
@@ -15,7 +15,7 @@ export class UserController {
     private logger: Logger
   ) {}
 
-  async createUser(req: ICreateUserRequest, res: Response, next: NextFunction) {
+  async createUser(req: TCreateUserRequest, res: Response, next: NextFunction) {
     const result = validationResult(req);
 
     if (!result.isEmpty()) {
@@ -115,7 +115,7 @@ export class UserController {
     }
   }
 
-  async updateUser(req: IUpdateUserRequest, res: Response, next: NextFunction) {
+  async updateUser(req: TUpdateUserRequest, res: Response, next: NextFunction) {
     const result = validationResult(req);
 
     if (!result.isEmpty()) {

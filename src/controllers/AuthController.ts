@@ -5,7 +5,12 @@ import { JwtPayload } from 'jsonwebtoken';
 import { Logger } from 'winston';
 import { User } from '../entity/User';
 import { CredentialService, TokenService, UserService } from '../services';
-import { IAuthRequest, IRegisterUserRequest, Roles } from '../types/auth.types';
+import {
+  IAuthRequest,
+  Roles,
+  TLoginUserRequest,
+  TRegisterUserRequest
+} from '../types/auth.types';
 
 export class AuthController {
   constructor(
@@ -15,7 +20,7 @@ export class AuthController {
     private logger: Logger
   ) {}
 
-  async register(req: IRegisterUserRequest, res: Response, next: NextFunction) {
+  async register(req: TRegisterUserRequest, res: Response, next: NextFunction) {
     const result = validationResult(req);
 
     if (!result.isEmpty()) {
@@ -58,7 +63,7 @@ export class AuthController {
     }
   }
 
-  async login(req: IRegisterUserRequest, res: Response, next: NextFunction) {
+  async login(req: TLoginUserRequest, res: Response, next: NextFunction) {
     const result = validationResult(req);
 
     if (!result.isEmpty()) {

@@ -1,4 +1,4 @@
-import createJWKSMock from 'mock-jwks';
+import createJWKSMock, { JWKSMock } from 'mock-jwks';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
@@ -8,7 +8,7 @@ import { Roles } from '../../src/types/auth.types';
 
 describe('GET /api/users', () => {
   let connection: DataSource;
-  let jwks: ReturnType<typeof createJWKSMock>;
+  let jwks: JWKSMock;
   let adminToken: string;
 
   beforeAll(async () => {

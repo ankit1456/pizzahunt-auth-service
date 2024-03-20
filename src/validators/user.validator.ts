@@ -115,7 +115,7 @@ export const validateUserId = validationSchema({
   userId: {
     in: ['params'],
     isUUID: {
-      errorMessage: 'Not a valid uuid'
+      errorMessage: 'Not a valid id'
     }
   }
 });
