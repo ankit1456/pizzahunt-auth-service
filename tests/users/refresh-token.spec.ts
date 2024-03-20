@@ -23,7 +23,7 @@ describe('POST /api/auth/refresh', () => {
     await connection.destroy();
   });
 
-  describe('success cases', () => {
+  describe('Success cases', () => {
     it('should return user id with accessToken and refreshToken in cookie', async () => {
       const refreshTokenRepository = connection.getRepository(RefreshToken);
 
@@ -52,7 +52,7 @@ describe('POST /api/auth/refresh', () => {
         .send();
 
       interface Headers {
-        ['set-cookie']: string[];
+        'set-cookie': string[];
       }
 
       let accessToken = '';
@@ -78,7 +78,7 @@ describe('POST /api/auth/refresh', () => {
       expect(isJwt(rfToken)).toBeTruthy();
     });
   });
-  describe('failure cases', () => {
+  describe('Failure cases', () => {
     it('should return exception for unexpected error', async () => {
       const refreshTokenRepository = connection.getRepository(RefreshToken);
 

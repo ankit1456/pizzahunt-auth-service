@@ -136,7 +136,7 @@ export class AuthController {
       const [accessToken, refreshToken] =
         await this.generateAccessAndRefreshTokens(payload, user);
 
-      await this.tokenService.deleteRefreshToken(req.auth?.id);
+      await this.tokenService.deleteRefreshToken(req.auth.id);
 
       this.setTokensInCookie(res, accessToken, refreshToken);
       res.json({ id: user.id });
