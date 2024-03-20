@@ -20,13 +20,12 @@ export default expressjwt({
   async isRevoked(req: Request, token) {
     try {
       const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
-      const { id, sub } = token?.payload as TRefreshTokenPayload;
 
       const refreshToken = await refreshTokenRepository.findOne({
         where: {
-          id,
+          id: (token?.payload as TRefreshTokenPayload).id,
           user: {
-            id: sub
+            id: (token?.payload as TRefreshTokenPayload).sub
           },
           expiresAt: MoreThan(new Date())
         }
@@ -34,8 +33,9 @@ export default expressjwt({
 
       return refreshToken === null;
     } catch (error) {
-      const tokenId = (token?.payload as TRefreshTokenPayload)?.id;
-      logger.error('Error while getting the refresh token', { id: tokenId });
+      logger.error('Error while getting the refresh token', {
+        id: (token?.payload as TRefreshTokenPayload).id
+      });
     }
     return true;
   }

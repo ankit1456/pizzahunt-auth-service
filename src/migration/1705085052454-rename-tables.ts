@@ -20,7 +20,7 @@ export class RenameTables1705085052454 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "refreshTokens" DROP CONSTRAINT "FK_265bec4e500714d5269580a0219"`
     );
-    await queryRunner.renameTable('use', 'user');
+    await queryRunner.renameTable('users', 'user');
     await queryRunner.renameTable('refreshTokens', 'refresh_token');
   }
 }
