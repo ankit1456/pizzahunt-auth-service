@@ -21,11 +21,12 @@ export default expressjwt({
     try {
       const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
 
+      const { id, sub } = token?.payload as TRefreshTokenPayload;
       const refreshToken = await refreshTokenRepository.findOne({
         where: {
-          id: (token?.payload as TRefreshTokenPayload).id,
+          id,
           user: {
-            id: (token?.payload as TRefreshTokenPayload).sub
+            id: sub
           },
           expiresAt: MoreThan(new Date())
         }
@@ -33,8 +34,10 @@ export default expressjwt({
 
       return refreshToken === null;
     } catch (error) {
+      const refreshTokenDocumentId = (token?.payload as TRefreshTokenPayload)
+        .id;
       logger.error('Error while getting the refresh token', {
-        id: (token?.payload as TRefreshTokenPayload).id
+        id: refreshTokenDocumentId
       });
     }
     return true;
