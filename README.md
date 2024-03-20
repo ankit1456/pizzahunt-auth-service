@@ -6,6 +6,7 @@
 
 <!-- npm run migration:generate -- src/migration/migration -d src/config/data-source.ts -->
 <!-- npm run migration:run -- -d src/config/data-source.ts -->
+<!-- npm run migration:create src/migration/migrate_name -->
 
 # Pizzahunt Auth Service
 

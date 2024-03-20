@@ -15,7 +15,10 @@ export default expressjwt({
   getToken(req: Request) {
     const authHeader = req.headers.authorization;
 
-    if (authHeader && authHeader.split(' ')[1] !== 'undefined') {
+    if (
+      authHeader?.startsWith('Bearer') &&
+      authHeader.split(' ')[1] !== undefined
+    ) {
       const token = authHeader.split(' ')[1];
 
       if (token) {

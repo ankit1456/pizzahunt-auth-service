@@ -9,7 +9,7 @@ import { User } from '../../src/entity/User';
 import { Roles } from '../../src/types/auth.types';
 import { createUser, generateRefreshToken } from '../utils';
 
-describe('POST /api/auth/refresh', () => {
+describe('POST /api/auth/logout', () => {
   let connection: DataSource;
   let jwks: ReturnType<typeof createJWKSMock>;
 
@@ -34,7 +34,7 @@ describe('POST /api/auth/refresh', () => {
     await connection.destroy();
   });
 
-  describe('success cases', () => {
+  describe('Success cases', () => {
     it('should clear the cookies and return success message', async () => {
       const refreshTokenRepository = connection.getRepository(RefreshToken);
 
@@ -48,14 +48,14 @@ describe('POST /api/auth/refresh', () => {
       };
       const accessToken = jwks.token(payload);
 
-      const newRefreshToken = await refreshTokenRepository.save({
+      const refreshTokenDocument = await refreshTokenRepository.save({
         user,
         expiresAt: new Date(Date.now() + MS_IN_YEAR)
       });
 
       const refreshToken = generateRefreshToken({
         ...payload,
-        id: newRefreshToken.id
+        id: refreshTokenDocument.id
       });
 
       const response = await request(app)
@@ -66,7 +66,7 @@ describe('POST /api/auth/refresh', () => {
         .send();
 
       interface Headers {
-        ['set-cookie']: string[];
+        'set-cookie': string[];
       }
 
       let acToken = '';
@@ -91,7 +91,7 @@ describe('POST /api/auth/refresh', () => {
       expect(rfToken).toBeFalsy();
     });
   });
-  describe('failure cases', () => {
+  describe('Failure cases', () => {
     it('should return 401 if refresh token or accessToken is missing', async () => {
       const payload: JwtPayload = {
         sub: 'fa72c1dc-00d1-42f4-9e87-fe03afab0560',
