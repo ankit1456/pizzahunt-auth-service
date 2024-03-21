@@ -1,13 +1,18 @@
 import { Request } from 'express';
 
-export interface ITenant {
+export type TTenant = {
   name: string;
   address: string;
+};
+
+export type TPartialTenant = Partial<{
+  name: string;
+  address: string;
+}>;
+
+interface GenericRequest<T> extends Request {
+  body: T;
 }
 
-export interface ICreateTenantRequest extends Request {
-  body: ITenant;
-}
-export interface IUpdateTenantRequest extends Request {
-  body: ITenant;
-}
+export type TCreateTenantRequest = GenericRequest<TTenant>;
+export type TUpdateTenantRequest = GenericRequest<TPartialTenant>;

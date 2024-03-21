@@ -1,14 +1,14 @@
-import createJWKSMock from 'mock-jwks';
+import createJWKSMock, { JWKSMock } from 'mock-jwks';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
-import { Tenant } from '../../src/entity/Tenant';
 import { Roles } from '../../src/types/auth.types';
+import { getTenants } from '../utils';
 
 describe('POST /api/tenants', () => {
   let connection: DataSource;
-  let jwks: ReturnType<typeof createJWKSMock>;
+  let jwks: JWKSMock;
   let adminToken: string;
 
   beforeAll(async () => {
@@ -36,7 +36,7 @@ describe('POST /api/tenants', () => {
     await connection.destroy();
   });
 
-  describe('success cases', () => {
+  describe('Success cases', () => {
     const tenantData = {
       name: 'Tenant name',
       address: 'Tenant address'
@@ -47,24 +47,25 @@ describe('POST /api/tenants', () => {
         .post('/api/tenants')
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(tenantData);
+
       expect(response.statusCode).toBe(201);
     });
-    it('should create tenant in the database', async () => {
+
+    it('should create a tenant in the database', async () => {
       await request(app)
         .post('/api/tenants')
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(tenantData);
 
-      const tenantRepository = connection.getRepository(Tenant);
-      const tanants = await tenantRepository.find();
+      const tenants = await getTenants(connection);
 
-      expect(tanants).toHaveLength(1);
-      expect(tanants[0]?.name).toBe(tenantData.name);
-      expect(tanants[0]?.address).toBe(tenantData.address);
+      expect(tenants).toHaveLength(1);
+      expect(tenants[0]?.name).toBe(tenantData.name);
+      expect(tenants[0]?.address).toBe(tenantData.address);
     });
   });
 
-  describe('failure cases', () => {
+  describe('Failure cases', () => {
     const tenantData = {
       name: 'Tenant name',
       address: 'Tenant address'
@@ -73,14 +74,13 @@ describe('POST /api/tenants', () => {
     it('should return 401 if user is not authenticated', async () => {
       const response = await request(app).post('/api/tenants').send(tenantData);
 
-      const tenantRepository = connection.getRepository(Tenant);
-      const tanants = await tenantRepository.find();
+      const tenants = await getTenants(connection);
 
       expect(response.statusCode).toBe(401);
-      expect(tanants).toHaveLength(0);
+      expect(tenants).toHaveLength(0);
     });
 
-    it('should return 403 if user is not authorized (not admin)', async () => {
+    it('should return 403 if user is not authorized (non admin)', async () => {
       const managerToken = jwks.token({
         sub: 'fa72c1dc-00d1-42f4-9e87-fe03afab0560',
         role: Roles.MANAGER
@@ -91,12 +91,12 @@ describe('POST /api/tenants', () => {
         .set('Cookie', [`accessToken=${managerToken};`])
         .send(tenantData);
 
-      const tenantRepository = connection.getRepository(Tenant);
-      const tanants = await tenantRepository.find();
+      const tenants = await getTenants(connection);
 
       expect(response.statusCode).toBe(403);
-      expect(tanants).toHaveLength(0);
+      expect(tenants).toHaveLength(0);
     });
+
     it('should return 400 status code if name or address is missing', async () => {
       const tenantData = {
         name: '',
@@ -108,12 +108,11 @@ describe('POST /api/tenants', () => {
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(tenantData);
 
-      const tenantRepository = connection.getRepository(Tenant);
-      const tanants = await tenantRepository.find();
+      const tenants = await getTenants(connection);
 
       expect(response.statusCode).toBe(400);
       expect(response.body).toHaveProperty('errors');
-      expect(tanants).toHaveLength(0);
+      expect(tenants).toHaveLength(0);
     });
   });
 });

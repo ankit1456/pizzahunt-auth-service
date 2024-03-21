@@ -1,11 +1,11 @@
 import { Repository } from 'typeorm';
 import { Tenant } from '../entity/Tenant';
-import { ITenant } from '../types/tenant.types';
+import { TPartialTenant, TTenant } from '../types/tenant.types';
 
 export class TenantService {
   constructor(private tenantRepository: Repository<Tenant>) {}
 
-  createTenant(tenant: ITenant) {
+  createTenant(tenant: TTenant) {
     return this.tenantRepository.save(tenant);
   }
 
@@ -16,8 +16,11 @@ export class TenantService {
     return this.tenantRepository.findOneBy({ id: tenantId });
   }
 
-  updateTenant(tenantId: string | undefined, tenant: ITenant) {
-    return this.tenantRepository.update({ id: tenantId }, tenant);
+  updateTenant(
+    tenantId: string | undefined,
+    tenantUpdatePayload: TPartialTenant
+  ) {
+    return this.tenantRepository.update({ id: tenantId }, tenantUpdatePayload);
   }
 
   deleteTenant(tenantId: string | undefined) {

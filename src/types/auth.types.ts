@@ -9,9 +9,17 @@ export type TUser = {
   tenantId?: string;
 };
 
-export interface IRegisterUserRequest extends Request {
-  body: TUser;
+type TCredentials = {
+  email: string;
+  password: string;
+};
+
+interface GenericRequest<T> extends Request {
+  body: T;
 }
+
+export type TRegisterUserRequest = GenericRequest<TUser>;
+export type TLoginUserRequest = GenericRequest<TCredentials>;
 
 type TRequestAuth = {
   id?: string;
@@ -33,13 +41,10 @@ export type TRefreshTokenPayload = {
   sub: string;
 };
 
-export interface ICreateUserRequest extends Request {
-  body: TUser;
-}
-export interface IUpdateUserRequest extends Request {
-  body: TUser;
+export type TCreateUserRequest = GenericRequest<TUser>;
+export type TUpdateUserRequest = GenericRequest<TUser> & {
   auth: TRequestAuth;
-}
+};
 
 export const enum Roles {
   CUSTOMER = 'customer',
