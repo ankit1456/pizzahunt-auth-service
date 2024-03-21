@@ -17,7 +17,7 @@ export default validationSchema({
 
   firstName: {
     ...commonOptions,
-    errorMessage: 'First name is required!',
+    errorMessage: 'First name is required',
     isLength: {
       options: {
         max: 30,
@@ -28,7 +28,7 @@ export default validationSchema({
   },
   lastName: {
     ...commonOptions,
-    errorMessage: 'Last name is required!',
+    errorMessage: 'Last name is required',
     isLength: {
       options: {
         max: 30,
@@ -40,7 +40,7 @@ export default validationSchema({
 
   password: {
     ...commonOptions,
-    errorMessage: 'Password is required!',
+    errorMessage: 'Password is required',
     isLength: {
       options: {
         min: 8
@@ -82,6 +82,7 @@ export const updateUserValidator = validationSchema({
       errorMessage: 'First name should be between 2 and 30 characters'
     }
   },
+
   lastName: {
     ...commonUpdationOptions,
     isLength: {
@@ -92,16 +93,24 @@ export const updateUserValidator = validationSchema({
       errorMessage: 'Last name should be between 2 and 30 characters'
     }
   },
-
-  password: {
+  tenantId: {
     ...commonUpdationOptions,
-    isLength: {
-      options: {
-        min: 8
-      },
-      errorMessage: 'Password length should be at least 8 characters long'
+    isUUID: {
+      errorMessage: 'Not a valid tenantId'
     }
   },
+
+  password: {
+    custom: {
+      options: (value, { req }) => {
+        if ('password' in req.body) {
+          throw new Error('Password cannot be updated');
+        }
+        return true;
+      }
+    }
+  },
+
   role: {
     ...commonUpdationOptions,
     isIn: {

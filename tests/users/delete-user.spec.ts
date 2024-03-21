@@ -5,6 +5,7 @@ import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/types/auth.types';
+import { createUser, getUsers } from '../utils';
 
 describe('DELETE /api/users/:userId', () => {
   let connection: DataSource;
@@ -36,25 +37,14 @@ describe('DELETE /api/users/:userId', () => {
   });
 
   describe('success cases', () => {
-    const userData = {
-      firstName: 'Ankit',
-      lastName: 'Tripahi',
-      email: 'ankit@gmail.com',
-      password: 'test1234',
-      role: Roles.MANAGER
-    };
     it('should delete a user and return success message with 200 status code', async () => {
-      const userRepository = connection.getRepository(User);
-
-      const { id } = await userRepository.save(userData);
-
+      const { id } = await createUser(connection.getRepository(User));
       const response = await request(app)
         .delete(`/api/users/${id}`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send();
 
-      const users = await userRepository.find();
-
+      const users = await getUsers(connection);
       expect(users).toHaveLength(0);
       expect(response.statusCode).toBe(200);
     });

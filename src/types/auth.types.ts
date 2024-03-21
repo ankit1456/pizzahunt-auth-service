@@ -21,15 +21,15 @@ interface GenericRequest<T> extends Request {
 export type TRegisterUserRequest = GenericRequest<TUser>;
 export type TLoginUserRequest = GenericRequest<TCredentials>;
 
-type TRequestAuth = {
+type TRequestAuthPayload = {
   id?: string;
   sub: string;
   role: string;
 };
 
-export interface IAuthRequest extends Request {
-  auth: TRequestAuth;
-}
+export type TAuthRequest = Request & {
+  auth: TRequestAuthPayload;
+};
 
 export type TAuthCookies = {
   accessToken: string;
@@ -42,8 +42,8 @@ export type TRefreshTokenPayload = {
 };
 
 export type TCreateUserRequest = GenericRequest<TUser>;
-export type TUpdateUserRequest = GenericRequest<TUser> & {
-  auth: TRequestAuth;
+export type TUpdateUserRequest = GenericRequest<Omit<TUser, 'password'>> & {
+  auth: TRequestAuthPayload;
 };
 
 export const enum Roles {

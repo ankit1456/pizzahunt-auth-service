@@ -7,7 +7,7 @@ import { Tenant } from '../../src/entity/Tenant';
 import { Roles } from '../../src/types/auth.types';
 import { createTenant } from '../utils';
 
-describe('PATCH /api/tenants', () => {
+describe('PATCH /api/tenants/:tenantId', () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let adminToken: string;

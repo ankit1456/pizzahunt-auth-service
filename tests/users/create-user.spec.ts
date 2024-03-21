@@ -6,7 +6,7 @@ import { AppDataSource } from '../../src/config/data-source';
 import { Tenant } from '../../src/entity/Tenant';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/types/auth.types';
-import { createTenant } from '../utils';
+import { createTenant, getUsers } from '../utils';
 
 describe('POST /api/users', () => {
   let connection: DataSource;
@@ -37,7 +37,7 @@ describe('POST /api/users', () => {
     await connection.destroy();
   });
 
-  describe('success cases', () => {
+  describe('Success cases', () => {
     it('should return 201 status code', async () => {
       const tenant = await createTenant(connection.getRepository(Tenant));
 
@@ -75,9 +75,7 @@ describe('POST /api/users', () => {
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(userData);
 
-      const userRepository = connection.getRepository(User);
-
-      const users = await userRepository.find();
+      const users = await getUsers(connection);
 
       expect(users).toHaveLength(1);
       expect(users[0]?.email).toBe(userData.email);
@@ -125,13 +123,12 @@ describe('POST /api/users', () => {
         role: Roles.MANAGER,
         tenantId: tenant.id
       };
-      const userRepository = connection.getRepository(User);
-      const users = await userRepository.find();
 
+      const users = await getUsers(connection);
       const response = await request(app).post('/api/users').send(userData);
 
       expect(response.statusCode).toBe(401);
-      expect((response.body as Record<string, string>).errors).toHaveLength(1);
+      expect(response.body.errors).toHaveLength(1);
       expect(users).toHaveLength(0);
     });
 
@@ -148,10 +145,9 @@ describe('POST /api/users', () => {
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(userData);
 
-      const userRepository = connection.getRepository(User);
-      const users = await userRepository.find();
+      const users = await getUsers(connection);
 
-      expect((response.body as Record<string, string>).errors?.length).toBe(8);
+      expect(response.body.errors?.length).toBe(8);
 
       expect(response.statusCode).toBe(400);
       expect(users).toHaveLength(0);
@@ -174,13 +170,10 @@ describe('POST /api/users', () => {
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(userData);
 
-      const userRepository = connection.getRepository(User);
-
-      const users = await userRepository.find();
-
+      const users = await getUsers(connection);
       expect(users).toHaveLength(0);
       expect(response.statusCode).toBe(400);
-      expect((response.body as Record<string, string>).errors?.length).toBe(1);
+      expect(response.body.errors?.length).toBe(1);
     });
 
     it('should return 403 if non admin creates a user', async () => {
@@ -198,8 +191,8 @@ describe('POST /api/users', () => {
         sub: 'fa72c1dc-00d1-42f4-9e87-fe03afab0560',
         role: Roles.MANAGER
       });
-      const userRepository = connection.getRepository(User);
-      const users = await userRepository.find();
+
+      const users = await getUsers(connection);
 
       const response = await request(app)
         .post('/api/users')
@@ -207,7 +200,7 @@ describe('POST /api/users', () => {
         .send(userData);
 
       expect(response.statusCode).toBe(403);
-      expect((response.body as Record<string, string>).errors).toHaveLength(1);
+      expect(response.body.errors).toHaveLength(1);
       expect(users).toHaveLength(0);
     });
   });

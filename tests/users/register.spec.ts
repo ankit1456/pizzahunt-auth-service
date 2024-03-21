@@ -91,14 +91,13 @@ describe('POST /api/auth/register', () => {
     });
 
     it('should return 400 statuscode if email already exists', async () => {
-      const userRespository = connection.getRepository(User);
-      await createUser(userRespository);
+      await createUser(connection.getRepository(User));
 
       const response = await request(app)
         .post('/api/auth/register')
         .send(userData);
 
-      const users = await userRespository.find();
+      const users = await getUsers(connection);
 
       expect(response.statusCode).toBe(400);
       expect(response.body.errors).toHaveLength(1);

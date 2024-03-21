@@ -137,13 +137,12 @@ export class UserController {
 
       const role = user.id === req.auth.sub ? Roles.ADMIN : req.body.role;
 
-      const { firstName, lastName, email, password, tenantId } = req.body;
+      const { firstName, lastName, email, tenantId } = req.body;
 
       await this.userService.updateUser(userId, {
         firstName,
         lastName,
         email,
-        password,
         role,
         tenantId
       });

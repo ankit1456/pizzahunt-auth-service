@@ -2,9 +2,10 @@ import bcrypt from 'bcryptjs';
 import { JwtPayload, sign } from 'jsonwebtoken';
 import { DataSource, Repository } from 'typeorm';
 import { Config } from '../../src/config';
+import { RefreshToken } from '../../src/entity/RefreshToken';
 import { Tenant } from '../../src/entity/Tenant';
 import { User } from '../../src/entity/User';
-import { Roles } from '../../src/types/auth.types';
+import { Roles, TUser } from '../../src/types/auth.types';
 
 export const truncateTables = async (connection: DataSource) => {
   const entities = connection.entityMetadatas;
@@ -55,6 +56,17 @@ export const createUser = async (repository: Repository<User>) => {
 
   return user;
 };
+export const createRefreshToken = async (
+  repository: Repository<RefreshToken>,
+  user: TUser
+) => {
+  const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365; // 1 year
+
+  return await repository.save({
+    user,
+    expiresAt: new Date(Date.now() + MS_IN_YEAR)
+  });
+};
 
 export const generateRefreshToken = (payload: JwtPayload) => {
   const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
@@ -75,4 +87,9 @@ export const getUsers = async (connection: DataSource) => {
 export const getTenants = async (connection: DataSource) => {
   const tenantRepository = connection.getRepository(Tenant);
   return await tenantRepository.find();
+};
+
+export const getRefreshTokens = async (connection: DataSource) => {
+  const refreshTokenRepository = connection.getRepository(RefreshToken);
+  return await refreshTokenRepository.find();
 };
