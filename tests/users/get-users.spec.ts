@@ -5,6 +5,7 @@ import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/types/auth.types';
+import { createUser } from '../utils';
 
 describe('GET /api/users', () => {
   let connection: DataSource;
@@ -36,17 +37,8 @@ describe('GET /api/users', () => {
   });
 
   describe('success cases', () => {
-    const userData = {
-      firstName: 'Ankit',
-      lastName: 'Tripahi',
-      email: 'ankit@gmail.com',
-      password: 'test1234',
-      role: Roles.CUSTOMER
-    };
     it('should return all users with 200 status code', async () => {
-      const userRepository = connection.getRepository(User);
-
-      await userRepository.save(userData);
+      await createUser(connection.getRepository(User));
 
       const response = await request(app)
         .get('/api/users')

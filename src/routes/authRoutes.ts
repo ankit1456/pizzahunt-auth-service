@@ -15,7 +15,7 @@ import {
   validateRefreshToken
 } from '../middlewares';
 import { CredentialService, TokenService, UserService } from '../services';
-import { IAuthRequest } from '../types/auth.types';
+import { TAuthRequest } from '../types/auth.types';
 import loginValidator from '../validators/login.validator';
 import registerValidator from '../validators/register.validator';
 
@@ -52,14 +52,14 @@ router.get(
   '/self',
   authenticate as RequestHandler,
   (async (req: Request, res: Response, next: NextFunction) =>
-    authController.self(req as IAuthRequest, res, next)) as RequestHandler
+    authController.self(req as TAuthRequest, res, next)) as RequestHandler
 );
 
 router.post(
   '/refresh',
   validateRefreshToken as RequestHandler,
   (async (req: Request, res: Response, next: NextFunction) =>
-    authController.refresh(req as IAuthRequest, res, next)) as RequestHandler
+    authController.refresh(req as TAuthRequest, res, next)) as RequestHandler
 );
 
 router.post(
@@ -67,7 +67,7 @@ router.post(
   authenticate as RequestHandler,
   parseRefreshToken as RequestHandler,
   (async (req: Request, res: Response, next: NextFunction) =>
-    authController.logout(req as IAuthRequest, res, next)) as RequestHandler
+    authController.logout(req as TAuthRequest, res, next)) as RequestHandler
 );
 
 export default router;

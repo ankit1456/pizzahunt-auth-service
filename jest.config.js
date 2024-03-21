@@ -7,5 +7,10 @@ module.exports = {
   testTimeout: 7000,
   collectCoverage: true,
   coverageProvider: 'v8',
-  collectCoverageFrom: ['src/**/*.ts', '!tests/**', '!**/node_modules/**']
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!tests/**',
+    '!**/node_modules/**',
+    '!src/migration/**'
+  ]
 };

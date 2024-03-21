@@ -7,7 +7,7 @@ import { Tenant } from '../../src/entity/Tenant';
 import { Roles } from '../../src/types/auth.types';
 import { createTenant } from '../utils';
 
-describe('POST /api/tenants', () => {
+describe('GET /api/tenants/:tenantId', () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let adminToken: string;
@@ -47,7 +47,7 @@ describe('POST /api/tenants', () => {
         .send();
 
       expect(response.statusCode).toBe(200);
-      expect((response.body as Record<string, string>).id).toBe(id);
+      expect(response.body.id).toBe(id);
     });
     it('should return 404 status code if tenant not found', async () => {
       const response = await request(app)

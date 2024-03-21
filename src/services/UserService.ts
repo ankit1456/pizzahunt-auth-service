@@ -34,8 +34,10 @@ export class UserService {
       if (err instanceof HttpError) {
         throw err;
       } else {
-        this.logger.error((err as Error).message, {
-          errorName: (err as Error).name
+        const _err = err as Error;
+
+        this.logger.error(_err.message, {
+          errorName: _err.name
         });
         throw createHttpError(500, 'Could not create the user');
       }
@@ -80,7 +82,10 @@ export class UserService {
     return this.userRepository.delete({ id: userId });
   }
 
-  updateUser(userId: string | undefined, user: TUser) {
-    return this.userRepository.update({ id: userId }, user);
+  updateUser(
+    userId: string | undefined,
+    updateUserPayload: Omit<TUser, 'password'>
+  ) {
+    return this.userRepository.update({ id: userId }, updateUserPayload);
   }
 }

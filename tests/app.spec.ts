@@ -6,6 +6,6 @@ describe('Service health check', () => {
     const response = await request(app).get('/').send();
 
     expect(response.statusCode).toBe(200);
-    expect((response.body as Record<string, string>).message).toBe('OK');
+    expect(response.body.message).toBe('OK');
   });
 });

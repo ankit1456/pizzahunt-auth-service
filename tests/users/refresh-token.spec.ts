@@ -5,7 +5,12 @@ import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
 import { RefreshToken } from '../../src/entity/RefreshToken';
 import { User } from '../../src/entity/User';
-import { createUser, generateRefreshToken, isJwt } from '../utils';
+import {
+  createRefreshToken,
+  createUser,
+  generateRefreshToken,
+  isJwt
+} from '../utils';
 
 describe('POST /api/auth/refresh', () => {
   let connection: DataSource;
@@ -25,25 +30,21 @@ describe('POST /api/auth/refresh', () => {
 
   describe('Success cases', () => {
     it('should return user id with accessToken and refreshToken in cookie', async () => {
-      const refreshTokenRepository = connection.getRepository(RefreshToken);
-
       const user = await createUser(connection.getRepository(User));
-
-      const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365; // 1 year
 
       const payload: JwtPayload = {
         sub: user.id,
         role: user.role
       };
 
-      const newRefreshToken = await refreshTokenRepository.save({
-        user,
-        expiresAt: new Date(Date.now() + MS_IN_YEAR)
-      });
+      const refreshTokenDocument = await createRefreshToken(
+        connection.getRepository(RefreshToken),
+        user
+      );
 
       const refreshToken = generateRefreshToken({
         ...payload,
-        id: newRefreshToken.id
+        id: refreshTokenDocument.id
       });
 
       const response = await request(app)
@@ -81,20 +82,17 @@ describe('POST /api/auth/refresh', () => {
   describe('Failure cases', () => {
     it('should return exception for unexpected error', async () => {
       const refreshTokenRepository = connection.getRepository(RefreshToken);
-
       const user = await createUser(connection.getRepository(User));
-
-      const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365; // 1 year
 
       const payload: JwtPayload = {
         sub: user.id,
         role: user.role
       };
 
-      const newRefreshToken = await refreshTokenRepository.save({
-        user,
-        expiresAt: new Date(Date.now() + MS_IN_YEAR)
-      });
+      const newRefreshToken = await createRefreshToken(
+        refreshTokenRepository,
+        user
+      );
 
       const refreshToken = generateRefreshToken({
         ...payload,

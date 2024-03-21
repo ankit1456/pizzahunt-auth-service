@@ -6,8 +6,8 @@ import { Logger } from 'winston';
 import { User } from '../entity/User';
 import { CredentialService, TokenService, UserService } from '../services';
 import {
-  IAuthRequest,
   Roles,
+  TAuthRequest,
   TLoginUserRequest,
   TRegisterUserRequest
 } from '../types/auth.types';
@@ -112,7 +112,7 @@ export class AuthController {
     }
   }
 
-  async self(req: IAuthRequest, res: Response, next: NextFunction) {
+  async self(req: TAuthRequest, res: Response, next: NextFunction) {
     try {
       const user = await this.userService.findById(req.auth.sub);
 
@@ -126,7 +126,7 @@ export class AuthController {
     }
   }
 
-  async refresh(req: IAuthRequest, res: Response, next: NextFunction) {
+  async refresh(req: TAuthRequest, res: Response, next: NextFunction) {
     try {
       const payload: JwtPayload = {
         sub: req.auth.sub,
@@ -183,7 +183,7 @@ export class AuthController {
     this.logger.info('tokens has been set in cookies');
   }
 
-  async logout(req: IAuthRequest, res: Response, next: NextFunction) {
+  async logout(req: TAuthRequest, res: Response, next: NextFunction) {
     try {
       await this.tokenService.deleteRefreshToken(req.auth.id);
 

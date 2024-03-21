@@ -46,7 +46,7 @@ describe('GET /api/users/:userId', () => {
         .send();
 
       expect(response.statusCode).toBe(200);
-      expect((response.body as Record<string, string>).id).toBe(id);
+      expect(response.body.id).toBe(id);
     });
   });
   describe('failure cases', () => {

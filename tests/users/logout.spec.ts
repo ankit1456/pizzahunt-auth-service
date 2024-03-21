@@ -7,7 +7,12 @@ import { AppDataSource } from '../../src/config/data-source';
 import { RefreshToken } from '../../src/entity/RefreshToken';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/types/auth.types';
-import { createUser, generateRefreshToken } from '../utils';
+import {
+  createRefreshToken,
+  createUser,
+  generateRefreshToken,
+  getRefreshTokens
+} from '../utils';
 
 describe('POST /api/auth/logout', () => {
   let connection: DataSource;
@@ -36,11 +41,7 @@ describe('POST /api/auth/logout', () => {
 
   describe('Success cases', () => {
     it('should clear the cookies and return success message', async () => {
-      const refreshTokenRepository = connection.getRepository(RefreshToken);
-
       const user = await createUser(connection.getRepository(User));
-
-      const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365; // 1 year
 
       const payload: JwtPayload = {
         sub: user.id,
@@ -48,10 +49,10 @@ describe('POST /api/auth/logout', () => {
       };
       const accessToken = jwks.token(payload);
 
-      const refreshTokenDocument = await refreshTokenRepository.save({
-        user,
-        expiresAt: new Date(Date.now() + MS_IN_YEAR)
-      });
+      const refreshTokenDocument = await createRefreshToken(
+        connection.getRepository(RefreshToken),
+        user
+      );
 
       const refreshToken = generateRefreshToken({
         ...payload,
@@ -82,7 +83,7 @@ describe('POST /api/auth/logout', () => {
         }
       });
 
-      const refreshTokens = await refreshTokenRepository.find();
+      const refreshTokens = await getRefreshTokens(connection);
 
       expect(refreshTokens).toHaveLength(0);
       expect(response.statusCode).toBe(200);

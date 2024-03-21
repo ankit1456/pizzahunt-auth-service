@@ -5,7 +5,7 @@ import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/types/auth.types';
-import { createUser } from '../utils';
+import { createUser, getUsers } from '../utils';
 
 describe('PATCH /api/users/:userId', () => {
   let connection: DataSource;
@@ -38,26 +38,21 @@ describe('PATCH /api/users/:userId', () => {
 
   describe('success cases', () => {
     it('should update a user and return 200 status code', async () => {
-      const userRepository = connection.getRepository(User);
-
-      const { id } = await createUser(userRepository);
+      const { id } = await createUser(connection.getRepository(User));
 
       const response = await request(app)
         .patch(`/api/users/${id}`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send({ role: Roles.CUSTOMER, firstName: 'Ankit Kumar' });
 
-      const users = await userRepository.find();
-
+      const users = await getUsers(connection);
       expect(response.statusCode).toBe(200);
       expect(users[0]?.firstName).toBe('Ankit Kumar');
       expect(users[0]?.role).toBe(Roles.CUSTOMER);
     });
 
     it('should not update admin user role', async () => {
-      const userRepository = connection.getRepository(User);
-
-      const { id } = await createUser(userRepository);
+      const { id } = await createUser(connection.getRepository(User));
 
       adminToken = jwks.token({
         sub: id,
@@ -69,13 +64,24 @@ describe('PATCH /api/users/:userId', () => {
         .set('Cookie', [`accessToken=${adminToken};`])
         .send({ role: Roles.CUSTOMER });
 
-      const users = await userRepository.find();
+      const users = await getUsers(connection);
 
       expect(response.statusCode).toBe(200);
       expect(users[0]?.role).toBe(Roles.ADMIN);
     });
   });
   describe('failure cases', () => {
+    it('should return 400 if admin user tries to update the password of a user', async () => {
+      const { id } = await createUser(connection.getRepository(User));
+
+      const response = await request(app)
+        .patch(`/api/users/${id}`)
+        .set('Cookie', [`accessToken=${adminToken};`])
+        .send({ firstName: 'Ankit Kumar', password: 'test' });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.errors).toHaveLength(1);
+    });
     it('should return 401 if user is not authenticated', async () => {
       const response = await request(app)
         .patch('/api/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560')
@@ -131,7 +137,7 @@ describe('PATCH /api/users/:userId', () => {
         .send(userData);
 
       expect(response.statusCode).toBe(400);
-      expect((response.body as Record<string, string>).errors).toHaveLength(3);
+      expect(response.body.errors).toHaveLength(3);
     });
   });
 });

@@ -7,7 +7,7 @@ import { Tenant } from '../../src/entity/Tenant';
 import { Roles } from '../../src/types/auth.types';
 import { createTenant } from '../utils';
 
-describe('DELETE /api/tenants', () => {
+describe('DELETE /api/tenants/:tenantId', () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let adminToken: string;
@@ -52,7 +52,7 @@ describe('DELETE /api/tenants', () => {
 
       expect(tenants).toHaveLength(0);
       expect(response.statusCode).toBe(200);
-      expect((response.body as Record<string, string>).message).toBeTruthy();
+      expect(response.body.message).toBeTruthy();
     });
     it('should return 404 status code if tenant not found', async () => {
       const response = await request(app)
