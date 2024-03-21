@@ -26,41 +26,30 @@ const tenantController = new TenantController(tenantService, logger);
 router.get('/', (async (req: Request, res: Response, next: NextFunction) =>
   tenantController.getAllTenants(req, res, next)) as RequestHandler);
 
-router.get(
-  '/:tenantId',
-  authenticate as RequestHandler,
-  canAccess(Roles.ADMIN),
-  validateTenantID,
-  (async (req: Request, res: Response, next: NextFunction) =>
-    tenantController.getTenantById(req, res, next)) as RequestHandler
-);
+router.use(authenticate as RequestHandler, canAccess(Roles.ADMIN));
 
-router.post(
-  '/',
-  authenticate as RequestHandler,
-  canAccess(Roles.ADMIN),
-  tenantValidator,
-  (async (req: Request, res: Response, next: NextFunction) =>
-    tenantController.createTenant(req, res, next)) as RequestHandler
-);
+router.get('/:tenantId', validateTenantID, (async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => tenantController.getTenantById(req, res, next)) as RequestHandler);
 
-router.patch(
-  '/:tenantId',
-  authenticate as RequestHandler,
-  canAccess(Roles.ADMIN),
-  validateTenantID,
-  updateTenantValidator,
-  (async (req: Request, res: Response, next: NextFunction) =>
-    tenantController.updateTenant(req, res, next)) as RequestHandler
-);
+router.post('/', tenantValidator, (async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => tenantController.createTenant(req, res, next)) as RequestHandler);
 
-router.delete(
-  '/:tenantId',
-  authenticate as RequestHandler,
-  canAccess(Roles.ADMIN),
-  validateTenantID,
-  (async (req: Request, res: Response, next: NextFunction) =>
-    tenantController.deleteTenant(req, res, next)) as RequestHandler
-);
+router.patch('/:tenantId', validateTenantID, updateTenantValidator, (async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => tenantController.updateTenant(req, res, next)) as RequestHandler);
+
+router.delete('/:tenantId', validateTenantID, (async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => tenantController.deleteTenant(req, res, next)) as RequestHandler);
 
 export default router;
