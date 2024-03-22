@@ -13,7 +13,7 @@ describe('GET /api/users', () => {
   let adminToken: string;
 
   beforeAll(async () => {
-    jwks = createJWKSMock('http://localhost:5500');
+    jwks = createJWKSMock('http://localhost:5000');
     connection = await AppDataSource.initialize();
   });
 

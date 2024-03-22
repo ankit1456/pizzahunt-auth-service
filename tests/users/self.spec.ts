@@ -11,7 +11,7 @@ describe('GET /api/auth/self', () => {
   let jwks: JWKSMock;
 
   beforeAll(async () => {
-    jwks = createJWKSMock('http://localhost:5500');
+    jwks = createJWKSMock('http://localhost:5000');
     connection = await AppDataSource.initialize();
   });
 
