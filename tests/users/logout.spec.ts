@@ -19,7 +19,7 @@ describe('POST /api/auth/logout', () => {
   let jwks: JWKSMock;
 
   beforeAll(async () => {
-    jwks = createJWKSMock('http://localhost:5000');
+    jwks = createJWKSMock('http://localhost:5500');
 
     connection = await AppDataSource.initialize();
   });

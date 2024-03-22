@@ -12,7 +12,7 @@ describe('POST /api/tenants', () => {
   let adminToken: string;
 
   beforeAll(async () => {
-    jwks = createJWKSMock('http://localhost:5000');
+    jwks = createJWKSMock('http://localhost:5500');
     connection = await AppDataSource.initialize();
   });
 
