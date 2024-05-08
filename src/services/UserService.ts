@@ -13,9 +13,10 @@ export class UserService {
   ) {}
 
   async createUser(user: TUser) {
+    const { firstName, lastName, email, role, tenantId } = user;
     try {
       const userExists = await this.userRepository.findOneBy({
-        email: user.email
+        email
       });
 
       if (userExists) {
@@ -26,9 +27,12 @@ export class UserService {
         await this.credentialService.generateHashedPassword(user.password);
 
       return await this.userRepository.save({
-        ...user,
-        tenantId: user.tenantId ? { id: user.tenantId } : undefined,
-        password: hashedPassword
+        firstName,
+        lastName,
+        email,
+        password: hashedPassword,
+        role,
+        tenant: tenantId ? { id: tenantId } : undefined
       });
     } catch (err) {
       if (err instanceof HttpError) {
@@ -57,8 +61,7 @@ export class UserService {
         'email',
         'password',
         'role',
-        'createdAt',
-        'updatedAt'
+        'createdAt'
       ];
     }
     return this.userRepository.findOne(queryOptions);
@@ -71,6 +74,12 @@ export class UserService {
       },
       relations: {
         tenant: true
+      },
+      select: {
+        tenant: {
+          name: true,
+          address: true
+        }
       }
     });
   }
@@ -86,6 +95,17 @@ export class UserService {
     userId: string | undefined,
     updateUserPayload: Omit<TUser, 'password'>
   ) {
-    return this.userRepository.update({ id: userId }, updateUserPayload);
+    const { firstName, lastName, email, role, tenantId } = updateUserPayload;
+
+    return this.userRepository.update(
+      { id: userId },
+      {
+        firstName,
+        lastName,
+        role,
+        email,
+        tenant: tenantId ? { id: tenantId } : undefined
+      }
+    );
   }
 }
