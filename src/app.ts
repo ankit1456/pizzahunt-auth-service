@@ -25,7 +25,7 @@ app.use(express.json());
 app.get('/', (req, res) => {
   const healthcheck = {
     message: 'OK',
-    timestamp: Date.now()
+    timestamp: new Date().toLocaleString()
   };
   try {
     res.send(healthcheck);

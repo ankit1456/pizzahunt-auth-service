@@ -48,6 +48,13 @@ export default validationSchema({
       errorMessage: 'Password length should be at least 8 chars long'
     }
   },
+  tenantId: {
+    optional: true,
+    trim: true,
+    isUUID: {
+      errorMessage: 'Not a valid tenantId'
+    }
+  },
 
   role: {
     optional: true,
