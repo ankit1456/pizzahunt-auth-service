@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import { validationResult } from 'express-validator';
+import { matchedData, validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { Logger } from 'winston';
 import { UserService } from '../services';
+import { TPaginatedQuery } from '../types';
 import {
   Roles,
   TCreateUserRequest,
@@ -39,7 +40,7 @@ export class UserController {
         email,
         password,
         role: role ?? Roles.CUSTOMER,
-        tenantId
+        tenantId: role === Roles.MANAGER ? tenantId : undefined
       });
       res.status(201).json({ ...user, password: undefined });
     } catch (error) {
@@ -48,8 +49,12 @@ export class UserController {
   }
 
   async getAllUsers(req: Request, res: Response, next: NextFunction) {
+    const validatedQuery = matchedData(req, { onlyValidData: true });
+
     try {
-      const users = await this.userService.getAllUsers();
+      const users = await this.userService.getAllUsers(
+        validatedQuery as TPaginatedQuery
+      );
 
       this.logger.info('All users fetched');
       res.json(users);
