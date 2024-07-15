@@ -2,7 +2,9 @@ import createHttpError, { HttpError } from 'http-errors';
 import { FindOneOptions, Repository } from 'typeorm';
 import { Logger } from 'winston';
 import { User } from '../entity/User';
+import { TPaginatedQuery } from '../types';
 import { TUser } from '../types/auth.types';
+import { paginate } from '../utils/paginate';
 import { CredentialService } from './CredentialService';
 
 export class UserService {
@@ -84,9 +86,11 @@ export class UserService {
     });
   }
 
-  getAllUsers() {
-    return this.userRepository.find();
+  getAllUsers(paginatedQuery: TPaginatedQuery) {
+    const queryBuilder = this.userRepository.createQueryBuilder();
+    return paginate<User>(queryBuilder, paginatedQuery);
   }
+
   deleteUser(userId: string | undefined) {
     return this.userRepository.delete({ id: userId });
   }

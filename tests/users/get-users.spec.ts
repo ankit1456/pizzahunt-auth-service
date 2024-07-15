@@ -46,7 +46,7 @@ describe('GET /api/users', () => {
         .send();
 
       expect(response.statusCode).toBe(200);
-      expect(response.body).toHaveLength(1);
+      expect(response.body.data).toHaveLength(1);
     });
   });
   describe('failure cases', () => {
