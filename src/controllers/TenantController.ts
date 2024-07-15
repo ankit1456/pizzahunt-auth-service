@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import { validationResult } from 'express-validator';
+import { matchedData, validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { Logger } from 'winston';
 import { TenantService } from '../services';
+import { TPaginatedQuery } from '../types';
 import {
   TCreateTenantRequest,
   TUpdateTenantRequest
@@ -44,8 +45,11 @@ export class TenantController {
   }
 
   async getAllTenants(req: Request, res: Response, next: NextFunction) {
+    const validatedQuery = matchedData(req, { onlyValidData: true });
     try {
-      const tenants = await this.tenantService.getAllTenants();
+      const tenants = await this.tenantService.getAllTenants(
+        validatedQuery as TPaginatedQuery
+      );
       this.logger.info('Fetched all tenants');
 
       res.json(tenants);

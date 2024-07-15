@@ -10,7 +10,7 @@ export async function paginate<T extends User | Tenant>(
   const skip = (page - 1) * limit;
   const [data, totalCount] = await queryBuilder
     .skip(skip)
-    .limit(limit)
+    .take(limit)
     .getManyAndCount();
 
   return { page, limit, totalCount, data };

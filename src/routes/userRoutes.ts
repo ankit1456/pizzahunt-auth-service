@@ -20,53 +20,28 @@ const credentialService = new CredentialService();
 const userService = new UserService(userRepository, credentialService, logger);
 const userController = new UserController(userService, logger);
 
-router.get(
-  '/',
-  authenticate as RequestHandler,
-  canAccess(Roles.ADMIN),
-  paginationValidator,
-  (async (req, res, next) =>
-    userController.getAllUsers(req, res, next)) as RequestHandler
-);
+router.use(authenticate as RequestHandler, canAccess(Roles.ADMIN));
 
-router.get(
-  '/:userId',
-  authenticate as RequestHandler,
-  canAccess(Roles.ADMIN),
-  validateUserId,
-  (async (req, res, next) =>
-    userController.getUser(req, res, next)) as RequestHandler
-);
+router.get('/', paginationValidator, (async (req, res, next) =>
+  userController.getAllUsers(req, res, next)) as RequestHandler);
 
-router.post(
-  '/',
-  authenticate as RequestHandler,
-  canAccess(Roles.ADMIN),
-  userValidator,
-  (async (req, res, next) =>
-    userController.createUser(req, res, next)) as RequestHandler
-);
+router.get('/:userId', validateUserId, (async (req, res, next) =>
+  userController.getUser(req, res, next)) as RequestHandler);
 
-router.patch(
-  '/:userId',
-  authenticate as RequestHandler,
-  canAccess(Roles.ADMIN),
-  validateUserId,
-  updateUserValidator,
-  (async (req, res, next) =>
-    userController.updateUser(
-      req as TUpdateUserRequest,
-      res,
-      next
-    )) as RequestHandler
-);
-router.delete(
-  '/:userId',
-  authenticate as RequestHandler,
-  canAccess(Roles.ADMIN),
-  validateUserId,
-  (async (req, res, next) =>
-    userController.deleteUser(req, res, next)) as RequestHandler
-);
+router.post('/', userValidator, (async (req, res, next) =>
+  userController.createUser(req, res, next)) as RequestHandler);
+
+router.patch('/:userId', validateUserId, updateUserValidator, (async (
+  req,
+  res,
+  next
+) =>
+  userController.updateUser(
+    req as TUpdateUserRequest,
+    res,
+    next
+  )) as RequestHandler);
+router.delete('/:userId', validateUserId, (async (req, res, next) =>
+  userController.deleteUser(req, res, next)) as RequestHandler);
 
 export default router;

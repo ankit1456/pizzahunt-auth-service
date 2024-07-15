@@ -1,6 +1,8 @@
 import { Repository } from 'typeorm';
 import { Tenant } from '../entity/Tenant';
+import { TPaginatedQuery } from '../types';
 import { TPartialTenant, TTenant } from '../types/tenant.types';
+import { paginate } from '../utils/paginate';
 
 export class TenantService {
   constructor(private tenantRepository: Repository<Tenant>) {}
@@ -9,8 +11,9 @@ export class TenantService {
     return this.tenantRepository.save(tenant);
   }
 
-  getAllTenants() {
-    return this.tenantRepository.find();
+  getAllTenants(validatedQuery: TPaginatedQuery) {
+    const queryBuilder = this.tenantRepository.createQueryBuilder();
+    return paginate<Tenant>(queryBuilder, validatedQuery);
   }
   getTenantById(tenantId: string | undefined) {
     return this.tenantRepository.findOneBy({ id: tenantId });
