@@ -1,9 +1,4 @@
-import express, {
-  NextFunction,
-  Request,
-  RequestHandler,
-  Response
-} from 'express';
+import express, { RequestHandler } from 'express';
 import { AppDataSource } from '../config/data-source';
 import logger from '../config/logger';
 import { AuthController } from '../controllers/AuthController';
@@ -36,29 +31,23 @@ const authController = new AuthController(
   logger
 );
 
-router.post('/register', registerValidator, (async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => authController.register(req, res, next)) as RequestHandler);
+router.post('/register', registerValidator, (async (req, res, next) =>
+  authController.register(req, res, next)) as RequestHandler);
 
-router.post('/login', loginValidator, (async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => authController.login(req, res, next)) as RequestHandler);
+router.post('/login', loginValidator, (async (req, res, next) =>
+  authController.login(req, res, next)) as RequestHandler);
 
 router.get(
   '/self',
   authenticate as RequestHandler,
-  (async (req: Request, res: Response, next: NextFunction) =>
+  (async (req, res, next) =>
     authController.self(req as TAuthRequest, res, next)) as RequestHandler
 );
 
 router.post(
   '/refresh',
   validateRefreshToken as RequestHandler,
-  (async (req: Request, res: Response, next: NextFunction) =>
+  (async (req, res, next) =>
     authController.refresh(req as TAuthRequest, res, next)) as RequestHandler
 );
 
@@ -66,7 +55,7 @@ router.post(
   '/logout',
   authenticate as RequestHandler,
   parseRefreshToken as RequestHandler,
-  (async (req: Request, res: Response, next: NextFunction) =>
+  (async (req, res, next) =>
     authController.logout(req as TAuthRequest, res, next)) as RequestHandler
 );
 

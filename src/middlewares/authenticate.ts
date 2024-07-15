@@ -21,9 +21,7 @@ export default expressjwt({
     ) {
       const token = authHeader.split(' ')[1];
 
-      if (token) {
-        return token;
-      }
+      if (token) return token;
     }
 
     const { accessToken } = req.cookies as TAuthCookies;

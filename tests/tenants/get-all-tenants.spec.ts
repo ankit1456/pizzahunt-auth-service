@@ -28,7 +28,7 @@ describe('GET /api/tenants', () => {
       const response = await request(app).get('/api/tenants').send();
 
       expect(response.statusCode).toBe(200);
-      expect(response.body).toHaveLength(1);
+      expect(response.body.data).toHaveLength(1);
     });
   });
 });
