@@ -1,10 +1,10 @@
 import bcrypt from 'bcryptjs';
-import logger from './config/logger';
+import { Server } from 'http';
 import app from './app';
 import { Config } from './config';
 import { AppDataSource } from './config/data-source';
-import { Server } from 'http';
-import { User } from './entity/User';
+import logger from './config/logger';
+import { User } from './entity';
 import { Roles } from './types/auth.types';
 
 process.on('uncaughtException', (err) => {

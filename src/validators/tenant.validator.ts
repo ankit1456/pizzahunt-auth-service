@@ -17,19 +17,19 @@ export default checkSchema({
   name: {
     trim: true,
     notEmpty: true,
-    errorMessage: 'Tenant name is required',
+    errorMessage: 'tenant name is required',
     isLength: {
       ...commonNameLengthOptions,
-      errorMessage: 'Tenant name should be between 3 and 50 characters'
+      errorMessage: 'tenant name must contain 3 to 50 characters'
     }
   },
   address: {
     trim: true,
     notEmpty: true,
-    errorMessage: 'Tenant address is required',
+    errorMessage: 'tenant address is required',
     isLength: {
       ...commonAddressLengthOptions,
-      errorMessage: 'Tenant address should be between 3 and 100 characters'
+      errorMessage: 'tenant address must contain 3 to 100 characters'
     }
   }
 });
@@ -44,23 +44,14 @@ export const updateTenantValidator = checkSchema({
     ...commonOptions,
     isLength: {
       ...commonNameLengthOptions,
-      errorMessage: 'Tenant name should be between 3 and 50 characters'
+      errorMessage: 'tenant name must contain 3 to 50 characters'
     }
   },
   address: {
     ...commonOptions,
     isLength: {
       ...commonAddressLengthOptions,
-      errorMessage: 'Tenant address should be between 3 and 100 characters'
-    }
-  }
-});
-
-export const validateTenantID = checkSchema({
-  tenantId: {
-    in: ['params'],
-    isUUID: {
-      errorMessage: 'Not a valid id'
+      errorMessage: 'tenant address must contain 3 to 100 characters'
     }
   }
 });

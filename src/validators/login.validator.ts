@@ -4,16 +4,16 @@ export default validationSchema({
   email: {
     trim: true,
     notEmpty: {
-      errorMessage: 'Email is required'
+      errorMessage: 'email is required'
     },
     isEmail: {
-      errorMessage: 'Not a valid email'
+      errorMessage: 'not a valid email'
     }
   },
   password: {
     trim: true,
     notEmpty: {
-      errorMessage: 'Password is required'
+      errorMessage: 'password is required'
     }
   }
 });

@@ -3,13 +3,13 @@ import { matchedData, validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { Logger } from 'winston';
 import { TenantService } from '../services';
-import { TPaginatedQuery } from '../types';
+import { TQueryParams } from '../types';
 import {
   TCreateTenantRequest,
   TUpdateTenantRequest
 } from '../types/tenant.types';
 
-export class TenantController {
+export default class TenantController {
   constructor(
     private tenantService: TenantService,
     private logger: Logger
@@ -45,11 +45,11 @@ export class TenantController {
   }
 
   async getAllTenants(req: Request, res: Response, next: NextFunction) {
-    const validatedQuery = matchedData(req, { onlyValidData: true });
+    const queryParams = matchedData(req, {
+      onlyValidData: true
+    }) as TQueryParams;
     try {
-      const tenants = await this.tenantService.getAllTenants(
-        validatedQuery as TPaginatedQuery
-      );
+      const tenants = await this.tenantService.getAllTenants(queryParams);
       this.logger.info('Fetched all tenants');
 
       res.json(tenants);

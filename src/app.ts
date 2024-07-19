@@ -4,9 +4,7 @@ import express from 'express';
 import 'reflect-metadata';
 import { Config } from './config';
 import { globalErrorHandler } from './middlewares';
-import authRouter from './routes/authRoutes';
-import tenantRouter from './routes/tenantRoutes';
-import userRouter from './routes/userRoutes';
+import { authRouter, tenantRouter, userRouter } from './routes';
 
 const app = express();
 

@@ -1,13 +1,18 @@
 import createHttpError, { HttpError } from 'http-errors';
-import { FindOneOptions, Repository } from 'typeorm';
+import {
+  Brackets,
+  FindOneOptions,
+  Repository,
+  SelectQueryBuilder
+} from 'typeorm';
 import { Logger } from 'winston';
-import { User } from '../entity/User';
-import { TPaginatedQuery } from '../types';
+import { User } from '../entity';
+import { TQueryParams } from '../types';
 import { TUser } from '../types/auth.types';
 import { paginate } from '../utils/paginate';
-import { CredentialService } from './CredentialService';
+import CredentialService from './CredentialService';
 
-export class UserService {
+export default class UserService {
   constructor(
     private userRepository: Repository<User>,
     private credentialService: CredentialService,
@@ -86,9 +91,11 @@ export class UserService {
     });
   }
 
-  getAllUsers(paginatedQuery: TPaginatedQuery) {
-    const queryBuilder = this.userRepository.createQueryBuilder();
-    return paginate<User>(queryBuilder, paginatedQuery);
+  getAllUsers(queryParams: TQueryParams) {
+    let queryBuilder = this.userRepository.createQueryBuilder('user');
+
+    queryBuilder = this.filterUsers(queryBuilder, queryParams);
+    return paginate<User>(queryBuilder, queryParams);
   }
 
   deleteUser(userId: string | undefined) {
@@ -111,5 +118,37 @@ export class UserService {
         tenant: tenantId ? { id: tenantId } : undefined
       }
     );
+  }
+
+  filterUsers(
+    queryBuilder: SelectQueryBuilder<User>,
+    queryParams: TQueryParams
+  ) {
+    if (queryParams.q) {
+      const searchTerm = `%${queryParams.q}%`;
+
+      queryBuilder.where(
+        new Brackets((qb) => {
+          qb.where("CONCAT(user.firstName, ' ', user.lastName) ILike :q", {
+            q: searchTerm
+          })
+            .orWhere('CONCAT(user.firstName, user.lastName) ILike :q', {
+              q: searchTerm
+            })
+            .orWhere('user.email ILike :q', { q: searchTerm });
+        })
+      );
+    }
+
+    if (queryParams.role) {
+      queryBuilder.andWhere('user.role = :role', {
+        role: queryParams.role
+      });
+    }
+
+    return queryBuilder
+      .leftJoin('user.tenant', 'tenant')
+      .addSelect(['tenant.id', 'tenant.name', 'tenant.address'])
+      .orderBy('user.createdAt', 'DESC');
   }
 }

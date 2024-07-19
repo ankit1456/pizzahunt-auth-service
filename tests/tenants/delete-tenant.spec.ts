@@ -3,7 +3,7 @@ import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
-import { Tenant } from '../../src/entity/Tenant';
+import { Tenant } from '../../src/entity';
 import { Roles } from '../../src/types/auth.types';
 import { createTenant } from '../utils';
 

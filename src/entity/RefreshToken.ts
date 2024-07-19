@@ -6,10 +6,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { User } from './User';
+import User from './User';
 
 @Entity('refreshTokens')
-export class RefreshToken {
+export default class RefreshToken {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

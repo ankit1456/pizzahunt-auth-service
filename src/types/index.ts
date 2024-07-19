@@ -1,8 +1,6 @@
-export type TPaginatedQuery = {
+export type TQueryParams = {
   page: number;
   limit: number;
-};
-
-export type TQueryParams = TPaginatedQuery & {
-  role?: string;
+  q: string;
+  role: string;
 };

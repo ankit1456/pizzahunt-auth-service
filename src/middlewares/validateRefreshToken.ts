@@ -4,7 +4,7 @@ import { MoreThan } from 'typeorm';
 import { Config } from '../config';
 import { AppDataSource } from '../config/data-source';
 import logger from '../config/logger';
-import { RefreshToken } from '../entity/RefreshToken';
+import { RefreshToken } from '../entity';
 import { TAuthCookies, TRefreshTokenPayload } from '../types/auth.types';
 
 export default expressjwt({
