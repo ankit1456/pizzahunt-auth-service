@@ -10,7 +10,7 @@ import {
   queryParamsValidator,
   updateUserValidator,
   userValidator,
-  validateId as validateUserId
+  validateUserId
 } from '../validators';
 
 const router = express.Router();

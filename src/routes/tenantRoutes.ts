@@ -9,7 +9,7 @@ import {
   queryParamsValidator,
   tenantValidator,
   updateTenantValidator,
-  validateId as validateTenantId
+  validateTenantId
 } from '../validators';
 
 import { TenantService } from './../services';

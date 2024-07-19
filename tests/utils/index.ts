@@ -2,9 +2,7 @@ import bcrypt from 'bcryptjs';
 import { JwtPayload, sign } from 'jsonwebtoken';
 import { DataSource, Repository } from 'typeorm';
 import { Config } from '../../src/config';
-import { RefreshToken } from '../../src/entity/RefreshToken';
-import { Tenant } from '../../src/entity/Tenant';
-import { User } from '../../src/entity/User';
+import { RefreshToken, Tenant, User } from '../../src/entity';
 import { Roles, TUser } from '../../src/types/auth.types';
 
 export const truncateTables = async (connection: DataSource) => {

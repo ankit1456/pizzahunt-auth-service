@@ -1,8 +1,12 @@
-import { updateUserValidator } from './user.validator';
-import { updateTenantValidator } from './tenant.validator';
+import { updateUserValidator, validateUserId } from './user.validator';
+import { updateTenantValidator, validateTenantId } from './tenant.validator';
 
-export { updateTenantValidator, updateUserValidator };
-export { default as validateId } from './id.validator';
+export {
+  updateTenantValidator,
+  updateUserValidator,
+  validateTenantId,
+  validateUserId
+};
 export { default as loginValidator } from './login.validator';
 export { default as queryParamsValidator } from './queryParams.validator';
 export { default as registerValidator } from './register.validator';

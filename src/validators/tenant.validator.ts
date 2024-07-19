@@ -1,4 +1,4 @@
-import { checkSchema } from 'express-validator';
+import { checkSchema as validationSchema } from 'express-validator';
 
 const commonNameLengthOptions = {
   options: {
@@ -13,7 +13,7 @@ const commonAddressLengthOptions = {
   }
 };
 
-export default checkSchema({
+export default validationSchema({
   name: {
     trim: true,
     notEmpty: true,
@@ -39,7 +39,7 @@ const commonOptions = {
   trim: true
 };
 
-export const updateTenantValidator = checkSchema({
+export const updateTenantValidator = validationSchema({
   name: {
     ...commonOptions,
     isLength: {
@@ -52,6 +52,15 @@ export const updateTenantValidator = checkSchema({
     isLength: {
       ...commonAddressLengthOptions,
       errorMessage: 'tenant address must contain 3 to 100 characters'
+    }
+  }
+});
+
+export const validateTenantId = validationSchema({
+  tenantId: {
+    in: ['params'],
+    isUUID: {
+      errorMessage: 'not a valid id'
     }
   }
 });

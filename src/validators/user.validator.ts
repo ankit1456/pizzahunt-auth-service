@@ -126,3 +126,12 @@ export const updateUserValidator = validationSchema({
     }
   }
 });
+
+export const validateUserId = validationSchema({
+  userId: {
+    in: ['params'],
+    isUUID: {
+      errorMessage: 'not a valid id'
+    }
+  }
+});
