@@ -4,8 +4,7 @@ import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config/data-source';
-import { RefreshToken } from '../../src/entity/RefreshToken';
-import { User } from '../../src/entity/User';
+import { RefreshToken, User } from '../../src/entity';
 import { Roles } from '../../src/types/auth.types';
 import {
   createRefreshToken,

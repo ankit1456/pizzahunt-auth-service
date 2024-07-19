@@ -3,14 +3,14 @@ import { matchedData, validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { Logger } from 'winston';
 import { UserService } from '../services';
-import { TPaginatedQuery } from '../types';
+import { TQueryParams } from '../types';
 import {
   Roles,
   TCreateUserRequest,
   TUpdateUserRequest
 } from '../types/auth.types';
 
-export class UserController {
+export default class UserController {
   constructor(
     private userService: UserService,
     private logger: Logger
@@ -49,12 +49,12 @@ export class UserController {
   }
 
   async getAllUsers(req: Request, res: Response, next: NextFunction) {
-    const validatedQuery = matchedData(req, { onlyValidData: true });
+    const queryParams = matchedData(req, {
+      onlyValidData: true
+    }) as TQueryParams;
 
     try {
-      const users = await this.userService.getAllUsers(
-        validatedQuery as TPaginatedQuery
-      );
+      const users = await this.userService.getAllUsers(queryParams);
 
       this.logger.info('All users fetched');
       res.json(users);

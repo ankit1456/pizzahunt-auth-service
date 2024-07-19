@@ -9,50 +9,50 @@ const commonOptions = {
 export default validationSchema({
   email: {
     ...commonOptions,
-    errorMessage: 'Email is required',
+    errorMessage: 'email is required',
     isEmail: {
-      errorMessage: 'Not a valid email'
+      errorMessage: 'not a valid email'
     }
   },
 
   firstName: {
     ...commonOptions,
-    errorMessage: 'First name is required',
+    errorMessage: 'first name is required',
     isLength: {
       options: {
         max: 30,
         min: 2
       },
-      errorMessage: 'First name should be between 2 and 30 characters'
+      errorMessage: 'first name must contain 2 to 30 characters'
     }
   },
   lastName: {
     ...commonOptions,
-    errorMessage: 'Last name is required',
+    errorMessage: 'fast name is required',
     isLength: {
       options: {
         max: 30,
         min: 2
       },
-      errorMessage: 'Last name should be between 2 and 30 characters'
+      errorMessage: 'last name must contain 2 to 30 characters'
     }
   },
 
   password: {
     ...commonOptions,
-    errorMessage: 'Password is required',
+    errorMessage: 'password is required',
     isLength: {
       options: {
         min: 8
       },
-      errorMessage: 'Password length should be at least 8 chars long'
+      errorMessage: 'password must contain at least 8 characters'
     }
   },
   tenantId: {
     optional: true,
     trim: true,
     isUUID: {
-      errorMessage: 'Not a valid tenantId'
+      errorMessage: 'not a valid tenantId'
     }
   },
 
@@ -61,7 +61,7 @@ export default validationSchema({
     ...commonOptions,
     isIn: {
       options: [roles],
-      errorMessage: `Role must be one of: ${roles.join(',')}`
+      errorMessage: `role must be one of: ${roles.join(',')}`
     }
   }
 });
@@ -75,7 +75,7 @@ export const updateUserValidator = validationSchema({
   email: {
     ...commonUpdationOptions,
     isEmail: {
-      errorMessage: 'Not a valid email'
+      errorMessage: 'not a valid email'
     }
   },
 
@@ -86,7 +86,7 @@ export const updateUserValidator = validationSchema({
         max: 30,
         min: 2
       },
-      errorMessage: 'First name should be between 2 and 30 characters'
+      errorMessage: 'first name must contain 2 to 30 characters'
     }
   },
 
@@ -97,22 +97,22 @@ export const updateUserValidator = validationSchema({
         max: 30,
         min: 2
       },
-      errorMessage: 'Last name should be between 2 and 30 characters'
+      errorMessage: 'last name must contain 2 to 30 characters'
     }
   },
   tenantId: {
     ...commonUpdationOptions,
     isUUID: {
-      errorMessage: 'Not a valid tenantId'
+      errorMessage: 'not a valid tenantId'
     }
   },
 
   password: {
     custom: {
       options: (value, { req }) => {
-        if ('password' in req.body) {
-          throw new Error('Password cannot be updated');
-        }
+        if ('password' in req.body)
+          throw new Error('password cannot be updated');
+
         return true;
       }
     }
@@ -122,7 +122,7 @@ export const updateUserValidator = validationSchema({
     ...commonUpdationOptions,
     isIn: {
       options: [roles],
-      errorMessage: `Role must be one of: ${roles.join(', ')}`
+      errorMessage: `role must be one of: ${roles.join(', ')}`
     }
   }
 });
@@ -131,7 +131,7 @@ export const validateUserId = validationSchema({
   userId: {
     in: ['params'],
     isUUID: {
-      errorMessage: 'Not a valid id'
+      errorMessage: 'not a valid id'
     }
   }
 });

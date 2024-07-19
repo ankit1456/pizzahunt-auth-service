@@ -1,16 +1,17 @@
 import express, { RequestHandler } from 'express';
 import { AppDataSource } from '../config/data-source';
 import logger from '../config/logger';
-import { UserController } from '../controllers/UserController';
-import { User } from '../entity/User';
+import { UserController } from '../controllers';
+import { User } from '../entity';
 import { authenticate, canAccess } from '../middlewares';
 import { CredentialService, UserService } from '../services';
 import { Roles, TUpdateUserRequest } from '../types/auth.types';
-import paginationValidator from '../validators/pagination.validator';
-import userValidator, {
+import {
+  queryParamsValidator,
   updateUserValidator,
+  userValidator,
   validateUserId
-} from '../validators/user.validator';
+} from '../validators';
 
 const router = express.Router();
 
@@ -22,7 +23,7 @@ const userController = new UserController(userService, logger);
 
 router.use(authenticate as RequestHandler, canAccess(Roles.ADMIN));
 
-router.get('/', paginationValidator, (async (req, res, next) =>
+router.get('/', queryParamsValidator, (async (req, res, next) =>
   userController.getAllUsers(req, res, next)) as RequestHandler);
 
 router.get('/:userId', validateUserId, (async (req, res, next) =>

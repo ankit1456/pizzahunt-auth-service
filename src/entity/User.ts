@@ -7,10 +7,10 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { Roles } from '../types/auth.types';
-import { Tenant } from './Tenant';
+import Tenant from './Tenant';
 
 @Entity('users')
-export class User {
+export default class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

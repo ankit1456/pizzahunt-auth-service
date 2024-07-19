@@ -3,7 +3,7 @@ import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { JwtPayload } from 'jsonwebtoken';
 import { Logger } from 'winston';
-import { User } from '../entity/User';
+import { User } from '../entity';
 import { CredentialService, TokenService, UserService } from '../services';
 import {
   Roles,
@@ -12,7 +12,7 @@ import {
   TRegisterUserRequest
 } from '../types/auth.types';
 
-export class AuthController {
+export default class AuthController {
   constructor(
     private userService: UserService,
     private tokenService: TokenService,
@@ -53,11 +53,15 @@ export class AuthController {
       const [accessToken, refreshToken] =
         await this.generateAccessAndRefreshTokens(payload, newUser);
 
-      this.setTokensInCookie(res, accessToken, refreshToken);
+      const responseWithCookies = this.setTokensInCookie(
+        res,
+        accessToken,
+        refreshToken
+      );
 
       this.logger.info('User has been registered', { id: newUser.id });
 
-      res.status(201).json({ ...newUser, password: undefined });
+      responseWithCookies.status(201).json({ ...newUser, password: undefined });
     } catch (error) {
       return next(error);
     }
@@ -102,11 +106,15 @@ export class AuthController {
       const [accessToken, refreshToken] =
         await this.generateAccessAndRefreshTokens(payload, user);
 
-      this.setTokensInCookie(res, accessToken, refreshToken);
+      const responseWithCookies = this.setTokensInCookie(
+        res,
+        accessToken,
+        refreshToken
+      );
 
       this.logger.info('User has been logged in', { id: user.id });
 
-      res.status(200).json({ ...user, password: undefined });
+      responseWithCookies.status(200).json({ ...user, password: undefined });
     } catch (error) {
       return next(error);
     }
@@ -143,8 +151,12 @@ export class AuthController {
 
       await this.tokenService.deleteRefreshToken(req.auth.id);
 
-      this.setTokensInCookie(res, accessToken, refreshToken);
-      res.json({ id: user.id });
+      const responseWithCookies = this.setTokensInCookie(
+        res,
+        accessToken,
+        refreshToken
+      );
+      responseWithCookies.json({ id: user.id });
     } catch (error) {
       return next(error);
     }
@@ -181,6 +193,8 @@ export class AuthController {
     });
 
     this.logger.info('tokens has been set in cookies');
+
+    return res;
   }
 
   async logout(req: TAuthRequest, res: Response, next: NextFunction) {

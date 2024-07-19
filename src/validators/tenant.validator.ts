@@ -1,4 +1,4 @@
-import { checkSchema } from 'express-validator';
+import { checkSchema as validationSchema } from 'express-validator';
 
 const commonNameLengthOptions = {
   options: {
@@ -13,23 +13,23 @@ const commonAddressLengthOptions = {
   }
 };
 
-export default checkSchema({
+export default validationSchema({
   name: {
     trim: true,
     notEmpty: true,
-    errorMessage: 'Tenant name is required',
+    errorMessage: 'tenant name is required',
     isLength: {
       ...commonNameLengthOptions,
-      errorMessage: 'Tenant name should be between 3 and 50 characters'
+      errorMessage: 'tenant name must contain 3 to 50 characters'
     }
   },
   address: {
     trim: true,
     notEmpty: true,
-    errorMessage: 'Tenant address is required',
+    errorMessage: 'tenant address is required',
     isLength: {
       ...commonAddressLengthOptions,
-      errorMessage: 'Tenant address should be between 3 and 100 characters'
+      errorMessage: 'tenant address must contain 3 to 100 characters'
     }
   }
 });
@@ -39,28 +39,28 @@ const commonOptions = {
   trim: true
 };
 
-export const updateTenantValidator = checkSchema({
+export const updateTenantValidator = validationSchema({
   name: {
     ...commonOptions,
     isLength: {
       ...commonNameLengthOptions,
-      errorMessage: 'Tenant name should be between 3 and 50 characters'
+      errorMessage: 'tenant name must contain 3 to 50 characters'
     }
   },
   address: {
     ...commonOptions,
     isLength: {
       ...commonAddressLengthOptions,
-      errorMessage: 'Tenant address should be between 3 and 100 characters'
+      errorMessage: 'tenant address must contain 3 to 100 characters'
     }
   }
 });
 
-export const validateTenantID = checkSchema({
+export const validateTenantId = validationSchema({
   tenantId: {
     in: ['params'],
     isUUID: {
-      errorMessage: 'Not a valid id'
+      errorMessage: 'not a valid id'
     }
   }
 });

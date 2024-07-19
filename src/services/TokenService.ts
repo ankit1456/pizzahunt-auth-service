@@ -1,10 +1,9 @@
 import { JwtPayload, sign } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 import { Config } from '../config';
-import { RefreshToken } from '../entity/RefreshToken';
-import { User } from '../entity/User';
+import { RefreshToken, User } from '../entity';
 
-export class TokenService {
+export default class TokenService {
   constructor(private refreshTokenRepository: Repository<RefreshToken>) {}
 
   generateAccessToken(payload: JwtPayload) {

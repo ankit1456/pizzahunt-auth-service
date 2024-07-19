@@ -13,6 +13,18 @@ export default validationSchema(
       customSanitizer: {
         options: (value: number) => (Number.isNaN(value) ? 8 : value)
       }
+    },
+    q: {
+      trim: true,
+      customSanitizer: {
+        options: (value: string) => value ?? ''
+      }
+    },
+    role: {
+      trim: true,
+      customSanitizer: {
+        options: (value: string) => value ?? ''
+      }
     }
   },
   ['query']

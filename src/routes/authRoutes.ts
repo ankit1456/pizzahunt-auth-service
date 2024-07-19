@@ -1,9 +1,9 @@
 import express, { RequestHandler } from 'express';
 import { AppDataSource } from '../config/data-source';
 import logger from '../config/logger';
-import { AuthController } from '../controllers/AuthController';
-import { RefreshToken } from '../entity/RefreshToken';
-import { User } from '../entity/User';
+import { AuthController } from '../controllers';
+import { RefreshToken, User } from '../entity';
+
 import {
   authenticate,
   parseRefreshToken,
