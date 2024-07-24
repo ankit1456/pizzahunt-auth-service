@@ -10,4 +10,4 @@
 
 # Pizzahunt Auth Service
 
-Authentication service for full stack food delivery app(pizzahunt).
+Authentication service for food delivery app(pizzahunt).

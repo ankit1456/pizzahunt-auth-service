@@ -48,6 +48,19 @@ describe('GET /api/users', () => {
       expect(response.statusCode).toBe(200);
       expect(response.body.data).toHaveLength(1);
     });
+
+    it('should return filtered users', async () => {
+      await createUser(connection.getRepository(User));
+
+      const response = await request(app)
+        .get('/api/users?q=ankit&role=customer')
+        .set('Cookie', [`accessToken=${adminToken};`])
+        .send();
+
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].email).toBe('ankit@gmail.com');
+      expect(response.body.data[0].role).toBe(Roles.CUSTOMER);
+    });
   });
   describe('failure cases', () => {
     it('should return 401 if user is not authenticated', async () => {

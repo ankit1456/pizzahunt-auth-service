@@ -30,5 +30,14 @@ describe('GET /api/tenants', () => {
       expect(response.statusCode).toBe(200);
       expect(response.body.data).toHaveLength(1);
     });
+
+    it('should return all tenants with 200 status code', async () => {
+      await createTenant(connection.getRepository(Tenant));
+
+      const response = await request(app).get('/api/tenants?q=name').send();
+
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].name).toBe('Tenant name');
+    });
   });
 });
