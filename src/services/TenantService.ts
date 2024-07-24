@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Tenant } from '../entity';
 import { TQueryParams } from '../types';
 import { TPartialTenant, TTenant } from '../types/tenant.types';
@@ -12,7 +12,9 @@ export default class TenantService {
   }
 
   getAllTenants(queryParams: TQueryParams) {
-    const queryBuilder = this.tenantRepository.createQueryBuilder();
+    let queryBuilder = this.tenantRepository.createQueryBuilder('tenant');
+
+    queryBuilder = this.searchTenants(queryBuilder, queryParams);
     return paginate<Tenant>(queryBuilder, queryParams);
   }
   getTenantById(tenantId: string | undefined) {
@@ -28,5 +30,24 @@ export default class TenantService {
 
   deleteTenant(tenantId: string | undefined) {
     return this.tenantRepository.delete({ id: tenantId });
+  }
+
+  searchTenants(
+    queryBuilder: SelectQueryBuilder<Tenant>,
+    queryParams: TQueryParams
+  ) {
+    if (queryParams.q) {
+      const searchTerm = `%${queryParams.q}%`;
+
+      queryBuilder
+        .where("CONCAT(tenant.name, ' ', tenant.address) ILike :q", {
+          q: searchTerm
+        })
+        .orWhere('CONCAT(tenant.name, tenant.address) ILike :q', {
+          q: searchTerm
+        });
+    }
+
+    return queryBuilder.orderBy('tenant.createdAt', 'DESC');
   }
 }
