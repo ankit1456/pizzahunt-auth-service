@@ -28,7 +28,7 @@ export default validationSchema({
   },
   lastName: {
     ...commonOptions,
-    errorMessage: 'fast name is required',
+    errorMessage: 'last name is required',
     isLength: {
       options: {
         max: 30,

@@ -115,7 +115,7 @@ export default class UserService {
         lastName,
         role,
         email,
-        tenant: tenantId ? { id: tenantId } : undefined
+        tenant: tenantId ? { id: tenantId } : null
       }
     );
   }

@@ -30,7 +30,7 @@ export default class User {
   role: Roles;
 
   @ManyToOne(() => Tenant)
-  tenant: Tenant;
+  tenant: Tenant | null;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
