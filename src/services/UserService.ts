@@ -39,7 +39,7 @@ export default class UserService {
         email,
         password: hashedPassword,
         role,
-        tenant: tenantId ? { id: tenantId } : undefined
+        tenant: tenantId ? { id: tenantId } : null
       });
     } catch (err) {
       if (err instanceof HttpError) {

@@ -85,19 +85,16 @@ export default class AuthController {
         includePassword: true
       });
 
-      if (!user) {
-        const err = createHttpError(400, 'Email or Password is incorrect');
-        return next(err);
-      }
+      if (!user)
+        return next(createHttpError(400, 'Email or Password is incorrect'));
 
       const passwordMatch = await this.credentialService.comparePassword(
         password,
         user.password
       );
 
-      if (!passwordMatch) {
+      if (!passwordMatch)
         return next(createHttpError(400, 'Email or Password is incorrect'));
-      }
 
       const payload: JwtPayload = {
         sub: user.id,

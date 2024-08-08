@@ -54,7 +54,7 @@ export const createUser = async (repository: Repository<User>) => {
 
   return user;
 };
-export const createRefreshToken = async (
+export const persistRefreshToken = async (
   repository: Repository<RefreshToken>,
   user: TUser
 ) => {

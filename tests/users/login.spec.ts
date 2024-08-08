@@ -101,5 +101,17 @@ describe('POST /api/auth/login', () => {
       expect(response.statusCode).toBe(400);
       expect(response.body.errors).toHaveLength(1);
     });
+
+    it('should return error 404 status code if user does not exists', async () => {
+      const creds = {
+        email: 'anki@gmail.com',
+        password: 'test12345'
+      };
+
+      const response = await request(app).post('/api/auth/login').send(creds);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.errors).toHaveLength(1);
+    });
   });
 });

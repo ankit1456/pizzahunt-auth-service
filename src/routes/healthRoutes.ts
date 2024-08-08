@@ -13,7 +13,7 @@ router.get('/', (_, res) => {
     if (error instanceof Error) {
       healthcheck.message = error.message;
     }
-    res.status(503).send();
+    res.status(503).send(healthcheck);
   }
 });
 
