@@ -9,7 +9,7 @@ import { Logger } from 'winston';
 import { User } from '../entity';
 import { TQueryParams } from '../types';
 import { TUser } from '../types/auth.types';
-import { paginate } from '../utils/paginate';
+import { paginate } from '../utils';
 import CredentialService from './CredentialService';
 
 export default class UserService {
@@ -33,7 +33,7 @@ export default class UserService {
       const hashedPassword =
         await this.credentialService.generateHashedPassword(user.password);
 
-      return await this.userRepository.save({
+      return this.userRepository.save({
         firstName,
         lastName,
         email,

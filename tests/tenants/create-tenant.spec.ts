@@ -2,7 +2,7 @@ import createJWKSMock, { JWKSMock } from 'mock-jwks';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
-import { AppDataSource } from '../../src/config/data-source';
+import { AppDataSource } from '../../src/config';
 import { Roles } from '../../src/types/auth.types';
 import { getTenants } from '../utils';
 

@@ -45,9 +45,9 @@ export default class TenantController {
   }
 
   async getAllTenants(req: Request, res: Response, next: NextFunction) {
-    const queryParams = matchedData(req, {
+    const queryParams = matchedData<TQueryParams>(req, {
       onlyValidData: true
-    }) as TQueryParams;
+    });
     try {
       const tenants = await this.tenantService.getAllTenants(queryParams);
       this.logger.info('Fetched all tenants');
@@ -70,9 +70,7 @@ export default class TenantController {
       const { tenantId } = req.params;
       const tenant = await this.tenantService.getTenantById(tenantId);
 
-      if (!tenant) {
-        throw createHttpError(404, `Tenant not found`);
-      }
+      if (!tenant) return next(createHttpError(404, `Tenant not found`));
 
       this.logger.debug('Tenant fetched', {
         id: tenant.id
@@ -90,7 +88,6 @@ export default class TenantController {
     next: NextFunction
   ) {
     const result = validationResult(req);
-
     if (!result.isEmpty()) {
       return res.status(400).json({
         errors: result.array()
@@ -101,9 +98,8 @@ export default class TenantController {
 
       const isExists = await this.tenantService.getTenantById(tenantId);
 
-      if (!isExists) {
-        throw createHttpError(404, 'Tenant not found');
-      }
+      if (!isExists) return next(createHttpError(404, 'Tenant not found'));
+
       const { name, address } = req.body;
 
       await this.tenantService.updateTenant(tenantId, {
@@ -135,9 +131,7 @@ export default class TenantController {
 
       const isExists = await this.tenantService.getTenantById(tenantId);
 
-      if (!isExists) {
-        throw createHttpError(404, `Tenant not found`);
-      }
+      if (!isExists) return next(createHttpError(404, `Tenant not found`));
 
       const result = await this.tenantService.deleteTenant(tenantId);
 

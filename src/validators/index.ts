@@ -7,6 +7,7 @@ export {
   validateTenantId,
   validateUserId
 };
+
 export { default as loginValidator } from './login.validator';
 export { default as queryParamsValidator } from './queryParams.validator';
 export { default as registerValidator } from './register.validator';

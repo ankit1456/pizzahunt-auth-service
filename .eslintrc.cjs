@@ -18,8 +18,8 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': [
       'error',
       {
-        argsIgnorePattern: '^(req|res|next)$',
-        varsIgnorePattern: '^(req|res|next)$'
+        argsIgnorePattern: '^(req|res|next|value)$',
+        varsIgnorePattern: '^(req|res|next|value)$'
       }
     ]
   }

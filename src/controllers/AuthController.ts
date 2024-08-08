@@ -124,9 +124,7 @@ export default class AuthController {
     try {
       const user = await this.userService.findById(req.auth.sub);
 
-      if (!user) {
-        throw createHttpError(404, 'User not found');
-      }
+      if (!user) return next(createHttpError(404, 'User not found'));
 
       res.json(user);
     } catch (error) {
@@ -143,9 +141,8 @@ export default class AuthController {
 
       const user = await this.userService.findById(req.auth.sub);
 
-      if (!user) {
-        return next(createHttpError(401, 'You are not authorized'));
-      }
+      if (!user) return next(createHttpError(401, 'You are not authorized'));
+
       const [accessToken, refreshToken] =
         await this.generateAccessAndRefreshTokens(payload, user);
 

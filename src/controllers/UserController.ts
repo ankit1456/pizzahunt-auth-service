@@ -49,9 +49,9 @@ export default class UserController {
   }
 
   async getAllUsers(req: Request, res: Response, next: NextFunction) {
-    const queryParams = matchedData(req, {
+    const queryParams = matchedData<TQueryParams>(req, {
       onlyValidData: true
-    }) as TQueryParams;
+    });
 
     try {
       const users = await this.userService.getAllUsers(queryParams);
@@ -140,9 +140,10 @@ export default class UserController {
         throw createHttpError(404, 'User not found');
       }
 
-      const role = user.id === req.auth.sub ? Roles.ADMIN : req.body.role;
+      const { firstName, lastName, email, role } = req.body;
 
-      const { firstName, lastName, email, tenantId } = req.body;
+      const tenantId =
+        user.role === Roles.MANAGER ? req.body.tenantId : undefined;
 
       await this.userService.updateUser(userId, {
         firstName,

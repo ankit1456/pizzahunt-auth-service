@@ -1,9 +1,7 @@
 import { Request } from 'express';
 import { expressjwt } from 'express-jwt';
 import { MoreThan } from 'typeorm';
-import { Config } from '../config';
-import { AppDataSource } from '../config/data-source';
-import logger from '../config/logger';
+import { AppDataSource, Config, logger } from '../config';
 import { RefreshToken } from '../entity';
 import { TAuthCookies, TRefreshTokenPayload } from '../types/auth.types';
 

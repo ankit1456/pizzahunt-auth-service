@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
-import { AppDataSource } from '../../src/config/data-source';
+import { AppDataSource } from '../../src/config';
 import { Tenant } from '../../src/entity';
 import { createTenant } from '../utils';
 
@@ -21,6 +21,10 @@ describe('GET /api/tenants', () => {
     await connection.destroy();
   });
 
+  const tenantData = {
+    name: 'New tenant name'
+  };
+
   describe('success cases', () => {
     it('should return all tenants with 200 status code', async () => {
       await createTenant(connection.getRepository(Tenant));
@@ -37,7 +41,7 @@ describe('GET /api/tenants', () => {
       const response = await request(app).get('/api/tenants?q=name').send();
 
       expect(response.body.data).toHaveLength(1);
-      expect(response.body.data[0].name).toBe('Tenant name');
+      expect(response.body.data[0].name).toBe(tenantData.name);
     });
   });
 });

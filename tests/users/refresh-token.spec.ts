@@ -2,7 +2,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
-import { AppDataSource } from '../../src/config/data-source';
+import { AppDataSource } from '../../src/config';
 import { RefreshToken, User } from '../../src/entity';
 import {
   createRefreshToken,
