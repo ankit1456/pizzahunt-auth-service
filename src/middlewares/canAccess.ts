@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
-import { Roles, TAuthRequest } from '../types/auth.types';
+import { ERoles, TAuthRequest } from '../types/auth.types';
 
-export default function canAccess(...roles: Roles[]) {
+export default function canAccess(...roles: ERoles[]) {
   return (req: Request, res: Response, next: NextFunction) => {
     const _req = req as TAuthRequest;
 
-    const userRole = _req.auth.role as Roles;
+    const userRole = _req.auth.role as ERoles;
 
     if (!roles.includes(userRole)) {
       return next(

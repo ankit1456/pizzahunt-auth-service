@@ -3,13 +3,13 @@ import { SelectQueryBuilder } from 'typeorm';
 import { AppDataSource, Config, logger } from '../config';
 import { Tenant, User } from '../entity';
 import { TQueryParams } from '../types';
-import { Roles } from '../types/auth.types';
+import { ERoles } from '../types/auth.types';
 
 export async function createAdmin() {
   try {
     const userRespository = AppDataSource.getRepository(User);
 
-    const ifExists = await userRespository.findOneBy({ role: Roles.ADMIN });
+    const ifExists = await userRespository.findOneBy({ role: ERoles.ADMIN });
 
     if (ifExists) return;
 
@@ -23,7 +23,7 @@ export async function createAdmin() {
       firstName: Config.ADMIN_DEFAULT_FIRSTNAME,
       lastName: Config.ADMIN_DEFAULT_LASTNAME,
       email: Config.ADMIN_DEFAULT_EMAIL,
-      role: Roles.ADMIN,
+      role: ERoles.ADMIN,
       password: hashedPassword
     });
   } catch (error) {

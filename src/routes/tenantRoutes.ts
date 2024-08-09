@@ -3,7 +3,7 @@ import { AppDataSource, logger } from '../config';
 import { TenantController } from '../controllers';
 import { Tenant } from '../entity';
 import { authenticate, canAccess } from '../middlewares';
-import { Roles } from '../types/auth.types';
+import { ERoles } from '../types/auth.types';
 import {
   queryParamsValidator,
   tenantValidator,
@@ -23,7 +23,7 @@ const tenantController = new TenantController(tenantService, logger);
 router.get('/', queryParamsValidator, ((req, res, next) =>
   tenantController.getAllTenants(req, res, next)) as RequestHandler);
 
-router.use(authenticate as RequestHandler, canAccess(Roles.ADMIN));
+router.use(authenticate as RequestHandler, canAccess(ERoles.ADMIN));
 
 router.post('/', tenantValidator, ((req, res, next) =>
   tenantController.createTenant(req, res, next)) as RequestHandler);

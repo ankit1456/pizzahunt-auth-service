@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { RefreshToken, User } from '../../src/entity';
-import { Roles } from '../../src/types/auth.types';
+import { ERoles } from '../../src/types/auth.types';
 import {
   persistRefreshToken,
   createUser,
@@ -95,7 +95,7 @@ describe('POST /api/auth/logout', () => {
     it('should return 401 if refresh token or accessToken is missing', async () => {
       const payload: JwtPayload = {
         sub: 'fa72c1dc-00d1-42f4-9e87-fe03afab0560',
-        role: Roles.CUSTOMER
+        role: ERoles.CUSTOMER
       };
       const accessToken = jwks.token(payload);
 

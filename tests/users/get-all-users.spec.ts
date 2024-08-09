@@ -4,8 +4,9 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { User } from '../../src/entity';
-import { Roles } from '../../src/types/auth.types';
+import { ERoles } from '../../src/types/auth.types';
 import { createUser } from '../utils';
+import { EStatus } from '../../src/types';
 
 describe('GET /api/users', () => {
   let connection: DataSource;
@@ -24,7 +25,7 @@ describe('GET /api/users', () => {
 
     adminToken = jwks.token({
       sub: 'fa72c1dc-00d1-42f4-9e87-fe03afab0560',
-      role: Roles.ADMIN
+      role: ERoles.ADMIN
     });
   });
 
@@ -46,6 +47,7 @@ describe('GET /api/users', () => {
         .send();
 
       expect(response.statusCode).toBe(200);
+      expect(response.body.status).toBe(EStatus.SUCCESS);
       expect(response.body.data).toHaveLength(1);
     });
 
@@ -59,7 +61,7 @@ describe('GET /api/users', () => {
 
       expect(response.body.data).toHaveLength(1);
       expect(response.body.data[0].email).toBe('ankit@gmail.com');
-      expect(response.body.data[0].role).toBe(Roles.CUSTOMER);
+      expect(response.body.data[0].role).toBe(ERoles.CUSTOMER);
     });
   });
   describe('failure cases', () => {
@@ -73,7 +75,7 @@ describe('GET /api/users', () => {
     it('should return 403 if user is not an admin', async () => {
       const nonAdminToken = jwks.token({
         sub: 'fa72c1dc-00d1-42f4-9e87-fe03afab0560',
-        role: Roles.MANAGER
+        role: ERoles.MANAGER
       });
 
       const response = await request(app)

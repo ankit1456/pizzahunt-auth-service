@@ -4,8 +4,9 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { User } from '../../src/entity';
-import { Roles } from '../../src/types/auth.types';
+import { ERoles } from '../../src/types/auth.types';
 import { createUser, getUsers } from '../utils';
+import { EStatus } from '../../src/types';
 
 describe('PATCH /api/users/:userId', () => {
   let connection: DataSource;
@@ -24,7 +25,7 @@ describe('PATCH /api/users/:userId', () => {
 
     adminToken = jwks.token({
       sub: 'fa72c1dc-00d1-42f4-9e87-fe03afab0560',
-      role: Roles.ADMIN
+      role: ERoles.ADMIN
     });
   });
 
@@ -43,12 +44,14 @@ describe('PATCH /api/users/:userId', () => {
       const response = await request(app)
         .patch(`/api/users/${id}`)
         .set('Cookie', [`accessToken=${adminToken};`])
-        .send({ role: Roles.CUSTOMER, firstName: 'Ankit Kumar' });
+        .send({ role: ERoles.CUSTOMER, firstName: 'Ankit Kumar' });
 
       const users = await getUsers(connection);
+
       expect(response.statusCode).toBe(200);
+      expect(response.body.status).toBe(EStatus.SUCCESS);
       expect(users[0]?.firstName).toBe('Ankit Kumar');
-      expect(users[0]?.role).toBe(Roles.CUSTOMER);
+      expect(users[0]?.role).toBe(ERoles.CUSTOMER);
     });
 
     it('should not update admin user role', async () => {
@@ -56,18 +59,18 @@ describe('PATCH /api/users/:userId', () => {
 
       adminToken = jwks.token({
         sub: id,
-        role: Roles.ADMIN
+        role: ERoles.ADMIN
       });
 
       const response = await request(app)
         .patch(`/api/users/${id}`)
         .set('Cookie', [`accessToken=${adminToken};`])
-        .send({ role: Roles.CUSTOMER });
+        .send({ role: ERoles.CUSTOMER });
 
       const users = await getUsers(connection);
 
       expect(response.statusCode).toBe(200);
-      expect(users[0]?.role).toBe(Roles.ADMIN);
+      expect(users[0]?.role).toBe(ERoles.ADMIN);
     });
   });
   describe('failure cases', () => {
@@ -85,7 +88,7 @@ describe('PATCH /api/users/:userId', () => {
     it('should return 401 if user is not authenticated', async () => {
       const response = await request(app)
         .patch('/api/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560')
-        .send({ role: Roles.CUSTOMER });
+        .send({ role: ERoles.CUSTOMER });
 
       expect(response.statusCode).toBe(401);
       expect(response.body).toHaveProperty('errors');
@@ -94,13 +97,13 @@ describe('PATCH /api/users/:userId', () => {
     it('should return 403 if user is not an admin', async () => {
       const nonAdminToken = jwks.token({
         sub: 'fa72c1dc-00d1-42f4-9e87-fe03afab0560',
-        role: Roles.MANAGER
+        role: ERoles.MANAGER
       });
 
       const response = await request(app)
         .patch('/api/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560')
         .set('Cookie', [`accessToken=${nonAdminToken};`])
-        .send({ role: Roles.CUSTOMER });
+        .send({ role: ERoles.CUSTOMER });
 
       expect(response.statusCode).toBe(403);
       expect(response.body).toHaveProperty('errors');
@@ -110,7 +113,7 @@ describe('PATCH /api/users/:userId', () => {
       const response = await request(app)
         .patch('/api/users/wfwef')
         .set('Cookie', [`accessToken=${adminToken};`])
-        .send({ role: Roles.CUSTOMER });
+        .send({ role: ERoles.CUSTOMER });
 
       expect(response.statusCode).toBe(400);
       expect(response.body).toHaveProperty('errors');

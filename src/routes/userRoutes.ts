@@ -4,7 +4,7 @@ import { UserController } from '../controllers';
 import { User } from '../entity';
 import { authenticate, canAccess } from '../middlewares';
 import { CredentialService, UserService } from '../services';
-import { Roles, TUpdateUserRequest } from '../types/auth.types';
+import { ERoles, TUpdateUserRequest } from '../types/auth.types';
 import {
   queryParamsValidator,
   updateUserValidator,
@@ -20,7 +20,7 @@ const credentialService = new CredentialService();
 const userService = new UserService(userRepository, credentialService, logger);
 const userController = new UserController(userService, logger);
 
-router.use(authenticate as RequestHandler, canAccess(Roles.ADMIN));
+router.use(authenticate as RequestHandler, canAccess(ERoles.ADMIN));
 
 router
   .route('/')

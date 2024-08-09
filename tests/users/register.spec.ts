@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { RefreshToken, User } from '../../src/entity';
-import { Roles } from '../../src/types/auth.types';
+import { ERoles } from '../../src/types/auth.types';
 import { createUser, getUsers, isJwt } from '../utils';
 
 describe('POST /api/auth/register', () => {
@@ -73,7 +73,7 @@ describe('POST /api/auth/register', () => {
       expect(response.body.id).toBe(users[0]?.id);
 
       expect(users[0]).toHaveProperty('role');
-      expect(users[0]?.role).toBe(Roles.CUSTOMER);
+      expect(users[0]?.role).toBe(ERoles.CUSTOMER);
     });
 
     it('should store hashed password', async () => {

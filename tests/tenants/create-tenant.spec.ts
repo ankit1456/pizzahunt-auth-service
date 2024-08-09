@@ -3,8 +3,9 @@ import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
-import { Roles } from '../../src/types/auth.types';
+import { ERoles } from '../../src/types/auth.types';
 import { getTenants } from '../utils';
+import { EStatus } from '../../src/types';
 
 describe('POST /api/tenants', () => {
   let connection: DataSource;
@@ -21,7 +22,7 @@ describe('POST /api/tenants', () => {
 
     adminToken = jwks.token({
       sub: 'fa72c1dc-00d1-42f4-9e87-fe03afab0560',
-      role: Roles.ADMIN
+      role: ERoles.ADMIN
     });
 
     await connection.dropDatabase();
@@ -49,6 +50,7 @@ describe('POST /api/tenants', () => {
         .send(tenantData);
 
       expect(response.statusCode).toBe(201);
+      expect(response.body.status).toBe(EStatus.SUCCESS);
     });
 
     it('should create a tenant in the database', async () => {
@@ -83,7 +85,7 @@ describe('POST /api/tenants', () => {
     it('should return 403 if user is not authorized (non admin)', async () => {
       const managerToken = jwks.token({
         sub: 'fa72c1dc-00d1-42f4-9e87-fe03afab0560',
-        role: Roles.MANAGER
+        role: ERoles.MANAGER
       });
 
       const response = await request(app)

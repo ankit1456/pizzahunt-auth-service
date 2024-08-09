@@ -3,7 +3,7 @@ import { matchedData, validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { Logger } from 'winston';
 import { TenantService } from '../services';
-import { TQueryParams } from '../types';
+import { EStatus, TQueryParams } from '../types';
 import {
   TCreateTenantRequest,
   TUpdateTenantRequest
@@ -38,7 +38,7 @@ export default class TenantController {
       this.logger.info('Tenant has been created', {
         id: newTenant.id
       });
-      res.status(201).json(newTenant);
+      res.status(201).json({ status: EStatus.SUCCESS, tenant: newTenant });
     } catch (error) {
       return next(error);
     }
@@ -52,7 +52,7 @@ export default class TenantController {
       const tenants = await this.tenantService.getAllTenants(queryParams);
       this.logger.info('Fetched all tenants');
 
-      res.json(tenants);
+      res.json({ status: EStatus.SUCCESS, ...tenants });
     } catch (error) {
       return next(error);
     }
@@ -76,7 +76,7 @@ export default class TenantController {
         id: tenant.id
       });
 
-      res.json(tenant);
+      res.json({ status: EStatus.SUCCESS, tenant });
     } catch (error) {
       return next(error);
     }
@@ -111,7 +111,7 @@ export default class TenantController {
         id: tenantId
       });
 
-      res.json({ id: tenantId });
+      res.json({ status: EStatus.SUCCESS, id: tenantId });
     } catch (error) {
       return next(error);
     }
@@ -139,7 +139,7 @@ export default class TenantController {
         id: tenantId
       });
       if (result.affected) {
-        res.json({ message: 'Tenant deleted' });
+        res.json({ status: EStatus.SUCCESS });
       }
     } catch (error) {
       return next(error);

@@ -3,7 +3,7 @@ import { JwtPayload, sign } from 'jsonwebtoken';
 import { DataSource, Repository } from 'typeorm';
 import { Config } from '../../src/config';
 import { RefreshToken, Tenant, User } from '../../src/entity';
-import { Roles, TUser } from '../../src/types/auth.types';
+import { ERoles, TUser } from '../../src/types/auth.types';
 
 export const truncateTables = async (connection: DataSource) => {
   const entities = connection.entityMetadatas;
@@ -49,7 +49,7 @@ export const createUser = async (repository: Repository<User>) => {
     lastName: 'Tripahi',
     email: 'ankit@gmail.com',
     password: hashedPassword,
-    role: Roles.CUSTOMER
+    role: ERoles.CUSTOMER
   });
 
   return user;
