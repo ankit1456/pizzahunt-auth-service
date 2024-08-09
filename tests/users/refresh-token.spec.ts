@@ -2,10 +2,10 @@ import { JwtPayload } from 'jsonwebtoken';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
-import { AppDataSource } from '../../src/config/data-source';
+import { AppDataSource } from '../../src/config';
 import { RefreshToken, User } from '../../src/entity';
 import {
-  createRefreshToken,
+  persistRefreshToken,
   createUser,
   generateRefreshToken,
   isJwt
@@ -36,7 +36,7 @@ describe('POST /api/auth/refresh', () => {
         role: user.role
       };
 
-      const refreshTokenDocument = await createRefreshToken(
+      const refreshTokenDocument = await persistRefreshToken(
         connection.getRepository(RefreshToken),
         user
       );
@@ -88,7 +88,7 @@ describe('POST /api/auth/refresh', () => {
         role: user.role
       };
 
-      const newRefreshToken = await createRefreshToken(
+      const newRefreshToken = await persistRefreshToken(
         refreshTokenRepository,
         user
       );

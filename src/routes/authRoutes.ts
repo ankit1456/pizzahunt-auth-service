@@ -1,6 +1,5 @@
 import express, { RequestHandler } from 'express';
-import { AppDataSource } from '../config/data-source';
-import logger from '../config/logger';
+import { AppDataSource, logger } from '../config';
 import { AuthController } from '../controllers';
 import { RefreshToken, User } from '../entity';
 
@@ -10,9 +9,8 @@ import {
   validateRefreshToken
 } from '../middlewares';
 import { CredentialService, TokenService, UserService } from '../services';
-import { TAuthRequest } from '../types/auth.types';
-import loginValidator from '../validators/login.validator';
-import registerValidator from '../validators/register.validator';
+import { AuthRoutes, TAuthRequest } from '../types/auth.types';
+import { loginValidator, registerValidator } from '../validators';
 
 const router = express.Router();
 
@@ -31,31 +29,28 @@ const authController = new AuthController(
   logger
 );
 
-router.post('/register', registerValidator, (async (req, res, next) =>
+router.post(AuthRoutes.REGISTER, registerValidator, ((req, res, next) =>
   authController.register(req, res, next)) as RequestHandler);
 
-router.post('/login', loginValidator, (async (req, res, next) =>
+router.post(AuthRoutes.LOGIN, loginValidator, ((req, res, next) =>
   authController.login(req, res, next)) as RequestHandler);
 
-router.get(
-  '/self',
-  authenticate as RequestHandler,
-  (async (req, res, next) =>
-    authController.self(req as TAuthRequest, res, next)) as RequestHandler
-);
-
 router.post(
-  '/refresh',
+  AuthRoutes.REFRESH,
   validateRefreshToken as RequestHandler,
-  (async (req, res, next) =>
+  ((req, res, next) =>
     authController.refresh(req as TAuthRequest, res, next)) as RequestHandler
 );
 
+router.use(authenticate as RequestHandler);
+
+router.get(AuthRoutes.SELF, ((req, res, next) =>
+  authController.self(req as TAuthRequest, res, next)) as RequestHandler);
+
 router.post(
-  '/logout',
-  authenticate as RequestHandler,
+  AuthRoutes.LOGOUT,
   parseRefreshToken as RequestHandler,
-  (async (req, res, next) =>
+  ((req, res, next) =>
     authController.logout(req as TAuthRequest, res, next)) as RequestHandler
 );
 

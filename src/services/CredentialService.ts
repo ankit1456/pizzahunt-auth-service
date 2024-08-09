@@ -1,12 +1,12 @@
 import bcrypt from 'bcryptjs';
 
 export default class CredentialService {
-  async generateHashedPassword(password: string) {
+  generateHashedPassword(password: string) {
     const saltRounds = 10;
-    return await bcrypt.hash(password, saltRounds);
+    return bcrypt.hash(password, saltRounds);
   }
 
-  async comparePassword(userPassword: string, passwordHash: string) {
-    return await bcrypt.compare(userPassword, passwordHash);
+  comparePassword(userPassword: string, passwordHash: string) {
+    return bcrypt.compare(userPassword, passwordHash);
   }
 }

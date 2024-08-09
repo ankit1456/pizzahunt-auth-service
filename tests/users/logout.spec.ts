@@ -3,11 +3,11 @@ import createJWKSMock, { JWKSMock } from 'mock-jwks';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
-import { AppDataSource } from '../../src/config/data-source';
+import { AppDataSource } from '../../src/config';
 import { RefreshToken, User } from '../../src/entity';
 import { Roles } from '../../src/types/auth.types';
 import {
-  createRefreshToken,
+  persistRefreshToken,
   createUser,
   generateRefreshToken,
   getRefreshTokens
@@ -48,7 +48,7 @@ describe('POST /api/auth/logout', () => {
       };
       const accessToken = jwks.token(payload);
 
-      const refreshTokenDocument = await createRefreshToken(
+      const refreshTokenDocument = await persistRefreshToken(
         connection.getRepository(RefreshToken),
         user
       );

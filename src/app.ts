@@ -4,37 +4,23 @@ import express from 'express';
 import 'reflect-metadata';
 import { Config } from './config';
 import { globalErrorHandler } from './middlewares';
-import { authRouter, tenantRouter, userRouter } from './routes';
+import { authRouter, healthRouter, tenantRouter, userRouter } from './routes';
 
 const app = express();
 
+// middlewares
 app.use(
   cors({
     origin: [Config.WHITELIST_ORIGIN!],
     credentials: true
   })
 );
-
 app.use(express.static('public'));
-
 app.use(cookieParser());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  const healthcheck = {
-    message: 'OK',
-    timestamp: new Date().toLocaleString()
-  };
-  try {
-    res.send(healthcheck);
-  } catch (error) {
-    if (error instanceof Error) {
-      healthcheck.message = error.message;
-    }
-    res.status(503).send();
-  }
-});
-
+// routes
+app.use('/api', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/tenants', tenantRouter);
 app.use('/api/users', userRouter);

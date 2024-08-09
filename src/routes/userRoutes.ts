@@ -1,6 +1,5 @@
 import express, { RequestHandler } from 'express';
-import { AppDataSource } from '../config/data-source';
-import logger from '../config/logger';
+import { AppDataSource, logger } from '../config';
 import { UserController } from '../controllers';
 import { User } from '../entity';
 import { authenticate, canAccess } from '../middlewares';
@@ -23,26 +22,24 @@ const userController = new UserController(userService, logger);
 
 router.use(authenticate as RequestHandler, canAccess(Roles.ADMIN));
 
-router.get('/', queryParamsValidator, (async (req, res, next) =>
-  userController.getAllUsers(req, res, next)) as RequestHandler);
+router
+  .route('/')
+  .get(queryParamsValidator, ((req, res, next) =>
+    userController.getAllUsers(req, res, next)) as RequestHandler)
+  .post(userValidator, ((req, res, next) =>
+    userController.createUser(req, res, next)) as RequestHandler);
 
-router.get('/:userId', validateUserId, (async (req, res, next) =>
-  userController.getUser(req, res, next)) as RequestHandler);
-
-router.post('/', userValidator, (async (req, res, next) =>
-  userController.createUser(req, res, next)) as RequestHandler);
-
-router.patch('/:userId', validateUserId, updateUserValidator, (async (
-  req,
-  res,
-  next
-) =>
-  userController.updateUser(
-    req as TUpdateUserRequest,
-    res,
-    next
-  )) as RequestHandler);
-router.delete('/:userId', validateUserId, (async (req, res, next) =>
-  userController.deleteUser(req, res, next)) as RequestHandler);
+router
+  .route('/:userId')
+  .get(validateUserId, ((req, res, next) =>
+    userController.getUser(req, res, next)) as RequestHandler)
+  .patch(validateUserId, updateUserValidator, ((req, res, next) =>
+    userController.updateUser(
+      req as TUpdateUserRequest,
+      res,
+      next
+    )) as RequestHandler)
+  .delete(validateUserId, ((req, res, next) =>
+    userController.deleteUser(req, res, next)) as RequestHandler);
 
 export default router;

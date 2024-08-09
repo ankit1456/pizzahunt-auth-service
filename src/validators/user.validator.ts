@@ -1,5 +1,5 @@
 import { checkSchema as validationSchema } from 'express-validator';
-import { roles } from '../types/auth.types';
+import { Roles, roles, TUpdateUserRequest } from '../types/auth.types';
 
 const commonOptions = {
   trim: true,
@@ -100,13 +100,6 @@ export const updateUserValidator = validationSchema({
       errorMessage: 'last name must contain 2 to 30 characters'
     }
   },
-  tenantId: {
-    ...commonUpdationOptions,
-    isUUID: {
-      errorMessage: 'not a valid tenantId'
-    }
-  },
-
   password: {
     custom: {
       options: (value, { req }) => {
@@ -117,12 +110,23 @@ export const updateUserValidator = validationSchema({
       }
     }
   },
-
   role: {
     ...commonUpdationOptions,
+    customSanitizer: {
+      options: (role: Roles, { req }) => {
+        const { params, auth } = req as TUpdateUserRequest;
+        return params.userId === auth.sub ? Roles.ADMIN : role;
+      }
+    },
     isIn: {
       options: [roles],
-      errorMessage: `role must be one of: ${roles.join(', ')}`
+      errorMessage: `role must be ${roles.join(', ')}`
+    }
+  },
+  tenantId: {
+    ...commonUpdationOptions,
+    isUUID: {
+      errorMessage: 'not a valid tenantId'
     }
   }
 });

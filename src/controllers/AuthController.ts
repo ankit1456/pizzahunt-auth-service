@@ -85,19 +85,16 @@ export default class AuthController {
         includePassword: true
       });
 
-      if (!user) {
-        const err = createHttpError(400, 'Email or Password is incorrect');
-        return next(err);
-      }
+      if (!user)
+        return next(createHttpError(400, 'Email or Password is incorrect'));
 
       const passwordMatch = await this.credentialService.comparePassword(
         password,
         user.password
       );
 
-      if (!passwordMatch) {
+      if (!passwordMatch)
         return next(createHttpError(400, 'Email or Password is incorrect'));
-      }
 
       const payload: JwtPayload = {
         sub: user.id,
@@ -124,9 +121,7 @@ export default class AuthController {
     try {
       const user = await this.userService.findById(req.auth.sub);
 
-      if (!user) {
-        throw createHttpError(404, 'User not found');
-      }
+      if (!user) return next(createHttpError(404, 'User not found'));
 
       res.json(user);
     } catch (error) {
@@ -143,9 +138,8 @@ export default class AuthController {
 
       const user = await this.userService.findById(req.auth.sub);
 
-      if (!user) {
-        return next(createHttpError(401, 'You are not authorized'));
-      }
+      if (!user) return next(createHttpError(401, 'You are not authorized'));
+
       const [accessToken, refreshToken] =
         await this.generateAccessAndRefreshTokens(payload, user);
 

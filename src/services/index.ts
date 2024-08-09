@@ -1,6 +1,4 @@
-import { default as CredentialService } from './CredentialService';
-import { default as TenantService } from './TenantService';
-import { default as TokenService } from './TokenService';
-import { default as UserService } from './UserService';
-
-export { CredentialService, TenantService, TokenService, UserService };
+export { default as CredentialService } from './CredentialService';
+export { default as TenantService } from './TenantService';
+export { default as TokenService } from './TokenService';
+export { default as UserService } from './UserService';

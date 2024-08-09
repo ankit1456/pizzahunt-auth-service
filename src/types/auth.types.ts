@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { TGenericBodyRequest } from '.';
 
 export type TUser = {
   firstName: string;
@@ -14,12 +15,8 @@ type TCredentials = {
   password: string;
 };
 
-interface GenericRequest<T> extends Request {
-  body: T;
-}
-
-export type TRegisterUserRequest = GenericRequest<TUser>;
-export type TLoginUserRequest = GenericRequest<TCredentials>;
+export type TRegisterUserRequest = TGenericBodyRequest<TUser>;
+export type TLoginUserRequest = TGenericBodyRequest<TCredentials>;
 
 type TRequestAuthPayload = {
   id?: string;
@@ -41,8 +38,10 @@ export type TRefreshTokenPayload = {
   sub: string;
 };
 
-export type TCreateUserRequest = GenericRequest<TUser>;
-export type TUpdateUserRequest = GenericRequest<Omit<TUser, 'password'>> & {
+export type TCreateUserRequest = TGenericBodyRequest<TUser>;
+export type TUpdateUserRequest = TGenericBodyRequest<
+  Omit<TUser, 'password'>
+> & {
   auth: TRequestAuthPayload;
 };
 
@@ -53,3 +52,11 @@ export const enum Roles {
 }
 
 export const roles: Roles[] = [Roles.CUSTOMER, Roles.MANAGER, Roles.ADMIN];
+
+export const enum AuthRoutes {
+  REGISTER = '/register',
+  LOGIN = '/login',
+  REFRESH = '/refresh',
+  SELF = '/self',
+  LOGOUT = '/logout'
+}

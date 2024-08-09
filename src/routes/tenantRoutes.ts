@@ -1,6 +1,5 @@
 import express, { RequestHandler } from 'express';
-import { AppDataSource } from '../config/data-source';
-import logger from '../config/logger';
+import { AppDataSource, logger } from '../config';
 import { TenantController } from '../controllers';
 import { Tenant } from '../entity';
 import { authenticate, canAccess } from '../middlewares';
@@ -21,24 +20,21 @@ const tenantRepository = AppDataSource.getRepository(Tenant);
 const tenantService = new TenantService(tenantRepository);
 const tenantController = new TenantController(tenantService, logger);
 
-router.get('/', queryParamsValidator, (async (req, res, next) =>
+router.get('/', queryParamsValidator, ((req, res, next) =>
   tenantController.getAllTenants(req, res, next)) as RequestHandler);
 
 router.use(authenticate as RequestHandler, canAccess(Roles.ADMIN));
 
-router.get('/:tenantId', validateTenantId, (async (req, res, next) =>
-  tenantController.getTenantById(req, res, next)) as RequestHandler);
-
-router.post('/', tenantValidator, (async (req, res, next) =>
+router.post('/', tenantValidator, ((req, res, next) =>
   tenantController.createTenant(req, res, next)) as RequestHandler);
 
-router.patch('/:tenantId', validateTenantId, updateTenantValidator, (async (
-  req,
-  res,
-  next
-) => tenantController.updateTenant(req, res, next)) as RequestHandler);
-
-router.delete('/:tenantId', validateTenantId, (async (req, res, next) =>
-  tenantController.deleteTenant(req, res, next)) as RequestHandler);
+router
+  .route('/:tenantId')
+  .get(validateTenantId, ((req, res, next) =>
+    tenantController.getTenantById(req, res, next)) as RequestHandler)
+  .patch(validateTenantId, updateTenantValidator, ((req, res, next) =>
+    tenantController.updateTenant(req, res, next)) as RequestHandler)
+  .delete(validateTenantId, ((req, res, next) =>
+    tenantController.deleteTenant(req, res, next)) as RequestHandler);
 
 export default router;

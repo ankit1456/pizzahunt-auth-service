@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
-import { AppDataSource } from '../../src/config/data-source';
+import { AppDataSource } from '../../src/config';
 import { User } from '../../src/entity';
 import { createUser, isJwt } from '../utils';
 
@@ -93,6 +93,18 @@ describe('POST /api/auth/login', () => {
     it('should return error if email or password is incorrect', async () => {
       const creds = {
         email: 'ankit@gmail.com',
+        password: 'test12345'
+      };
+
+      const response = await request(app).post('/api/auth/login').send(creds);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.errors).toHaveLength(1);
+    });
+
+    it('should return error 404 status code if user does not exists', async () => {
+      const creds = {
+        email: 'anki@gmail.com',
         password: 'test12345'
       };
 

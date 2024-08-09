@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 import { Config } from '.';
 const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME } = Config;
 
-export const AppDataSource = new DataSource({
+const AppDataSource = new DataSource({
   type: 'postgres',
   host: DB_HOST,
   port: Number(DB_PORT),
@@ -16,3 +16,5 @@ export const AppDataSource = new DataSource({
   migrations: ['src/migration/*.{ts,js}'],
   subscribers: []
 });
+
+export default AppDataSource;

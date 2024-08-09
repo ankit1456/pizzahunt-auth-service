@@ -1,8 +1,8 @@
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Tenant } from '../entity';
 import { TQueryParams } from '../types';
-import { TPartialTenant, TTenant } from '../types/tenant.types';
-import { paginate } from '../utils/paginate';
+import { TTenant } from '../types/tenant.types';
+import { paginate } from '../utils';
 
 export default class TenantService {
   constructor(private tenantRepository: Repository<Tenant>) {}
@@ -21,10 +21,7 @@ export default class TenantService {
     return this.tenantRepository.findOneBy({ id: tenantId });
   }
 
-  updateTenant(
-    tenantId: string | undefined,
-    tenantUpdatePayload: TPartialTenant
-  ) {
+  updateTenant(tenantId: string | undefined, tenantUpdatePayload: TTenant) {
     return this.tenantRepository.update({ id: tenantId }, tenantUpdatePayload);
   }
 
