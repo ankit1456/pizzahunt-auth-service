@@ -1,5 +1,5 @@
 import { checkSchema as validationSchema } from 'express-validator';
-import { Roles, roles, TUpdateUserRequest } from '../types/auth.types';
+import { ERoles, roles, TUpdateUserRequest } from '../types/auth.types';
 
 const commonOptions = {
   trim: true,
@@ -113,9 +113,9 @@ export const updateUserValidator = validationSchema({
   role: {
     ...commonUpdationOptions,
     customSanitizer: {
-      options: (role: Roles, { req }) => {
+      options: (role: ERoles, { req }) => {
         const { params, auth } = req as TUpdateUserRequest;
-        return params.userId === auth.sub ? Roles.ADMIN : role;
+        return params.userId === auth.sub ? ERoles.ADMIN : role;
       }
     },
     isIn: {

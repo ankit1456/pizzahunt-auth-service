@@ -6,7 +6,7 @@ export type TUser = {
   lastName: string;
   email: string;
   password: string;
-  role: Roles;
+  role: ERoles;
   tenantId?: string;
 };
 
@@ -45,13 +45,13 @@ export type TUpdateUserRequest = TGenericBodyRequest<
   auth: TRequestAuthPayload;
 };
 
-export const enum Roles {
+export const enum ERoles {
   CUSTOMER = 'customer',
   MANAGER = 'manager',
   ADMIN = 'admin'
 }
 
-export const roles: Roles[] = [Roles.CUSTOMER, Roles.MANAGER, Roles.ADMIN];
+export const roles: ERoles[] = [ERoles.CUSTOMER, ERoles.MANAGER, ERoles.ADMIN];
 
 export const enum AuthRoutes {
   REGISTER = '/register',

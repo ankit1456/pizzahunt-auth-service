@@ -4,8 +4,9 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { User } from '../../src/entity';
-import { Roles } from '../../src/types/auth.types';
+import { ERoles } from '../../src/types/auth.types';
 import { createUser, getUsers } from '../utils';
+import { EStatus } from '../../src/types';
 
 describe('DELETE /api/users/:userId', () => {
   let connection: DataSource;
@@ -24,7 +25,7 @@ describe('DELETE /api/users/:userId', () => {
 
     adminToken = jwks.token({
       sub: 'fa72c1dc-00d1-42f4-9e87-fe03afab0560',
-      role: Roles.ADMIN
+      role: ERoles.ADMIN
     });
   });
 
@@ -47,6 +48,7 @@ describe('DELETE /api/users/:userId', () => {
       const users = await getUsers(connection);
       expect(users).toHaveLength(0);
       expect(response.statusCode).toBe(200);
+      expect(response.body.status).toBe(EStatus.SUCCESS);
     });
   });
   describe('failure cases', () => {
@@ -62,7 +64,7 @@ describe('DELETE /api/users/:userId', () => {
     it('should return 403 if user is not an admin', async () => {
       const nonAdminToken = jwks.token({
         sub: 'fa72c1dc-00d1-42f4-9e87-fe03afab0560',
-        role: Roles.MANAGER
+        role: ERoles.MANAGER
       });
 
       const response = await request(app)

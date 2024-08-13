@@ -3,9 +3,9 @@ import { matchedData, validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { Logger } from 'winston';
 import { UserService } from '../services';
-import { TQueryParams } from '../types';
+import { EStatus, TQueryParams } from '../types';
 import {
-  Roles,
+  ERoles,
   TCreateUserRequest,
   TUpdateUserRequest
 } from '../types/auth.types';
@@ -39,10 +39,13 @@ export default class UserController {
         lastName,
         email,
         password,
-        role: role ?? Roles.CUSTOMER,
-        tenantId: role === Roles.MANAGER ? tenantId : undefined
+        role: role ?? ERoles.CUSTOMER,
+        tenantId: role === ERoles.MANAGER ? tenantId : undefined
       });
-      res.status(201).json({ ...user, password: undefined });
+      res.status(201).json({
+        status: EStatus.SUCCESS,
+        user: { ...user, password: undefined }
+      });
     } catch (error) {
       return next(error);
     }
@@ -57,7 +60,7 @@ export default class UserController {
       const users = await this.userService.getAllUsers(queryParams);
 
       this.logger.info('All users fetched');
-      res.json(users);
+      res.json({ status: EStatus.SUCCESS, ...users });
     } catch (error) {
       return next(error);
     }
@@ -82,7 +85,50 @@ export default class UserController {
         id: userId
       });
 
-      res.json(user);
+      res.json({ status: EStatus.SUCCESS, user });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async updateUser(req: TUpdateUserRequest, res: Response, next: NextFunction) {
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      return res.status(400).json({
+        errors: result.array()
+      });
+    }
+    try {
+      const { userId } = req.params;
+
+      this.logger.info('Updating user', {
+        id: userId
+      });
+      const user = await this.userService.findById(userId);
+
+      if (!user) {
+        throw createHttpError(404, 'User not found');
+      }
+
+      const { firstName, lastName, email, role } = req.body;
+
+      const tenantId =
+        user.role === ERoles.MANAGER ? req.body.tenantId : undefined;
+
+      await this.userService.updateUser(userId, {
+        firstName,
+        lastName,
+        email,
+        role,
+        tenantId
+      });
+
+      this.logger.info('User updated', {
+        id: userId
+      });
+
+      res.json({ status: EStatus.SUCCESS, id: user.id });
     } catch (error) {
       return next(error);
     }
@@ -113,51 +159,8 @@ export default class UserController {
         this.logger.info('User deleted', {
           id: userId
         });
-        res.json({ message: 'User deleted' });
+        res.json({ status: EStatus.SUCCESS });
       }
-    } catch (error) {
-      return next(error);
-    }
-  }
-
-  async updateUser(req: TUpdateUserRequest, res: Response, next: NextFunction) {
-    const result = validationResult(req);
-
-    if (!result.isEmpty()) {
-      return res.status(400).json({
-        errors: result.array()
-      });
-    }
-    try {
-      const { userId } = req.params;
-
-      this.logger.info('Updating user', {
-        id: userId
-      });
-      const user = await this.userService.findById(userId);
-
-      if (!user) {
-        throw createHttpError(404, 'User not found');
-      }
-
-      const { firstName, lastName, email, role } = req.body;
-
-      const tenantId =
-        user.role === Roles.MANAGER ? req.body.tenantId : undefined;
-
-      await this.userService.updateUser(userId, {
-        firstName,
-        lastName,
-        email,
-        role,
-        tenantId
-      });
-
-      this.logger.info('User updated', {
-        id: userId
-      });
-
-      res.json({ id: user.id });
     } catch (error) {
       return next(error);
     }

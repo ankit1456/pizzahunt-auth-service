@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { Roles } from '../types/auth.types';
+import { ERoles } from '../types/auth.types';
 import Tenant from './Tenant';
 
 @Entity('users')
@@ -27,7 +27,7 @@ export default class User {
   password: string;
 
   @Column()
-  role: Roles;
+  role: ERoles;
 
   @ManyToOne(() => Tenant)
   tenant: Tenant | null;

@@ -4,6 +4,7 @@ import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { Tenant } from '../../src/entity';
 import { createTenant } from '../utils';
+import { EStatus } from '../../src/types';
 
 describe('GET /api/tenants', () => {
   let connection: DataSource;
@@ -32,6 +33,7 @@ describe('GET /api/tenants', () => {
       const response = await request(app).get('/api/tenants').send();
 
       expect(response.statusCode).toBe(200);
+      expect(response.body.status).toBe(EStatus.SUCCESS);
       expect(response.body.data).toHaveLength(1);
     });
 

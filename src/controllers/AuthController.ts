@@ -6,7 +6,7 @@ import { Logger } from 'winston';
 import { User } from '../entity';
 import { CredentialService, TokenService, UserService } from '../services';
 import {
-  Roles,
+  ERoles,
   TAuthRequest,
   TLoginUserRequest,
   TRegisterUserRequest
@@ -34,7 +34,7 @@ export default class AuthController {
       firstName,
       lastName,
       email,
-      role: Roles.CUSTOMER
+      role: ERoles.CUSTOMER
     });
     try {
       const newUser = await this.userService.createUser({
@@ -42,7 +42,7 @@ export default class AuthController {
         lastName,
         email,
         password,
-        role: Roles.CUSTOMER
+        role: ERoles.CUSTOMER
       });
 
       const payload: JwtPayload = {
