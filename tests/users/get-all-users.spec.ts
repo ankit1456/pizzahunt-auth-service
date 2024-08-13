@@ -69,7 +69,7 @@ describe('GET /api/users', () => {
       const response = await request(app).get('/api/users').send();
 
       expect(response.statusCode).toBe(401);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.body).toHaveProperty('ref');
     });
 
     it('should return 403 if user is not an admin', async () => {
@@ -84,7 +84,7 @@ describe('GET /api/users', () => {
         .send();
 
       expect(response.statusCode).toBe(403);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.body).toHaveProperty('ref');
     });
   });
 });

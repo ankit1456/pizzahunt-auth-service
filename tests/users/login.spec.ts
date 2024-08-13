@@ -99,7 +99,7 @@ describe('POST /api/auth/login', () => {
       const response = await request(app).post('/api/auth/login').send(creds);
 
       expect(response.statusCode).toBe(400);
-      expect(response.body.errors).toHaveLength(1);
+      expect(response.body.message).toBe('Email or Password is incorrect');
     });
 
     it('should return error 404 status code if user does not exists', async () => {
@@ -111,7 +111,7 @@ describe('POST /api/auth/login', () => {
       const response = await request(app).post('/api/auth/login').send(creds);
 
       expect(response.statusCode).toBe(400);
-      expect(response.body.errors).toHaveLength(1);
+      expect(response.body).toHaveProperty('ref');
     });
   });
 });

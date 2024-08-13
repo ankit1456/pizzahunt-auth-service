@@ -21,6 +21,8 @@ module.exports = {
         argsIgnorePattern: '^(req|res|next|value)$',
         varsIgnorePattern: '^(req|res|next|value)$'
       }
-    ]
+    ],
+    '@typescript-eslint/no-misused-promises': 'off',
+    '@typescript-eslint/unbound-method': 'off'
   }
 };

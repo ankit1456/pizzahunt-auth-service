@@ -52,11 +52,3 @@ export const enum ERoles {
 }
 
 export const roles: ERoles[] = [ERoles.CUSTOMER, ERoles.MANAGER, ERoles.ADMIN];
-
-export const enum AuthRoutes {
-  REGISTER = '/register',
-  LOGIN = '/login',
-  REFRESH = '/refresh',
-  SELF = '/self',
-  LOGOUT = '/logout'
-}

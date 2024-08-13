@@ -72,7 +72,7 @@ describe('DELETE /api/tenants/:tenantId', () => {
         .send();
 
       expect(response.statusCode).toBe(401);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.body.type).toBe('UnauthorizedError');
     });
 
     it('should return 403 if user is not admin', async () => {
@@ -87,7 +87,7 @@ describe('DELETE /api/tenants/:tenantId', () => {
         .send();
 
       expect(response.statusCode).toBe(403);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.body.type).toBe('ForbiddenError');
     });
 
     it('should return 400 if id is not a valid uuid', async () => {

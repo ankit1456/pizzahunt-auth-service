@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { Request, RequestHandler } from 'express';
 import { expressjwt } from 'express-jwt';
 import { MoreThan } from 'typeorm';
 import { AppDataSource, Config, logger } from '../config';
@@ -40,4 +40,4 @@ export default expressjwt({
     }
     return true;
   }
-});
+}) as RequestHandler;

@@ -1,10 +1,10 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import createHttpError from 'http-errors';
 import { JwtPayload } from 'jsonwebtoken';
 import { Logger } from 'winston';
 import { User } from '../entity';
 import { CredentialService, TokenService, UserService } from '../services';
+import { EStatus } from '../types';
 import {
   ERoles,
   TAuthRequest,
@@ -12,22 +12,32 @@ import {
   TRegisterUserRequest
 } from '../types/auth.types';
 
+import {
+  BadRequestError,
+  NotFoundError,
+  UnAuthorizedError,
+  ValidationError
+} from '../utils/errors';
+
 export default class AuthController {
   constructor(
     private userService: UserService,
     private tokenService: TokenService,
     private credentialService: CredentialService,
     private logger: Logger
-  ) {}
+  ) {
+    this.register = this.register.bind(this);
+    this.login = this.login.bind(this);
+    this.self = this.self.bind(this);
+    this.refresh = this.refresh.bind(this);
+    this.logout = this.logout.bind(this);
+  }
 
-  async register(req: TRegisterUserRequest, res: Response, next: NextFunction) {
+  async register(_req: Request, res: Response, next: NextFunction) {
+    const req = _req as TRegisterUserRequest;
     const result = validationResult(req);
 
-    if (!result.isEmpty()) {
-      return res.status(400).json({
-        errors: result.array()
-      });
-    }
+    if (!result.isEmpty()) return next(new ValidationError(result.array()));
     const { firstName, lastName, email, password } = req.body;
 
     this.logger.debug('Registering user', {
@@ -36,124 +46,116 @@ export default class AuthController {
       email,
       role: ERoles.CUSTOMER
     });
-    try {
-      const newUser = await this.userService.createUser({
-        firstName,
-        lastName,
-        email,
-        password,
-        role: ERoles.CUSTOMER
-      });
 
-      const payload: JwtPayload = {
-        sub: newUser.id,
-        role: newUser.role
-      };
+    const newUser = await this.userService.createUser({
+      firstName,
+      lastName,
+      email,
+      password,
+      role: ERoles.CUSTOMER
+    });
 
-      const [accessToken, refreshToken] =
-        await this.generateAccessAndRefreshTokens(payload, newUser);
+    const payload: JwtPayload = {
+      sub: newUser.id,
+      role: newUser.role
+    };
 
-      const responseWithCookies = this.setTokensInCookie(
-        res,
-        accessToken,
-        refreshToken
-      );
+    const [accessToken, refreshToken] =
+      await this.generateAccessAndRefreshTokens(payload, newUser);
 
-      this.logger.info('User has been registered', { id: newUser.id });
+    const responseWithCookies = this.setTokensInCookie(
+      res,
+      accessToken,
+      refreshToken
+    );
 
-      responseWithCookies.status(201).json({ ...newUser, password: undefined });
-    } catch (error) {
-      return next(error);
-    }
+    this.logger.info('User has been registered', { id: newUser.id });
+
+    responseWithCookies.status(201).json({
+      status: EStatus.SUCCESS,
+      user: { ...newUser, password: undefined }
+    });
   }
 
   async login(req: TLoginUserRequest, res: Response, next: NextFunction) {
     const result = validationResult(req);
 
-    if (!result.isEmpty()) {
-      return res.status(400).json({
-        errors: result.array()
-      });
-    }
+    if (!result.isEmpty()) return next(new ValidationError(result.array()));
+
     const { email, password } = req.body;
 
     this.logger.debug('Logging user in', {
       email
     });
-    try {
-      const user = await this.userService.findByEmail(email, {
-        includePassword: true
-      });
+    const user = await this.userService.findByEmail(email, {
+      includePassword: true
+    });
 
-      if (!user)
-        return next(createHttpError(400, 'Email or Password is incorrect'));
+    if (!user)
+      return next(new BadRequestError('Email or Password is incorrect'));
 
-      const passwordMatch = await this.credentialService.comparePassword(
-        password,
-        user.password
-      );
+    const passwordMatch = await this.credentialService.comparePassword(
+      password,
+      user.password
+    );
 
-      if (!passwordMatch)
-        return next(createHttpError(400, 'Email or Password is incorrect'));
+    if (!passwordMatch)
+      return next(new BadRequestError('Email or Password is incorrect'));
 
-      const payload: JwtPayload = {
-        sub: user.id,
-        role: user.role
-      };
-      const [accessToken, refreshToken] =
-        await this.generateAccessAndRefreshTokens(payload, user);
+    const payload: JwtPayload = {
+      sub: user.id,
+      role: user.role
+    };
+    const [accessToken, refreshToken] =
+      await this.generateAccessAndRefreshTokens(payload, user);
 
-      const responseWithCookies = this.setTokensInCookie(
-        res,
-        accessToken,
-        refreshToken
-      );
+    const responseWithCookies = this.setTokensInCookie(
+      res,
+      accessToken,
+      refreshToken
+    );
 
-      this.logger.info('User has been logged in', { id: user.id });
+    this.logger.info('User has been logged in', { id: user.id });
 
-      responseWithCookies.status(200).json({ ...user, password: undefined });
-    } catch (error) {
-      return next(error);
-    }
+    responseWithCookies.status(200).json({
+      status: EStatus.SUCCESS,
+      user: { ...user, password: undefined }
+    });
   }
 
-  async self(req: TAuthRequest, res: Response, next: NextFunction) {
-    try {
-      const user = await this.userService.findById(req.auth.sub);
+  async self(_req: Request, res: Response, next: NextFunction) {
+    const req = _req as TAuthRequest;
 
-      if (!user) return next(createHttpError(404, 'User not found'));
+    const user = await this.userService.findById(req.auth.sub);
 
-      res.json(user);
-    } catch (error) {
-      return next(error);
-    }
+    if (!user) return next(new NotFoundError('User not found'));
+
+    res.json({ status: EStatus.SUCCESS, user });
   }
 
-  async refresh(req: TAuthRequest, res: Response, next: NextFunction) {
-    try {
-      const payload: JwtPayload = {
-        sub: req.auth.sub,
-        role: req.auth.role
-      };
+  async refresh(_req: Request, res: Response, next: NextFunction) {
+    const req = _req as TAuthRequest;
 
-      const user = await this.userService.findById(req.auth.sub);
+    const payload: JwtPayload = {
+      sub: req.auth.sub,
+      role: req.auth.role
+    };
 
-      if (!user) return next(createHttpError(401, 'You are not authorized'));
+    const user = await this.userService.findById(req.auth.sub);
 
-      const [accessToken, refreshToken] =
-        await this.generateAccessAndRefreshTokens(payload, user);
+    if (!user) return next(new UnAuthorizedError());
 
-      await this.tokenService.deleteRefreshToken(req.auth.id);
+    const [accessToken, refreshToken] =
+      await this.generateAccessAndRefreshTokens(payload, user);
 
-      const responseWithCookies = this.setTokensInCookie(
-        res,
-        accessToken,
-        refreshToken
-      );
-      responseWithCookies.json({ id: user.id });
-    } catch (error) {
-      return next(error);
-    }
+    await this.tokenService.deleteRefreshToken(req.auth.id);
+
+    const responseWithCookies = this.setTokensInCookie(
+      res,
+      accessToken,
+      refreshToken
+    );
+    responseWithCookies.json({ status: EStatus.SUCCESS, id: user.id });
   }
 
   async generateAccessAndRefreshTokens(
@@ -191,23 +193,24 @@ export default class AuthController {
     return res;
   }
 
-  async logout(req: TAuthRequest, res: Response, next: NextFunction) {
-    try {
-      await this.tokenService.deleteRefreshToken(req.auth.id);
+  async logout(_req: Request, res: Response, next: NextFunction) {
+    const req = _req as TAuthRequest;
 
-      this.logger.info('Refresh token has been deleted', {
-        id: req.auth.id
-      });
+    await this.tokenService.deleteRefreshToken(req.auth.id);
 
-      this.logger.info('User has been logged out', {
-        id: req.auth.sub
-      });
-      res.clearCookie('accessToken');
-      res.clearCookie('refreshToken');
+    this.logger.info('Refresh token has been deleted', {
+      id: req.auth.id
+    });
 
-      res.json({ message: 'You have been logged out' });
-    } catch (error) {
-      return next(error);
-    }
+    this.logger.info('User has been logged out', {
+      id: req.auth.sub
+    });
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+
+    res.json({
+      status: EStatus.SUCCESS,
+      message: 'You have been logged out'
+    });
   }
 }

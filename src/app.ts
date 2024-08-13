@@ -5,6 +5,7 @@ import 'reflect-metadata';
 import { Config } from './config';
 import { globalErrorHandler } from './middlewares';
 import { authRouter, healthRouter, tenantRouter, userRouter } from './routes';
+import { NotFoundError } from './utils/errors';
 
 const app = express();
 
@@ -24,6 +25,10 @@ app.use('/api', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/tenants', tenantRouter);
 app.use('/api/users', userRouter);
+
+app.all('*', (req, res, next) =>
+  next(new NotFoundError(`Can't find ${req.url} on the server`))
+);
 
 app.use(globalErrorHandler);
 

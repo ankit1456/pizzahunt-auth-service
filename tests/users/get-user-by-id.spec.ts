@@ -58,7 +58,9 @@ describe('GET /api/users/:userId', () => {
         .send();
 
       expect(response.statusCode).toBe(401);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.body.message).toBe(
+        'You are not logged in. Please log in and try again'
+      );
     });
 
     it('should return 403 if user is not an admin', async () => {
@@ -73,7 +75,9 @@ describe('GET /api/users/:userId', () => {
         .send();
 
       expect(response.statusCode).toBe(403);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.body.message).toBe(
+        'You are not authorized to perform this operation'
+      );
     });
 
     it('should return 400 if id is not a valid uuid', async () => {
@@ -92,7 +96,7 @@ describe('GET /api/users/:userId', () => {
         .send();
 
       expect(response.statusCode).toBe(404);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.body).toHaveProperty('ref');
     });
   });
 });

@@ -58,7 +58,7 @@ describe('DELETE /api/users/:userId', () => {
         .send();
 
       expect(response.statusCode).toBe(401);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.body.type).toBe('UnauthorizedError');
     });
 
     it('should return 403 if user is not an admin', async () => {
@@ -73,7 +73,7 @@ describe('DELETE /api/users/:userId', () => {
         .send();
 
       expect(response.statusCode).toBe(403);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.body.type).toBe('ForbiddenError');
     });
 
     it('should return 400 if id is not a valid uuid', async () => {
@@ -92,7 +92,7 @@ describe('DELETE /api/users/:userId', () => {
         .send();
 
       expect(response.statusCode).toBe(404);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.body.type).toBe('NotFoundError');
     });
   });
 });

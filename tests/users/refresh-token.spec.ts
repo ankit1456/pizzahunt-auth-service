@@ -68,8 +68,8 @@ describe('POST /api/auth/refresh', () => {
         }
       });
 
-      expect(response.statusCode).toBe(200);
-      expect(response.body).toHaveProperty('id');
+      expect(response.ok).toBeTruthy();
+      expect(response.body).toHaveProperty('status');
 
       expect(accessToken).not.toBeFalsy();
       expect(rfToken).not.toBeFalsy();
@@ -79,8 +79,14 @@ describe('POST /api/auth/refresh', () => {
     });
   });
   describe('Failure cases', () => {
-    it('should return exception for unexpected error', async () => {
-      const refreshTokenRepository = connection.getRepository(RefreshToken);
+    it('should return 401 if refresh token is missing', async () => {
+      const response = await request(app).post('/api/auth/refresh').send();
+
+      expect(response.unauthorized).toBeTruthy();
+      expect(response.body.type).toBe('UnauthorizedError');
+    });
+
+    it('should return 400 if refresh token is invalid', async () => {
       const user = await createUser(connection.getRepository(User));
 
       const payload: JwtPayload = {
@@ -88,33 +94,26 @@ describe('POST /api/auth/refresh', () => {
         role: user.role
       };
 
-      const newRefreshToken = await persistRefreshToken(
-        refreshTokenRepository,
+      const refreshTokenDocument = await persistRefreshToken(
+        connection.getRepository(RefreshToken),
         user
       );
 
       const refreshToken = generateRefreshToken({
         ...payload,
-        id: newRefreshToken.id
+        id: refreshTokenDocument.id
       });
 
-      refreshTokenRepository.findOne = jest
-        .fn()
-        .mockRejectedValue(new Error('unexpected error'));
+      const refreshTokenRepository = connection.getRepository(RefreshToken);
+      await refreshTokenRepository.delete({ id: refreshTokenDocument.id });
 
       const response = await request(app)
         .post('/api/auth/refresh')
         .set('Cookie', [`refreshToken=${refreshToken};`])
         .send();
 
-      expect(response.statusCode).toBe(401);
-      expect(response.body.errors).toHaveLength(1);
-    });
-
-    it('should return 401 if refresh token is missing', async () => {
-      const response = await request(app).post('/api/auth/refresh').send();
-
-      expect(response.statusCode).toBe(401);
+      expect(response.unauthorized).toBeTruthy();
+      expect(response.body.type).toBe('UnauthorizedError');
     });
   });
 });

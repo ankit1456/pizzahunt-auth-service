@@ -1,58 +1,43 @@
-import createHttpError, { HttpError } from 'http-errors';
 import {
   Brackets,
   FindOneOptions,
   Repository,
   SelectQueryBuilder
 } from 'typeorm';
-import { Logger } from 'winston';
 import { User } from '../entity';
 import { TQueryParams } from '../types';
 import { TUser } from '../types/auth.types';
 import { paginate } from '../utils';
+import { BadRequestError } from '../utils/errors';
 import CredentialService from './CredentialService';
 
 export default class UserService {
   constructor(
     private userRepository: Repository<User>,
-    private credentialService: CredentialService,
-    private logger: Logger
+    private credentialService: CredentialService
   ) {}
 
   async createUser(user: TUser) {
     const { firstName, lastName, email, role, tenantId } = user;
-    try {
-      const userExists = await this.userRepository.findOneBy({
-        email
-      });
 
-      if (userExists) {
-        throw createHttpError(400, 'Email already exists');
-      }
+    const userExists = await this.userRepository.findOneBy({
+      email
+    });
 
-      const hashedPassword =
-        await this.credentialService.generateHashedPassword(user.password);
+    if (userExists) throw new BadRequestError('Email already exists');
 
-      return this.userRepository.save({
-        firstName,
-        lastName,
-        email,
-        password: hashedPassword,
-        role,
-        tenant: tenantId ? { id: tenantId } : null
-      });
-    } catch (err) {
-      if (err instanceof HttpError) {
-        throw err;
-      } else {
-        const _err = err as Error;
+    const hashedPassword = await this.credentialService.generateHashedPassword(
+      user.password
+    );
 
-        this.logger.error(_err.message, {
-          errorName: _err.name
-        });
-        throw createHttpError(500, 'Could not create the user');
-      }
-    }
+    return this.userRepository.save({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+      role,
+      tenant: tenantId ? { id: tenantId } : null
+    });
   }
 
   findByEmail(email: string, options?: { includePassword?: boolean }) {
