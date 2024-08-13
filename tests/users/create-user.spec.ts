@@ -7,7 +7,6 @@ import { Tenant, User } from '../../src/entity';
 import { ERoles } from '../../src/types/auth.types';
 import { createTenant, createUser, getUsers } from '../utils';
 import { EStatus } from '../../src/types';
-import { UnAuthorizedError } from '../../src/utils/errors';
 
 describe('POST /api/users', () => {
   let connection: DataSource;
