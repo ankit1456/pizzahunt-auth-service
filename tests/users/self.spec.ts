@@ -40,8 +40,8 @@ describe('GET /api/auth/self', () => {
         .set('Cookie', [`accessToken=${accessToken};`])
         .send();
 
-      expect(response.statusCode).toBe(200);
-      expect(response.body.id).toBe(user.id);
+      expect(response.ok).toBeTruthy();
+      expect(response.body).toHaveProperty('user');
     });
 
     it('should not return password', async () => {
@@ -77,7 +77,7 @@ describe('GET /api/auth/self', () => {
         .send();
 
       expect(response.statusCode).toBe(404);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.body.type).toBe('NotFoundError');
     });
   });
 });

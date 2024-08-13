@@ -69,8 +69,8 @@ describe('POST /api/auth/register', () => {
 
       const users = await getUsers(connection);
 
-      expect(response.body).toHaveProperty('id');
-      expect(response.body.id).toBe(users[0]?.id);
+      expect(response.body).toHaveProperty('user');
+      expect(response.body.user.id).toBe(users[0]?.id);
 
       expect(users[0]).toHaveProperty('role');
       expect(users[0]?.role).toBe(ERoles.CUSTOMER);
@@ -98,8 +98,8 @@ describe('POST /api/auth/register', () => {
 
       const users = await getUsers(connection);
 
-      expect(response.statusCode).toBe(400);
-      expect(response.body.errors).toHaveLength(1);
+      expect(response.badRequest).toBeTruthy();
+      expect(response.body.type).toBe('BadRequestError');
       expect(users).toHaveLength(1);
     });
 
@@ -134,7 +134,7 @@ describe('POST /api/auth/register', () => {
     });
 
     it('should store the refresh token in the database', async () => {
-      const respose = await request(app)
+      const response = await request(app)
         .post('/api/auth/register')
         .send(userData);
 
@@ -143,7 +143,7 @@ describe('POST /api/auth/register', () => {
       const tokens = await refreshTokenRepository
         .createQueryBuilder('refreshToken')
         .where('refreshToken.userId = :userId', {
-          userId: respose.body.id
+          userId: response.body.user.id
         })
         .getMany();
 

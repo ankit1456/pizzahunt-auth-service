@@ -86,7 +86,7 @@ describe('POST /api/auth/logout', () => {
 
       expect(refreshTokens).toHaveLength(0);
       expect(response.statusCode).toBe(200);
-      expect(response.body).toHaveProperty('message');
+      expect(response.body).toHaveProperty('status');
       expect(acToken).toBeFalsy();
       expect(rfToken).toBeFalsy();
     });
@@ -105,6 +105,7 @@ describe('POST /api/auth/logout', () => {
         .send();
 
       expect(response.statusCode).toBe(401);
+      expect(response.body.type).toBe('UnauthorizedError');
     });
   });
 });

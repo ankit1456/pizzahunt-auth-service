@@ -1,19 +1,72 @@
 import { NextFunction, Request, Response } from 'express';
+import { UnauthorizedError as UnauthorizedErrorExpressJwt } from 'express-jwt';
+import { ValidationError as TExpressValidationError } from 'express-validator';
 import { HttpError } from 'http-errors';
-import logger from '../config/logger';
+import { QueryFailedError } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import { Config } from '../config';
+import logger from '../config/logger';
+import { EStatus } from '../types';
+import { UnAuthorizedError, ValidationError } from '../utils/errors';
 
-export default function globalErrorHandler(
-  err: HttpError,
+type ErrorResponse = {
+  ref: string;
+  type: string;
+  message: string;
+  statusCode: number;
+  status: EStatus;
+  stack?: string;
+  path: string;
+  location: string;
+  errors?: TExpressValidationError[];
+};
+
+// Error Handler Middleware
+export default function errorHandler(
+  err: Error,
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  const isProduction = process.env.NODE_ENV === 'prod';
-  const statusCode = err.statusCode || err.status || 500;
-
-  let errMessage = isProduction ? 'Something went wrong' : err.message;
+  const isProduction = Config.NODE_ENV === 'prod';
   const errorId = uuid();
+  let statusCode = 500;
+
+  const response: ErrorResponse = {
+    ref: errorId,
+    type: err.name,
+    message: err.message,
+    status: EStatus.FAIL,
+    statusCode,
+    stack: isProduction ? undefined : err.stack,
+    path: req.path,
+    location: 'server'
+  };
+
+  if (
+    err instanceof UnAuthorizedError ||
+    err instanceof UnauthorizedErrorExpressJwt
+  ) {
+    statusCode = err.status;
+    if (err instanceof UnauthorizedErrorExpressJwt) {
+      response.message = 'You are not logged in. Please log in and try again';
+    }
+  } else if (err instanceof ValidationError) {
+    statusCode = err.statusCode;
+    response.errors = err.errors;
+  } else if (err instanceof QueryFailedError) {
+    const errorMessage = handleQueryFailedError(err);
+
+    statusCode = errorMessage ? 400 : 500;
+    response.message = errorMessage ?? 'Something went wrong';
+  } else if (err instanceof HttpError) {
+    statusCode = err.statusCode;
+  } else {
+    response.message = 'Something went wrong.';
+    response.status = EStatus.ERROR;
+  }
+
+  response.statusCode = statusCode;
 
   logger.error(err.message, {
     id: errorId,
@@ -24,20 +77,26 @@ export default function globalErrorHandler(
     method: req.method
   });
 
-  if (err.name === 'UnauthorizedError' && isProduction) {
-    errMessage = 'You are not authenticated';
-  }
-  res.status(statusCode).json({
-    errors: [
-      {
-        ref: errorId,
-        type: err.name,
-        message: errMessage,
-        path: req.path,
-        method: req.method,
-        stack: isProduction ? undefined : err.stack,
-        location: 'server'
-      }
-    ]
-  });
+  return res.status(statusCode).json(response);
 }
+
+function handleQueryFailedError(err: QueryFailedError) {
+  const code = (err.driverError as Record<string, string>).code;
+  if (code === '23505') {
+    return formatUniqueConstraintError(
+      (err.driverError as Record<string, string>).detail
+    );
+  }
+  return undefined;
+}
+
+// message -> 'Key (email)=(john@gmail.com) already exists.'
+function formatUniqueConstraintError(detail: string | undefined) {
+  const match = detail?.match(/\((.*?)\)=/);
+  return match
+    ? `${capitalizeFirstLetter(match[1])} already exists`
+    : undefined;
+}
+
+const capitalizeFirstLetter = (string: string | undefined) =>
+  string ? string.charAt(0).toUpperCase() + string.slice(1) : undefined;

@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { Request, RequestHandler } from 'express';
 import { expressjwt } from 'express-jwt';
 import { Config } from '../config';
 import { TAuthCookies } from '../types/auth.types';
@@ -12,4 +12,4 @@ export default expressjwt({
 
     return refreshToken;
   }
-});
+}) as RequestHandler;

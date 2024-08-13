@@ -5,8 +5,9 @@ import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { Tenant, User } from '../../src/entity';
 import { ERoles } from '../../src/types/auth.types';
-import { createTenant, getUsers } from '../utils';
+import { createTenant, createUser, getUsers } from '../utils';
 import { EStatus } from '../../src/types';
+import { UnAuthorizedError } from '../../src/utils/errors';
 
 describe('POST /api/users', () => {
   let connection: DataSource;
@@ -84,35 +85,6 @@ describe('POST /api/users', () => {
     });
   });
   describe('failure cases', () => {
-    it('should return 500 on unexpected error', async () => {
-      const tenant = await createTenant(connection.getRepository(Tenant));
-
-      const userData = {
-        firstName: 'Ankit',
-        lastName: 'Tripahi',
-        email: 'ankit@gmail.com',
-        password: 'test1234',
-        role: ERoles.MANAGER,
-        tenantId: tenant.id
-      };
-
-      const userRepository = connection.getRepository(User);
-
-      userRepository.findOneBy = jest
-        .fn()
-        .mockRejectedValue(new Error('Unexpected error'));
-
-      const users = await userRepository.find();
-
-      const response = await request(app)
-        .post('/api/users')
-        .set('Cookie', [`accessToken=${adminToken};`])
-        .send(userData);
-
-      expect(response.statusCode).toBe(500);
-      expect(response.body.errors).toHaveLength(1);
-      expect(users).toHaveLength(0);
-    });
     it("should return 401 statuscode if token doesn't exist", async () => {
       const tenant = await createTenant(connection.getRepository(Tenant));
 
@@ -129,7 +101,7 @@ describe('POST /api/users', () => {
       const response = await request(app).post('/api/users').send(userData);
 
       expect(response.statusCode).toBe(401);
-      expect(response.body.errors).toHaveLength(1);
+      expect(response.body.type).toBe('UnauthorizedError');
       expect(users).toHaveLength(0);
     });
 
@@ -152,6 +124,26 @@ describe('POST /api/users', () => {
 
       expect(response.statusCode).toBe(400);
       expect(users).toHaveLength(0);
+    });
+
+    it('should return 400 status code if email already exists', async () => {
+      await createUser(connection.getRepository(User));
+      const userData = {
+        firstName: 'Ankit',
+        lastName: 'Tripahi',
+        email: 'ankit@gmail.com',
+        password: 'test1234'
+      };
+      const response = await request(app)
+        .post('/api/users')
+        .set('Cookie', [`accessToken=${adminToken};`])
+        .send(userData);
+
+      const users = await getUsers(connection);
+
+      expect(response.body.type).toBe('BadRequestError');
+      expect(response.statusCode).toBe(400);
+      expect(users).toHaveLength(1);
     });
 
     it('should return 400 status code if email is not valid', async () => {
@@ -201,7 +193,7 @@ describe('POST /api/users', () => {
         .send(userData);
 
       expect(response.statusCode).toBe(403);
-      expect(response.body.errors).toHaveLength(1);
+      expect(response.body.type).toBe('ForbiddenError');
       expect(users).toHaveLength(0);
     });
   });

@@ -1,10 +1,11 @@
-import express, { RequestHandler } from 'express';
+import express from 'express';
 import { AppDataSource, logger } from '../config';
 import { UserController } from '../controllers';
 import { User } from '../entity';
 import { authenticate, canAccess } from '../middlewares';
 import { CredentialService, UserService } from '../services';
-import { ERoles, TUpdateUserRequest } from '../types/auth.types';
+import { ERoles } from '../types/auth.types';
+import { catchAsync } from '../utils';
 import {
   queryParamsValidator,
   updateUserValidator,
@@ -20,26 +21,21 @@ const credentialService = new CredentialService();
 const userService = new UserService(userRepository, credentialService, logger);
 const userController = new UserController(userService, logger);
 
-router.use(authenticate as RequestHandler, canAccess(ERoles.ADMIN));
+router.use(authenticate, canAccess(ERoles.ADMIN));
 
 router
   .route('/')
-  .get(queryParamsValidator, ((req, res, next) =>
-    userController.getAllUsers(req, res, next)) as RequestHandler)
-  .post(userValidator, ((req, res, next) =>
-    userController.createUser(req, res, next)) as RequestHandler);
+  .get(queryParamsValidator, catchAsync(userController.getAllUsers))
+  .post(userValidator, catchAsync(userController.createUser));
 
 router
   .route('/:userId')
-  .get(validateUserId, ((req, res, next) =>
-    userController.getUser(req, res, next)) as RequestHandler)
-  .patch(validateUserId, updateUserValidator, ((req, res, next) =>
-    userController.updateUser(
-      req as TUpdateUserRequest,
-      res,
-      next
-    )) as RequestHandler)
-  .delete(validateUserId, ((req, res, next) =>
-    userController.deleteUser(req, res, next)) as RequestHandler);
+  .get(validateUserId, catchAsync(userController.getUser))
+  .patch(
+    validateUserId,
+    updateUserValidator,
+    catchAsync(userController.updateUser)
+  )
+  .delete(validateUserId, catchAsync(userController.deleteUser));
 
 export default router;

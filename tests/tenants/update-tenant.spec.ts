@@ -76,8 +76,8 @@ describe('PATCH /api/tenants/:tenantId', () => {
         .patch('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
         .send(tenantData);
 
-      expect(response.statusCode).toBe(401);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.unauthorized).toBeTruthy();
+      expect(response.body.type).toBe('UnauthorizedError');
     });
 
     it('should return 403 if user is not admin', async () => {
@@ -91,8 +91,7 @@ describe('PATCH /api/tenants/:tenantId', () => {
         .set('Cookie', [`accessToken=${nonAdminToken}`])
         .send(tenantData);
 
-      expect(response.statusCode).toBe(403);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.forbidden).toBeTruthy();
     });
 
     it('should return 400 if id is not a valid uuid', async () => {

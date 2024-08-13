@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { Request, RequestHandler } from 'express';
 import { GetVerificationKey, expressjwt } from 'express-jwt';
 import JwksClient from 'jwks-rsa';
 import { TAuthCookies } from '../types/auth.types';
@@ -27,4 +27,4 @@ export default expressjwt({
     const { accessToken } = req.cookies as TAuthCookies;
     return accessToken;
   }
-});
+}) as RequestHandler;

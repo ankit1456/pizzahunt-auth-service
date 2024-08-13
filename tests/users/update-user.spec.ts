@@ -90,8 +90,8 @@ describe('PATCH /api/users/:userId', () => {
         .patch('/api/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560')
         .send({ role: ERoles.CUSTOMER });
 
-      expect(response.statusCode).toBe(401);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.unauthorized).toBeTruthy();
+      expect(response.body.type).toBe('UnauthorizedError');
     });
 
     it('should return 403 if user is not an admin', async () => {
@@ -105,8 +105,8 @@ describe('PATCH /api/users/:userId', () => {
         .set('Cookie', [`accessToken=${nonAdminToken};`])
         .send({ role: ERoles.CUSTOMER });
 
-      expect(response.statusCode).toBe(403);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.forbidden).toBeTruthy();
+      expect(response.body.type).toBe('ForbiddenError');
     });
 
     it('should return 400 if id is not a valid uuid', async () => {
@@ -125,7 +125,7 @@ describe('PATCH /api/users/:userId', () => {
         .send();
 
       expect(response.statusCode).toBe(404);
-      expect(response.body).toHaveProperty('errors');
+      expect(response.body.message).toBe('User not found');
     });
     it('should return 400 if fields are not valid', async () => {
       const userData = {

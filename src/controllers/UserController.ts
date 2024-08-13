@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import { matchedData, validationResult } from 'express-validator';
-import createHttpError from 'http-errors';
 import { Logger } from 'winston';
 import { UserService } from '../services';
 import { EStatus, TQueryParams } from '../types';
@@ -9,46 +8,45 @@ import {
   TCreateUserRequest,
   TUpdateUserRequest
 } from '../types/auth.types';
+import { NotFoundError, ValidationError } from '../utils/errors';
 
 export default class UserController {
   constructor(
     private userService: UserService,
     private logger: Logger
-  ) {}
+  ) {
+    this.createUser = this.createUser.bind(this);
+    this.getAllUsers = this.getAllUsers.bind(this);
+    this.getUser = this.getUser.bind(this);
+    this.updateUser = this.updateUser.bind(this);
+    this.deleteUser = this.deleteUser.bind(this);
+  }
 
   async createUser(req: TCreateUserRequest, res: Response, next: NextFunction) {
     const result = validationResult(req);
+    if (!result.isEmpty()) return next(new ValidationError(result.array()));
 
-    if (!result.isEmpty()) {
-      return res.status(400).json({
-        errors: result.array()
-      });
-    }
-    try {
-      const { firstName, lastName, email, password, role, tenantId } = req.body;
+    const { firstName, lastName, email, password, role, tenantId } = req.body;
 
-      this.logger.debug('Creating user', {
-        firstName,
-        lastName,
-        email,
-        role
-      });
+    this.logger.debug('Creating user', {
+      firstName,
+      lastName,
+      email,
+      role
+    });
 
-      const user = await this.userService.createUser({
-        firstName,
-        lastName,
-        email,
-        password,
-        role: role ?? ERoles.CUSTOMER,
-        tenantId: role === ERoles.MANAGER ? tenantId : undefined
-      });
-      res.status(201).json({
-        status: EStatus.SUCCESS,
-        user: { ...user, password: undefined }
-      });
-    } catch (error) {
-      return next(error);
-    }
+    const user = await this.userService.createUser({
+      firstName,
+      lastName,
+      email,
+      password,
+      role: role ?? ERoles.CUSTOMER,
+      tenantId: role === ERoles.MANAGER ? tenantId : undefined
+    });
+    res.status(201).json({
+      status: EStatus.SUCCESS,
+      user: { ...user, password: undefined }
+    });
   }
 
   async getAllUsers(req: Request, res: Response, next: NextFunction) {
@@ -56,113 +54,86 @@ export default class UserController {
       onlyValidData: true
     });
 
-    try {
-      const users = await this.userService.getAllUsers(queryParams);
+    const users = await this.userService.getAllUsers(queryParams);
 
-      this.logger.info('All users fetched');
-      res.json({ status: EStatus.SUCCESS, ...users });
-    } catch (error) {
-      return next(error);
-    }
+    this.logger.info('All users fetched');
+    res.json({ status: EStatus.SUCCESS, ...users });
   }
 
   async getUser(req: Request, res: Response, next: NextFunction) {
     const result = validationResult(req);
 
-    if (!result.isEmpty()) {
-      return res.status(400).json({
-        errors: result.array()
-      });
-    }
+    if (!result.isEmpty()) return next(new ValidationError(result.array()));
 
-    try {
-      const { userId } = req.params;
-      const user = await this.userService.findById(userId);
+    const { userId } = req.params;
+    const user = await this.userService.findById(userId);
 
-      if (!user) throw createHttpError(404, 'User not found');
+    if (!user) return next(new NotFoundError('User not found'));
 
-      this.logger.info('User fetched', {
-        id: userId
-      });
+    this.logger.info('User fetched', {
+      id: userId
+    });
 
-      res.json({ status: EStatus.SUCCESS, user });
-    } catch (error) {
-      return next(error);
-    }
+    res.json({ status: EStatus.SUCCESS, user });
   }
 
-  async updateUser(req: TUpdateUserRequest, res: Response, next: NextFunction) {
+  async updateUser(_req: Request, res: Response, next: NextFunction) {
+    const req = _req as TUpdateUserRequest;
     const result = validationResult(req);
 
-    if (!result.isEmpty()) {
-      return res.status(400).json({
-        errors: result.array()
-      });
-    }
-    try {
-      const { userId } = req.params;
+    if (!result.isEmpty()) return next(new ValidationError(result.array()));
 
-      this.logger.info('Updating user', {
-        id: userId
-      });
-      const user = await this.userService.findById(userId);
+    const { userId } = req.params;
 
-      if (!user) {
-        throw createHttpError(404, 'User not found');
-      }
+    this.logger.info('Updating user', {
+      id: userId
+    });
+    const user = await this.userService.findById(userId);
 
-      const { firstName, lastName, email, role } = req.body;
+    if (!user) return next(new NotFoundError('User not found'));
 
-      const tenantId =
-        user.role === ERoles.MANAGER ? req.body.tenantId : undefined;
+    const { firstName, lastName, email, role } = req.body;
 
-      await this.userService.updateUser(userId, {
-        firstName,
-        lastName,
-        email,
-        role,
-        tenantId
-      });
+    const tenantId =
+      user.role === ERoles.MANAGER ? req.body.tenantId : undefined;
 
-      this.logger.info('User updated', {
-        id: userId
-      });
+    await this.userService.updateUser(userId, {
+      firstName,
+      lastName,
+      email,
+      role,
+      tenantId
+    });
 
-      res.json({ status: EStatus.SUCCESS, id: user.id });
-    } catch (error) {
-      return next(error);
-    }
+    this.logger.info('User updated', {
+      id: userId
+    });
+
+    res.json({ status: EStatus.SUCCESS, id: user.id });
   }
 
   async deleteUser(req: Request, res: Response, next: NextFunction) {
     const result = validationResult(req);
 
-    if (!result.isEmpty()) {
-      return res.status(400).json({
-        errors: result.array()
-      });
-    }
-    try {
-      const { userId } = req.params;
+    if (!result.isEmpty()) return next(new ValidationError(result.array()));
 
-      this.logger.info('Deleting user', {
+    const { userId } = req.params;
+
+    this.logger.info('Deleting user', {
+      id: userId
+    });
+
+    const user = await this.userService.findById(userId);
+
+    if (!user) return next(new NotFoundError('User not found'));
+
+    const response = await this.userService.deleteUser(userId);
+
+    if (response.affected) {
+      this.logger.info('User deleted', {
         id: userId
       });
-
-      const user = await this.userService.findById(userId);
-
-      if (!user) throw createHttpError(404, 'User not found');
-
-      const result = await this.userService.deleteUser(userId);
-
-      if (result.affected) {
-        this.logger.info('User deleted', {
-          id: userId
-        });
-        res.json({ status: EStatus.SUCCESS });
-      }
-    } catch (error) {
-      return next(error);
+      res.json({ status: EStatus.SUCCESS });
     }
   }
 }

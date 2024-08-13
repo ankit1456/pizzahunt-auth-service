@@ -78,7 +78,7 @@ describe('POST /api/tenants', () => {
 
       const tenants = await getTenants(connection);
 
-      expect(response.statusCode).toBe(401);
+      expect(response.unauthorized).toBeTruthy();
       expect(tenants).toHaveLength(0);
     });
 

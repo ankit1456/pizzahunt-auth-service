@@ -1,8 +1,6 @@
 import bcrypt from 'bcryptjs';
-import { SelectQueryBuilder } from 'typeorm';
 import { AppDataSource, Config, logger } from '../config';
-import { Tenant, User } from '../entity';
-import { TQueryParams } from '../types';
+import { User } from '../entity';
 import { ERoles } from '../types/auth.types';
 
 export async function createAdmin() {
@@ -35,16 +33,5 @@ export async function createAdmin() {
   }
 }
 
-export async function paginate<T extends User | Tenant>(
-  queryBuilder: SelectQueryBuilder<T>,
-  { page, limit }: TQueryParams
-) {
-  const skip = (page - 1) * limit;
-
-  const [data, totalCount] = await queryBuilder
-    .skip(skip)
-    .take(limit)
-    .getManyAndCount();
-
-  return { page, limit, totalCount, data };
-}
+export { default as catchAsync } from './catchAsync';
+export { default as paginate } from './paginate';
