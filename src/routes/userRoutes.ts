@@ -18,7 +18,7 @@ const router = express.Router();
 const userRepository = AppDataSource.getRepository(User);
 
 const credentialService = new CredentialService();
-const userService = new UserService(userRepository, credentialService, logger);
+const userService = new UserService(userRepository, credentialService);
 const userController = new UserController(userService, logger);
 
 router.use(authenticate, canAccess(ERoles.ADMIN));

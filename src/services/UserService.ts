@@ -4,19 +4,17 @@ import {
   Repository,
   SelectQueryBuilder
 } from 'typeorm';
-import { Logger } from 'winston';
 import { User } from '../entity';
 import { TQueryParams } from '../types';
 import { TUser } from '../types/auth.types';
 import { paginate } from '../utils';
-import { BadRequestError } from '../utils/errors/';
+import { BadRequestError } from '../utils/errors';
 import CredentialService from './CredentialService';
 
 export default class UserService {
   constructor(
     private userRepository: Repository<User>,
-    private credentialService: CredentialService,
-    private logger: Logger
+    private credentialService: CredentialService
   ) {}
 
   async createUser(user: TUser) {
