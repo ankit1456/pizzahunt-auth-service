@@ -17,9 +17,7 @@ const startServer = async () => {
     await AppDataSource.initialize();
     logger.info('Database connected successfully 😊');
 
-    if (NODE_ENV !== 'test') {
-      await createAdmin();
-    }
+    if (NODE_ENV !== 'test') await createAdmin();
 
     server = app.listen(PORT, () =>
       logger.info(`Auth Service running on port ${PORT}`, {

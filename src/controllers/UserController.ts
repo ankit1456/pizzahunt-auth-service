@@ -50,11 +50,13 @@ export default class UserController {
   }
 
   async getAllUsers(req: Request, res: Response, next: NextFunction) {
-    const queryParams = matchedData<TQueryParams>(req, {
+    const queryParams = matchedData(req, {
       onlyValidData: true
     });
 
-    const users = await this.userService.getAllUsers(queryParams);
+    const users = await this.userService.getAllUsers(
+      queryParams as TQueryParams
+    );
 
     this.logger.info('All users fetched');
     res.json({ status: EStatus.SUCCESS, ...users });
@@ -95,7 +97,9 @@ export default class UserController {
     const { firstName, lastName, email, role } = req.body;
 
     const tenantId =
-      user.role === ERoles.MANAGER ? req.body.tenantId : undefined;
+      user.role === ERoles.MANAGER || req.body.role === ERoles.MANAGER
+        ? req.body.tenantId
+        : undefined;
 
     await this.userService.updateUser(userId, {
       firstName,

@@ -7,7 +7,7 @@ export default validationSchema({
       errorMessage: 'email is required'
     },
     isEmail: {
-      errorMessage: 'not a valid email'
+      errorMessage: 'email is not valid'
     }
   },
   password: {
