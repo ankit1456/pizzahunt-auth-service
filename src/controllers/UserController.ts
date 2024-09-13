@@ -52,9 +52,11 @@ export default class UserController {
   async getAllUsers(req: Request, res: Response, next: NextFunction) {
     const queryParams = matchedData(req, {
       onlyValidData: true
-    }) as TQueryParams;
+    });
 
-    const users = await this.userService.getAllUsers(queryParams);
+    const users = await this.userService.getAllUsers(
+      queryParams as TQueryParams
+    );
 
     this.logger.info('All users fetched');
     res.json({ status: EStatus.SUCCESS, ...users });
