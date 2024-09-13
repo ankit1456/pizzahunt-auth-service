@@ -45,9 +45,9 @@ export default class TenantController {
   }
 
   async getAllTenants(req: Request, res: Response, next: NextFunction) {
-    const queryParams = matchedData<TQueryParams>(req, {
+    const queryParams = matchedData(req, {
       onlyValidData: true
-    });
+    }) as TQueryParams;
 
     const tenants = await this.tenantService.getAllTenants(queryParams);
     this.logger.info('Fetched all tenants');

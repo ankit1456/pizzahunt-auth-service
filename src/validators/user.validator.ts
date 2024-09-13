@@ -11,7 +11,7 @@ export default validationSchema({
     ...commonOptions,
     errorMessage: 'email is required',
     isEmail: {
-      errorMessage: 'not a valid email'
+      errorMessage: 'email is not valid'
     }
   },
 
@@ -75,7 +75,7 @@ export const updateUserValidator = validationSchema({
   email: {
     ...commonUpdationOptions,
     isEmail: {
-      errorMessage: 'not a valid email'
+      errorMessage: 'email is not valid'
     }
   },
 
