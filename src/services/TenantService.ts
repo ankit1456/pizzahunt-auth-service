@@ -5,7 +5,7 @@ import { TTenant } from '../types/tenant.types';
 import { paginate } from '../utils';
 
 export default class TenantService {
-  constructor(private tenantRepository: Repository<Tenant>) {}
+  constructor(private readonly tenantRepository: Repository<Tenant>) {}
 
   createTenant(tenant: TTenant) {
     return this.tenantRepository.save(tenant);

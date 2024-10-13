@@ -11,8 +11,8 @@ import { NotFoundError, ValidationError } from '../utils/errors';
 
 export default class TenantController {
   constructor(
-    private tenantService: TenantService,
-    private logger: Logger
+    private readonly tenantService: TenantService,
+    private readonly logger: Logger
   ) {
     this.createTenant = this.createTenant.bind(this);
     this.getAllTenants = this.getAllTenants.bind(this);
@@ -26,13 +26,15 @@ export default class TenantController {
     res: Response,
     next: NextFunction
   ) {
-    this.logger.debug('Creating a tenant', req.body);
+    const { name, address } = req.body;
+    this.logger.debug('Creating a tenant', {
+      name,
+      address
+    });
 
     const result = validationResult(req);
 
     if (!result.isEmpty()) return next(new ValidationError(result.array()));
-
-    const { name, address } = req.body;
 
     const newTenant = await this.tenantService.createTenant({
       name,

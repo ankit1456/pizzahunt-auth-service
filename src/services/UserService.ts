@@ -13,8 +13,8 @@ import CredentialService from './CredentialService';
 
 export default class UserService {
   constructor(
-    private userRepository: Repository<User>,
-    private credentialService: CredentialService
+    private readonly userRepository: Repository<User>,
+    private readonly credentialService: CredentialService
   ) {}
 
   async createUser(user: TUser) {
