@@ -4,7 +4,9 @@ import { Config } from '../config';
 import { RefreshToken, User } from '../entity';
 
 export default class TokenService {
-  constructor(private refreshTokenRepository: Repository<RefreshToken>) {}
+  constructor(
+    private readonly refreshTokenRepository: Repository<RefreshToken>
+  ) {}
 
   generateAccessToken(payload: JwtPayload) {
     const privateKey = Config.PRIVATE_KEY!;

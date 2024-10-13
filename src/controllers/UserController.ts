@@ -12,8 +12,8 @@ import { NotFoundError, ValidationError } from '../utils/errors';
 
 export default class UserController {
   constructor(
-    private userService: UserService,
-    private logger: Logger
+    private readonly userService: UserService,
+    private readonly logger: Logger
   ) {
     this.createUser = this.createUser.bind(this);
     this.getAllUsers = this.getAllUsers.bind(this);
@@ -24,8 +24,6 @@ export default class UserController {
 
   async createUser(req: TCreateUserRequest, res: Response, next: NextFunction) {
     const result = validationResult(req);
-    if (!result.isEmpty()) return next(new ValidationError(result.array()));
-
     const { firstName, lastName, email, password, role, tenantId } = req.body;
 
     this.logger.debug('Creating user', {
@@ -34,6 +32,8 @@ export default class UserController {
       email,
       role
     });
+
+    if (!result.isEmpty()) return next(new ValidationError(result.array()));
 
     const user = await this.userService.createUser({
       firstName,

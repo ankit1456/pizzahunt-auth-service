@@ -21,10 +21,10 @@ import {
 
 export default class AuthController {
   constructor(
-    private userService: UserService,
-    private tokenService: TokenService,
-    private credentialService: CredentialService,
-    private logger: Logger
+    private readonly userService: UserService,
+    private readonly tokenService: TokenService,
+    private readonly credentialService: CredentialService,
+    private readonly logger: Logger
   ) {
     this.register = this.register.bind(this);
     this.login = this.login.bind(this);
@@ -35,10 +35,10 @@ export default class AuthController {
 
   async register(_req: Request, res: Response, next: NextFunction) {
     const req = _req as TRegisterUserRequest;
+    const { firstName, lastName, email, password } = req.body;
     const result = validationResult(req);
 
     if (!result.isEmpty()) return next(new ValidationError(result.array()));
-    const { firstName, lastName, email, password } = req.body;
 
     this.logger.debug('Registering user', {
       firstName,
@@ -79,10 +79,9 @@ export default class AuthController {
 
   async login(req: TLoginUserRequest, res: Response, next: NextFunction) {
     const result = validationResult(req);
+    const { email, password } = req.body;
 
     if (!result.isEmpty()) return next(new ValidationError(result.array()));
-
-    const { email, password } = req.body;
 
     this.logger.debug('Logging user in', {
       email
