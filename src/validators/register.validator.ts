@@ -4,7 +4,8 @@ export default validationSchema({
   email: {
     trim: true,
     notEmpty: {
-      errorMessage: 'email is required'
+      errorMessage: 'email is required',
+      bail: true
     },
     isEmail: {
       errorMessage: 'email is not valid'
@@ -14,7 +15,8 @@ export default validationSchema({
   firstName: {
     trim: true,
     notEmpty: {
-      errorMessage: 'first name is required'
+      errorMessage: 'first name is required',
+      bail: true
     },
     isLength: {
       options: {
@@ -27,7 +29,8 @@ export default validationSchema({
   lastName: {
     trim: true,
     notEmpty: {
-      errorMessage: 'last name is required'
+      errorMessage: 'last name is required',
+      bail: true
     },
     isLength: {
       options: {
@@ -41,7 +44,8 @@ export default validationSchema({
   password: {
     trim: true,
     notEmpty: {
-      errorMessage: 'password is required'
+      errorMessage: 'password is required',
+      bail: true
     },
     isLength: {
       options: {

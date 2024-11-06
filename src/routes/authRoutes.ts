@@ -6,6 +6,7 @@ import express from 'express';
 import {
   authenticate,
   parseRefreshToken,
+  sanitizeRequest,
   validateRefreshToken
 } from '@middlewares';
 import { CredentialService, TokenService, UserService } from '@services';
@@ -32,14 +33,21 @@ const authController = new AuthController(
 router.post(
   '/register',
   registerValidator,
+  sanitizeRequest,
   catchAsync(authController.register)
 );
 
-router.post('/login', loginValidator, catchAsync(authController.login));
+router.post(
+  '/login',
+  loginValidator,
+  sanitizeRequest,
+  catchAsync(authController.login)
+);
 
 router.post(
   '/refresh',
   validateRefreshToken,
+  sanitizeRequest,
   catchAsync(authController.refresh)
 );
 

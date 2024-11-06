@@ -2,12 +2,12 @@ import { AppDataSource, logger } from '@config';
 import { TenantController } from '@controllers';
 import { ERoles } from '@customTypes/auth.types';
 import { Tenant } from '@entity';
-import { authenticate, canAccess } from '@middlewares';
+import { authenticate, canAccess, sanitizeRequest } from '@middlewares';
 import {
+  idValidator,
   queryParamsValidator,
   tenantValidator,
-  updateTenantValidator,
-  validateTenantId
+  updateTenantValidator
 } from '@validators';
 import express from 'express';
 
@@ -29,16 +29,30 @@ router.get(
 
 router.use(authenticate, canAccess(ERoles.ADMIN));
 
-router.post('/', tenantValidator, catchAsync(tenantController.createTenant));
+router.post(
+  '/',
+  tenantValidator,
+  sanitizeRequest,
+  catchAsync(tenantController.createTenant)
+);
 
 router
   .route('/:tenantId')
-  .get(validateTenantId, catchAsync(tenantController.getTenantById))
+  .get(
+    idValidator('tenantId'),
+    sanitizeRequest,
+    catchAsync(tenantController.getTenantById)
+  )
   .patch(
-    validateTenantId,
+    idValidator('tenantId'),
     updateTenantValidator,
+    sanitizeRequest,
     catchAsync(tenantController.updateTenant)
   )
-  .delete(validateTenantId, catchAsync(tenantController.deleteTenant));
+  .delete(
+    idValidator('tenantId'),
+    sanitizeRequest,
+    catchAsync(tenantController.deleteTenant)
+  );
 
 export default router;

@@ -8,15 +8,13 @@ import { EStatus } from '@customTypes/common';
 import { User } from '@entity';
 import { CredentialService, TokenService, UserService } from '@services';
 import { NextFunction, Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import { JwtPayload } from 'jsonwebtoken';
 import { Logger } from 'winston';
 
 import {
   BadRequestError,
   NotFoundError,
-  UnAuthorizedError,
-  ValidationError
+  UnAuthorizedError
 } from '@utils/errors';
 
 export default class AuthController {
@@ -33,12 +31,8 @@ export default class AuthController {
     this.logout = this.logout.bind(this);
   }
 
-  async register(_req: Request, res: Response, next: NextFunction) {
-    const req = _req as TRegisterUserRequest;
+  async register(req: TRegisterUserRequest, res: Response, next: NextFunction) {
     const { firstName, lastName, email, password } = req.body;
-    const result = validationResult(req);
-
-    if (!result.isEmpty()) return next(new ValidationError(result.array()));
 
     this.logger.debug('Registering user', {
       firstName,
@@ -78,10 +72,7 @@ export default class AuthController {
   }
 
   async login(req: TLoginUserRequest, res: Response, next: NextFunction) {
-    const result = validationResult(req);
     const { email, password } = req.body;
-
-    if (!result.isEmpty()) return next(new ValidationError(result.array()));
 
     this.logger.debug('Logging user in', {
       email

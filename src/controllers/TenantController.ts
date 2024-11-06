@@ -4,9 +4,9 @@ import {
   TUpdateTenantRequest
 } from '@customTypes/tenant.types';
 import { TenantService } from '@services';
-import { NotFoundError, ValidationError } from '@utils/errors';
+import { NotFoundError } from '@utils/errors';
 import { NextFunction, Request, Response } from 'express';
-import { matchedData, validationResult } from 'express-validator';
+import { matchedData } from 'express-validator';
 import { Logger } from 'winston';
 
 export default class TenantController {
@@ -32,10 +32,6 @@ export default class TenantController {
       address
     });
 
-    const result = validationResult(req);
-
-    if (!result.isEmpty()) return next(new ValidationError(result.array()));
-
     const newTenant = await this.tenantService.createTenant({
       name,
       address
@@ -47,23 +43,17 @@ export default class TenantController {
   }
 
   async getAllTenants(req: Request, res: Response, next: NextFunction) {
-    const queryParams = matchedData(req, {
+    const queryParams = matchedData<TQueryParams>(req, {
       onlyValidData: true
     });
 
-    const tenants = await this.tenantService.getAllTenants(
-      queryParams as TQueryParams
-    );
+    const tenants = await this.tenantService.getAllTenants(queryParams);
     this.logger.info('Fetched all tenants');
 
     res.json({ status: EStatus.SUCCESS, ...tenants });
   }
 
   async getTenantById(req: Request, res: Response, next: NextFunction) {
-    const result = validationResult(req);
-
-    if (!result.isEmpty()) return next(new ValidationError(result.array()));
-
     const { tenantId } = req.params;
     const tenant = await this.tenantService.getTenantById(tenantId);
 
@@ -81,9 +71,6 @@ export default class TenantController {
     res: Response,
     next: NextFunction
   ) {
-    const result = validationResult(req);
-    if (!result.isEmpty()) return next(new ValidationError(result.array()));
-
     const { tenantId } = req.params;
 
     const isExists = await this.tenantService.getTenantById(tenantId);
@@ -105,10 +92,6 @@ export default class TenantController {
   }
 
   async deleteTenant(req: Request, res: Response, next: NextFunction) {
-    const result = validationResult(req);
-
-    if (!result.isEmpty()) return next(new ValidationError(result.array()));
-
     const { tenantId } = req.params;
 
     const isExists = await this.tenantService.getTenantById(tenantId);

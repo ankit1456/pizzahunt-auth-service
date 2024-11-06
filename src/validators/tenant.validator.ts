@@ -16,8 +16,11 @@ const commonAddressLengthOptions = {
 export default validationSchema({
   name: {
     trim: true,
-    notEmpty: true,
-    errorMessage: 'tenant name is required',
+    notEmpty: {
+      errorMessage: 'tenant name is required',
+      bail: true
+    },
+
     isLength: {
       ...commonNameLengthOptions,
       errorMessage: 'tenant name must contain 3 to 50 characters'
@@ -25,8 +28,10 @@ export default validationSchema({
   },
   address: {
     trim: true,
-    notEmpty: true,
-    errorMessage: 'tenant address is required',
+    notEmpty: {
+      errorMessage: 'tenant address is required',
+      bail: true
+    },
     isLength: {
       ...commonAddressLengthOptions,
       errorMessage: 'tenant address must contain 3 to 100 characters'
@@ -52,15 +57,6 @@ export const updateTenantValidator = validationSchema({
     isLength: {
       ...commonAddressLengthOptions,
       errorMessage: 'tenant address must contain 3 to 100 characters'
-    }
-  }
-});
-
-export const validateTenantId = validationSchema({
-  tenantId: {
-    in: ['params'],
-    isUUID: {
-      errorMessage: 'not a valid id'
     }
   }
 });
