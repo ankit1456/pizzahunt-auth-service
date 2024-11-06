@@ -1,11 +1,11 @@
+import { Config } from '@config';
+import { globalErrorHandler } from '@middlewares';
+import { authRouter, healthRouter, tenantRouter, userRouter } from '@routes';
+import { NotFoundError } from '@utils/errors';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import 'reflect-metadata';
-import { Config } from './config';
-import { globalErrorHandler } from './middlewares';
-import { authRouter, healthRouter, tenantRouter, userRouter } from './routes';
-import { NotFoundError } from './utils/errors';
 
 const app = express();
 

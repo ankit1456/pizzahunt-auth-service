@@ -1,8 +1,7 @@
-import { SelectQueryBuilder } from 'typeorm';
-import { Tenant, User } from '../entity';
-import { TQueryParams } from '../types';
+import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
+import { TQueryParams } from '@customTypes/common';
 
-async function paginate<T extends User | Tenant>(
+async function paginate<T extends ObjectLiteral>(
   queryBuilder: SelectQueryBuilder<T>,
   { page, limit }: TQueryParams
 ) {

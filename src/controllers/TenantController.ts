@@ -1,13 +1,13 @@
-import { NextFunction, Request, Response } from 'express';
-import { matchedData, validationResult } from 'express-validator';
-import { Logger } from 'winston';
-import { TenantService } from '../services';
-import { EStatus, TQueryParams } from '../types';
+import { EStatus, TQueryParams } from '@customTypes/common';
 import {
   TCreateTenantRequest,
   TUpdateTenantRequest
-} from '../types/tenant.types';
-import { NotFoundError, ValidationError } from '../utils/errors';
+} from '@customTypes/tenant.types';
+import { TenantService } from '@services';
+import { NotFoundError, ValidationError } from '@utils/errors';
+import { NextFunction, Request, Response } from 'express';
+import { matchedData, validationResult } from 'express-validator';
+import { Logger } from 'winston';
 
 export default class TenantController {
   constructor(

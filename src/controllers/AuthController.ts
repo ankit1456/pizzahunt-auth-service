@@ -1,23 +1,23 @@
-import { NextFunction, Request, Response } from 'express';
-import { validationResult } from 'express-validator';
-import { JwtPayload } from 'jsonwebtoken';
-import { Logger } from 'winston';
-import { User } from '../entity';
-import { CredentialService, TokenService, UserService } from '../services';
-import { EStatus } from '../types';
 import {
   ERoles,
   TAuthRequest,
   TLoginUserRequest,
   TRegisterUserRequest
-} from '../types/auth.types';
+} from '@customTypes/auth.types';
+import { EStatus } from '@customTypes/common';
+import { User } from '@entity';
+import { CredentialService, TokenService, UserService } from '@services';
+import { NextFunction, Request, Response } from 'express';
+import { validationResult } from 'express-validator';
+import { JwtPayload } from 'jsonwebtoken';
+import { Logger } from 'winston';
 
 import {
   BadRequestError,
   NotFoundError,
   UnAuthorizedError,
   ValidationError
-} from '../utils/errors';
+} from '@utils/errors';
 
 export default class AuthController {
   constructor(

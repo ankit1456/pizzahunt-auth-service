@@ -1,8 +1,8 @@
+import { TQueryParams } from '@customTypes/common';
+import { TTenant } from '@customTypes/tenant.types';
+import { Tenant } from '@entity';
+import { paginate } from '@utils';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { Tenant } from '../entity';
-import { TQueryParams } from '../types';
-import { TTenant } from '../types/tenant.types';
-import { paginate } from '../utils';
 
 export default class TenantService {
   constructor(private readonly tenantRepository: Repository<Tenant>) {}

@@ -3,10 +3,10 @@ import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
+import { ERoles } from '../../src/customTypes/auth.types';
+import { EStatus } from '../../src/customTypes/common';
 import { User } from '../../src/entity';
-import { ERoles } from '../../src/types/auth.types';
 import { createUser } from '../utils';
-import { EStatus } from '../../src/types';
 
 describe('GET /api/users/:userId', () => {
   let connection: DataSource;

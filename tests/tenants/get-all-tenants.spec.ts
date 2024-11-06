@@ -2,9 +2,9 @@ import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
+import { EStatus } from '../../src/customTypes/common';
 import { Tenant } from '../../src/entity';
 import { createTenant } from '../utils';
-import { EStatus } from '../../src/types';
 
 describe('GET /api/tenants', () => {
   let connection: DataSource;

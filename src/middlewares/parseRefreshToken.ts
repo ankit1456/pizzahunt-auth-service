@@ -1,7 +1,7 @@
+import { Config } from '@config';
+import { TAuthCookies } from '@customTypes/auth.types';
 import { Request, RequestHandler } from 'express';
 import { expressjwt } from 'express-jwt';
-import { Config } from '../config';
-import { TAuthCookies } from '../types/auth.types';
 
 export default expressjwt({
   secret: Config.REFRESH_TOKEN_SECRET!,

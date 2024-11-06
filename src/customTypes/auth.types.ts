@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { TGenericBodyRequest } from '.';
+import { TGenericBodyRequest } from './common';
 
 export type TUser = {
   firstName: string;

@@ -1,7 +1,7 @@
+import { AppDataSource, Config, logger } from '@config';
+import app from '@src/app';
+import { createAdmin } from '@utils';
 import { Server } from 'http';
-import app from './app';
-import { AppDataSource, Config, logger } from './config';
-import { createAdmin } from './utils';
 
 process.on('uncaughtException', (err) => {
   logger.info('UNCAUGHT EXCEPTION! 💥 Shutting down...');

@@ -1,13 +1,12 @@
+import { logger } from '@config';
+import { EStatus } from '@customTypes/common';
+import { UnAuthorizedError, ValidationError } from '@utils/errors';
 import { NextFunction, Request, Response } from 'express';
 import { UnauthorizedError as UnauthorizedErrorExpressJwt } from 'express-jwt';
 import { ValidationError as TExpressValidationError } from 'express-validator';
 import { HttpError } from 'http-errors';
 import { QueryFailedError } from 'typeorm';
 import { v4 as uuid } from 'uuid';
-import { Config } from '../config';
-import logger from '../config/logger';
-import { EStatus } from '../types';
-import { UnAuthorizedError, ValidationError } from '../utils/errors';
 
 type ErrorResponse = {
   ref: string;
@@ -28,7 +27,7 @@ export default function errorHandler(
   res: Response,
   next: NextFunction
 ) {
-  const isProduction = Config.NODE_ENV === 'prod';
+  const isProduction = process.env.NODE_ENV === 'prod';
   const errorId = uuid();
   let statusCode = 500;
 
@@ -62,7 +61,7 @@ export default function errorHandler(
   } else if (err instanceof HttpError) {
     statusCode = err.statusCode;
   } else {
-    response.message = 'Something went wrong.';
+    response.message = 'Something went wrong. Please try again later';
     response.status = EStatus.ERROR;
   }
 

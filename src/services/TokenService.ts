@@ -1,7 +1,7 @@
+import { Config } from '@config';
+import { RefreshToken, User } from '@entity';
 import { JwtPayload, sign } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
-import { Config } from '../config';
-import { RefreshToken, User } from '../entity';
 
 export default class TokenService {
   constructor(

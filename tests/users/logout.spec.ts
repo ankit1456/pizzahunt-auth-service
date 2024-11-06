@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { RefreshToken, User } from '../../src/entity';
-import { ERoles } from '../../src/types/auth.types';
+import { ERoles } from '../../src/customTypes/auth.types';
 import {
   persistRefreshToken,
   createUser,

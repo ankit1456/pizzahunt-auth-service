@@ -1,9 +1,9 @@
+import { AppDataSource, Config, logger } from '@config';
+import { TAuthCookies, TRefreshTokenPayload } from '@customTypes/auth.types';
+import { RefreshToken } from '@entity';
 import { Request, RequestHandler } from 'express';
 import { expressjwt } from 'express-jwt';
 import { MoreThan } from 'typeorm';
-import { AppDataSource, Config, logger } from '../config';
-import { RefreshToken } from '../entity';
-import { TAuthCookies, TRefreshTokenPayload } from '../types/auth.types';
 
 export default expressjwt({
   secret: Config.REFRESH_TOKEN_SECRET!,

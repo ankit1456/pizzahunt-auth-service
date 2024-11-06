@@ -1,7 +1,7 @@
+import { AppDataSource, Config, logger } from '@config';
+import { ERoles } from '@customTypes/auth.types';
+import { User } from '@entity';
 import bcrypt from 'bcryptjs';
-import { AppDataSource, Config, logger } from '../config';
-import { User } from '../entity';
-import { ERoles } from '../types/auth.types';
 
 async function createAdmin() {
   try {
