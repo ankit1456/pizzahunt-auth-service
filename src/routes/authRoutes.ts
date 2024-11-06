@@ -1,16 +1,16 @@
+import { AppDataSource, logger } from '@config';
+import { AuthController } from '@controllers';
+import { RefreshToken, User } from '@entity';
 import express from 'express';
-import { AppDataSource, logger } from '../config';
-import { AuthController } from '../controllers';
-import { RefreshToken, User } from '../entity';
 
 import {
   authenticate,
   parseRefreshToken,
   validateRefreshToken
-} from '../middlewares';
-import { CredentialService, TokenService, UserService } from '../services';
-import { catchAsync } from '../utils';
-import { loginValidator, registerValidator } from '../validators';
+} from '@middlewares';
+import { CredentialService, TokenService, UserService } from '@services';
+import { catchAsync } from '@utils';
+import { loginValidator, registerValidator } from '@validators';
 
 const router = express.Router();
 

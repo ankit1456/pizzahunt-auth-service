@@ -1,14 +1,14 @@
+import { TUser } from '@customTypes/auth.types';
+import { TQueryParams } from '@customTypes/common';
+import { User } from '@entity';
+import { paginate } from '@utils';
+import { BadRequestError } from '@utils/errors';
 import {
   Brackets,
   FindOneOptions,
   Repository,
   SelectQueryBuilder
 } from 'typeorm';
-import { User } from '../entity';
-import { TQueryParams } from '../types';
-import { TUser } from '../types/auth.types';
-import { paginate } from '../utils';
-import { BadRequestError } from '../utils/errors';
 import CredentialService from './CredentialService';
 
 export default class UserService {

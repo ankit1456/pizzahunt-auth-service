@@ -1,3 +1,4 @@
+import { ERoles } from '@customTypes/auth.types';
 import {
   Column,
   CreateDateColumn,
@@ -6,7 +7,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { ERoles } from '../types/auth.types';
 import Tenant from './Tenant';
 
 @Entity('users')

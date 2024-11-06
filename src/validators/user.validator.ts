@@ -1,5 +1,5 @@
+import { ERoles, roles, TUpdateUserRequest } from '@customTypes/auth.types';
 import { checkSchema as validationSchema } from 'express-validator';
-import { ERoles, roles, TUpdateUserRequest } from '../types/auth.types';
 
 const commonOptions = {
   trim: true,

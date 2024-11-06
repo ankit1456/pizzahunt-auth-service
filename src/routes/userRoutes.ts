@@ -1,17 +1,17 @@
-import express from 'express';
-import { AppDataSource, logger } from '../config';
-import { UserController } from '../controllers';
-import { User } from '../entity';
-import { authenticate, canAccess } from '../middlewares';
-import { CredentialService, UserService } from '../services';
-import { ERoles } from '../types/auth.types';
-import { catchAsync } from '../utils';
+import { AppDataSource, logger } from '@config';
+import { UserController } from '@controllers';
+import { ERoles } from '@customTypes/auth.types';
+import { User } from '@entity';
+import { authenticate, canAccess } from '@middlewares';
+import { CredentialService, UserService } from '@services';
+import { catchAsync } from '@utils';
 import {
   queryParamsValidator,
   updateUserValidator,
   userValidator,
   validateUserId
-} from '../validators';
+} from '@validators';
+import express from 'express';
 
 const router = express.Router();
 

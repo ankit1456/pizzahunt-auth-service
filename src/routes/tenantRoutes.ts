@@ -1,18 +1,18 @@
-import express from 'express';
-import { AppDataSource, logger } from '../config';
-import { TenantController } from '../controllers';
-import { Tenant } from '../entity';
-import { authenticate, canAccess } from '../middlewares';
-import { ERoles } from '../types/auth.types';
+import { AppDataSource, logger } from '@config';
+import { TenantController } from '@controllers';
+import { ERoles } from '@customTypes/auth.types';
+import { Tenant } from '@entity';
+import { authenticate, canAccess } from '@middlewares';
 import {
   queryParamsValidator,
   tenantValidator,
   updateTenantValidator,
   validateTenantId
-} from '../validators';
+} from '@validators';
+import express from 'express';
 
-import { catchAsync } from '../utils';
-import { TenantService } from './../services';
+import { TenantService } from '@services';
+import { catchAsync } from '@utils';
 
 const router = express.Router();
 

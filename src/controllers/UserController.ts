@@ -1,14 +1,14 @@
-import { NextFunction, Request, Response } from 'express';
-import { matchedData, validationResult } from 'express-validator';
-import { Logger } from 'winston';
-import { UserService } from '../services';
-import { EStatus, TQueryParams } from '../types';
 import {
   ERoles,
   TCreateUserRequest,
   TUpdateUserRequest
-} from '../types/auth.types';
-import { NotFoundError, ValidationError } from '../utils/errors';
+} from '@customTypes/auth.types';
+import { EStatus, TQueryParams } from '@customTypes/common';
+import { UserService } from '@services';
+import { NotFoundError, ValidationError } from '@utils/errors';
+import { NextFunction, Request, Response } from 'express';
+import { matchedData, validationResult } from 'express-validator';
+import { Logger } from 'winston';
 
 export default class UserController {
   constructor(

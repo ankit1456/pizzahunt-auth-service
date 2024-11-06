@@ -1,4 +1,4 @@
-import { TGenericBodyRequest } from '.';
+import { TGenericBodyRequest } from './common';
 
 export type TTenant = {
   name: string;
