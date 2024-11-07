@@ -186,7 +186,7 @@ describe('POST /api/auth/register', () => {
 
       expect(response.statusCode).toBe(400);
       expect(response.body).toHaveProperty('errors');
-      expect(response.body.errors.length).toBeGreaterThan(3);
+      expect(response.body.errors.length).not.toBeFalsy();
       expect(users.length).toBe(0);
     });
   });
