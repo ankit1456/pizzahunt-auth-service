@@ -1,23 +1,25 @@
 import { ERoles, roles, TUpdateUserRequest } from '@customTypes/auth.types';
+import { formatEnumMessage } from '@utils/formatEnumMessage';
 import { checkSchema as validationSchema } from 'express-validator';
-
-const commonOptions = {
-  trim: true,
-  notEmpty: true
-};
 
 export default validationSchema({
   email: {
-    ...commonOptions,
-    errorMessage: 'email is required',
+    trim: true,
+    notEmpty: {
+      errorMessage: 'email is required',
+      bail: true
+    },
     isEmail: {
       errorMessage: 'email is not valid'
     }
   },
 
   firstName: {
-    ...commonOptions,
-    errorMessage: 'first name is required',
+    trim: true,
+    notEmpty: {
+      errorMessage: 'first name is required',
+      bail: true
+    },
     isLength: {
       options: {
         max: 30,
@@ -27,8 +29,10 @@ export default validationSchema({
     }
   },
   lastName: {
-    ...commonOptions,
-    errorMessage: 'last name is required',
+    notEmpty: {
+      errorMessage: 'last name is required',
+      bail: true
+    },
     isLength: {
       options: {
         max: 30,
@@ -39,8 +43,10 @@ export default validationSchema({
   },
 
   password: {
-    ...commonOptions,
-    errorMessage: 'password is required',
+    notEmpty: {
+      errorMessage: 'password is required',
+      bail: true
+    },
     isLength: {
       options: {
         min: 8
@@ -58,10 +64,10 @@ export default validationSchema({
 
   role: {
     optional: true,
-    ...commonOptions,
+    trim: true,
     isIn: {
       options: [roles],
-      errorMessage: `role must be one of: ${roles.join(',')}`
+      errorMessage: `role must be ${formatEnumMessage(roles)}`
     }
   }
 });
@@ -120,22 +126,13 @@ export const updateUserValidator = validationSchema({
     },
     isIn: {
       options: [roles],
-      errorMessage: `role must be ${roles.join(', ')}`
+      errorMessage: `role must be ${formatEnumMessage(roles)}`
     }
   },
   tenantId: {
     ...commonUpdationOptions,
     isUUID: {
-      errorMessage: 'not a valid tenantId'
-    }
-  }
-});
-
-export const validateUserId = validationSchema({
-  userId: {
-    in: ['params'],
-    isUUID: {
-      errorMessage: 'not a valid id'
+      errorMessage: 'tenantId is not valid'
     }
   }
 });

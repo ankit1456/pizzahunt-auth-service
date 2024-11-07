@@ -5,9 +5,9 @@ import {
 } from '@customTypes/auth.types';
 import { EStatus, TQueryParams } from '@customTypes/common';
 import { UserService } from '@services';
-import { NotFoundError, ValidationError } from '@utils/errors';
+import { NotFoundError } from '@utils/errors';
 import { NextFunction, Request, Response } from 'express';
-import { matchedData, validationResult } from 'express-validator';
+import { matchedData } from 'express-validator';
 import { Logger } from 'winston';
 
 export default class UserController {
@@ -23,7 +23,6 @@ export default class UserController {
   }
 
   async createUser(req: TCreateUserRequest, res: Response, next: NextFunction) {
-    const result = validationResult(req);
     const { firstName, lastName, email, password, role, tenantId } = req.body;
 
     this.logger.debug('Creating user', {
@@ -32,8 +31,6 @@ export default class UserController {
       email,
       role
     });
-
-    if (!result.isEmpty()) return next(new ValidationError(result.array()));
 
     const user = await this.userService.createUser({
       firstName,
@@ -50,23 +47,17 @@ export default class UserController {
   }
 
   async getAllUsers(req: Request, res: Response, next: NextFunction) {
-    const queryParams = matchedData(req, {
+    const queryParams = matchedData<TQueryParams>(req, {
       onlyValidData: true
     });
 
-    const users = await this.userService.getAllUsers(
-      queryParams as TQueryParams
-    );
+    const users = await this.userService.getAllUsers(queryParams);
 
     this.logger.info('All users fetched');
     res.json({ status: EStatus.SUCCESS, ...users });
   }
 
   async getUser(req: Request, res: Response, next: NextFunction) {
-    const result = validationResult(req);
-
-    if (!result.isEmpty()) return next(new ValidationError(result.array()));
-
     const { userId } = req.params;
     const user = await this.userService.findById(userId);
 
@@ -81,9 +72,6 @@ export default class UserController {
 
   async updateUser(_req: Request, res: Response, next: NextFunction) {
     const req = _req as TUpdateUserRequest;
-    const result = validationResult(req);
-
-    if (!result.isEmpty()) return next(new ValidationError(result.array()));
 
     const { userId } = req.params;
 
@@ -117,10 +105,6 @@ export default class UserController {
   }
 
   async deleteUser(req: Request, res: Response, next: NextFunction) {
-    const result = validationResult(req);
-
-    if (!result.isEmpty()) return next(new ValidationError(result.array()));
-
     const { userId } = req.params;
 
     this.logger.info('Deleting user', {

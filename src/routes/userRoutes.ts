@@ -2,14 +2,14 @@ import { AppDataSource, logger } from '@config';
 import { UserController } from '@controllers';
 import { ERoles } from '@customTypes/auth.types';
 import { User } from '@entity';
-import { authenticate, canAccess } from '@middlewares';
+import { authenticate, canAccess, sanitizeRequest } from '@middlewares';
 import { CredentialService, UserService } from '@services';
 import { catchAsync } from '@utils';
 import {
+  idValidator,
   queryParamsValidator,
   updateUserValidator,
-  userValidator,
-  validateUserId
+  userValidator
 } from '@validators';
 import express from 'express';
 
@@ -26,16 +26,25 @@ router.use(authenticate, canAccess(ERoles.ADMIN));
 router
   .route('/')
   .get(queryParamsValidator, catchAsync(userController.getAllUsers))
-  .post(userValidator, catchAsync(userController.createUser));
+  .post(userValidator, sanitizeRequest, catchAsync(userController.createUser));
 
 router
   .route('/:userId')
-  .get(validateUserId, catchAsync(userController.getUser))
+  .get(
+    idValidator('userId'),
+    sanitizeRequest,
+    catchAsync(userController.getUser)
+  )
   .patch(
-    validateUserId,
+    idValidator('userId'),
     updateUserValidator,
+    sanitizeRequest,
     catchAsync(userController.updateUser)
   )
-  .delete(validateUserId, catchAsync(userController.deleteUser));
+  .delete(
+    idValidator('userId'),
+    sanitizeRequest,
+    catchAsync(userController.deleteUser)
+  );
 
 export default router;
