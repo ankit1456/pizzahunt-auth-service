@@ -1,6 +1,7 @@
 import { Config } from '@config';
+import { TJwtPayload } from '@customTypes/auth.types';
 import { RefreshToken, User } from '@entity';
-import { JwtPayload, sign } from 'jsonwebtoken';
+import { sign } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 
 export default class TokenService {
@@ -8,7 +9,7 @@ export default class TokenService {
     private readonly refreshTokenRepository: Repository<RefreshToken>
   ) {}
 
-  generateAccessToken(payload: JwtPayload) {
+  generateAccessToken(payload: TJwtPayload) {
     const privateKey = Config.PRIVATE_KEY!;
 
     const accessToken = sign(payload, privateKey, {
@@ -20,7 +21,7 @@ export default class TokenService {
     return accessToken;
   }
 
-  generateRefreshToken(payload: JwtPayload) {
+  generateRefreshToken(payload: TJwtPayload) {
     const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
       algorithm: 'HS256',
       expiresIn: Config.REFRESH_TOKEN_EXPIRES_IN,

@@ -1,9 +1,10 @@
-import { EStatus, TQueryParams } from '@customTypes/common';
+import { TQueryParams } from '@customTypes/common';
 import {
   TCreateTenantRequest,
   TUpdateTenantRequest
 } from '@customTypes/tenant.types';
 import { TenantService } from '@services';
+import { EStatus } from '@utils/constants';
 import { NotFoundError } from '@utils/errors';
 import { NextFunction, Request, Response } from 'express';
 import { matchedData } from 'express-validator';
@@ -32,7 +33,7 @@ export default class TenantController {
       address
     });
 
-    const newTenant = await this.tenantService.createTenant({
+    const newTenant = await this.tenantService.create({
       name,
       address
     });
@@ -47,7 +48,7 @@ export default class TenantController {
       onlyValidData: true
     });
 
-    const tenants = await this.tenantService.getAllTenants(queryParams);
+    const tenants = await this.tenantService.getAll(queryParams);
     this.logger.info('Fetched all tenants');
 
     res.json({ status: EStatus.SUCCESS, ...tenants });
@@ -55,7 +56,7 @@ export default class TenantController {
 
   async getTenantById(req: Request, res: Response, next: NextFunction) {
     const { tenantId } = req.params;
-    const tenant = await this.tenantService.getTenantById(tenantId);
+    const tenant = await this.tenantService.findOne(tenantId);
 
     if (!tenant) return next(new NotFoundError('Tenant not found'));
 
@@ -73,13 +74,13 @@ export default class TenantController {
   ) {
     const { tenantId } = req.params;
 
-    const isExists = await this.tenantService.getTenantById(tenantId);
+    const isExists = await this.tenantService.findOne(tenantId);
 
     if (!isExists) return next(new NotFoundError('Tenant not found'));
 
     const { name, address } = req.body;
 
-    await this.tenantService.updateTenant(tenantId, {
+    await this.tenantService.update(tenantId, {
       name,
       address
     });
@@ -94,11 +95,11 @@ export default class TenantController {
   async deleteTenant(req: Request, res: Response, next: NextFunction) {
     const { tenantId } = req.params;
 
-    const isExists = await this.tenantService.getTenantById(tenantId);
+    const isExists = await this.tenantService.findOne(tenantId);
 
     if (!isExists) return next(new NotFoundError('Tenant not found'));
 
-    const response = await this.tenantService.deleteTenant(tenantId);
+    const response = await this.tenantService.delete(tenantId);
 
     this.logger.info('Tenant deleted', {
       id: tenantId

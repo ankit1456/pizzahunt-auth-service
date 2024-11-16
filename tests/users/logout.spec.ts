@@ -5,12 +5,12 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { RefreshToken, User } from '../../src/entity';
-import { ERoles } from '../../src/customTypes/auth.types';
+import { ERoles } from '../../src/utils/constants';
 import {
-  persistRefreshToken,
   createUser,
   generateRefreshToken,
-  getRefreshTokens
+  getRefreshTokens,
+  persistRefreshToken
 } from '../utils';
 
 describe('POST /api/auth/logout', () => {

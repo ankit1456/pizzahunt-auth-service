@@ -1,10 +1,10 @@
 import { AppDataSource, logger } from '@config';
 import { UserController } from '@controllers';
-import { ERoles } from '@customTypes/auth.types';
 import { User } from '@entity';
 import { authenticate, canAccess, sanitizeRequest } from '@middlewares';
 import { CredentialService, UserService } from '@services';
 import { catchAsync } from '@utils';
+import { ERoles } from '@utils/constants';
 import {
   idValidator,
   queryParamsValidator,

@@ -1,14 +1,12 @@
 import {
-  ERoles,
   TAuthRequest,
+  TJwtPayload,
   TLoginUserRequest,
   TRegisterUserRequest
 } from '@customTypes/auth.types';
-import { EStatus } from '@customTypes/common';
 import { User } from '@entity';
 import { CredentialService, TokenService, UserService } from '@services';
 import { NextFunction, Request, Response } from 'express';
-import { JwtPayload } from 'jsonwebtoken';
 import { Logger } from 'winston';
 
 import {
@@ -16,6 +14,7 @@ import {
   NotFoundError,
   UnAuthorizedError
 } from '@utils/errors';
+import { ERoles, EStatus } from '@utils/constants';
 
 export default class AuthController {
   constructor(
@@ -41,7 +40,7 @@ export default class AuthController {
       role: ERoles.CUSTOMER
     });
 
-    const newUser = await this.userService.createUser({
+    const newUser = await this.userService.create({
       firstName,
       lastName,
       email,
@@ -49,7 +48,7 @@ export default class AuthController {
       role: ERoles.CUSTOMER
     });
 
-    const payload: JwtPayload = {
+    const payload: TJwtPayload = {
       sub: newUser.id,
       role: newUser.role
     };
@@ -77,7 +76,7 @@ export default class AuthController {
     this.logger.debug('Logging user in', {
       email
     });
-    const user = await this.userService.findByEmail(email, {
+    const user = await this.userService.findOne('email', email, {
       includePassword: true
     });
 
@@ -92,10 +91,12 @@ export default class AuthController {
     if (!passwordMatch)
       return next(new BadRequestError('Email or Password is incorrect'));
 
-    const payload: JwtPayload = {
+    const payload: TJwtPayload = {
       sub: user.id,
-      role: user.role
+      role: user.role,
+      tenantId: user.tenant?.id
     };
+
     const [accessToken, refreshToken] =
       await this.generateAccessAndRefreshTokens(payload, user);
 
@@ -109,14 +110,14 @@ export default class AuthController {
 
     responseWithCookies.status(200).json({
       status: EStatus.SUCCESS,
-      user: { ...user, password: undefined }
+      user: { ...user, tenant: undefined, password: undefined }
     });
   }
 
   async self(_req: Request, res: Response, next: NextFunction) {
     const req = _req as TAuthRequest;
 
-    const user = await this.userService.findById(req.auth.sub);
+    const user = await this.userService.findOne('id', req.auth.sub);
 
     if (!user) return next(new NotFoundError('User not found'));
 
@@ -126,12 +127,13 @@ export default class AuthController {
   async refresh(_req: Request, res: Response, next: NextFunction) {
     const req = _req as TAuthRequest;
 
-    const payload: JwtPayload = {
+    const payload: TJwtPayload = {
       sub: req.auth.sub,
-      role: req.auth.role
+      role: req.auth.role,
+      tenantId: req.auth.tenantId
     };
 
-    const user = await this.userService.findById(req.auth.sub);
+    const user = await this.userService.findOne('id', req.auth.sub);
 
     if (!user) return next(new UnAuthorizedError());
 
@@ -149,7 +151,7 @@ export default class AuthController {
   }
 
   async generateAccessAndRefreshTokens(
-    payload: JwtPayload,
+    payload: TJwtPayload,
     user: User
   ): Promise<[string, string]> {
     const accessToken = this.tokenService.generateAccessToken(payload);

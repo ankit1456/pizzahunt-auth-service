@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 // routes
-app.use('/api', healthRouter);
+app.use('/health', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/tenants', tenantRouter);
 app.use('/api/users', userRouter);

@@ -1,10 +1,10 @@
 import {
-  ERoles,
   TCreateUserRequest,
   TUpdateUserRequest
 } from '@customTypes/auth.types';
-import { EStatus, TQueryParams } from '@customTypes/common';
+import { TQueryParams } from '@customTypes/common';
 import { UserService } from '@services';
+import { ERoles, EStatus } from '@utils/constants';
 import { NotFoundError } from '@utils/errors';
 import { NextFunction, Request, Response } from 'express';
 import { matchedData } from 'express-validator';
@@ -32,7 +32,7 @@ export default class UserController {
       role
     });
 
-    const user = await this.userService.createUser({
+    const user = await this.userService.create({
       firstName,
       lastName,
       email,
@@ -51,7 +51,7 @@ export default class UserController {
       onlyValidData: true
     });
 
-    const users = await this.userService.getAllUsers(queryParams);
+    const users = await this.userService.getAll(queryParams);
 
     this.logger.info('All users fetched');
     res.json({ status: EStatus.SUCCESS, ...users });
@@ -59,7 +59,7 @@ export default class UserController {
 
   async getUser(req: Request, res: Response, next: NextFunction) {
     const { userId } = req.params;
-    const user = await this.userService.findById(userId);
+    const user = await this.userService.findOne('id', userId);
 
     if (!user) return next(new NotFoundError('User not found'));
 
@@ -78,7 +78,7 @@ export default class UserController {
     this.logger.info('Updating user', {
       id: userId
     });
-    const user = await this.userService.findById(userId);
+    const user = await this.userService.findOne('id', userId);
 
     if (!user) return next(new NotFoundError('User not found'));
 
@@ -89,7 +89,7 @@ export default class UserController {
         ? req.body.tenantId
         : undefined;
 
-    await this.userService.updateUser(userId, {
+    await this.userService.update(userId, {
       firstName,
       lastName,
       email,
@@ -111,11 +111,11 @@ export default class UserController {
       id: userId
     });
 
-    const user = await this.userService.findById(userId);
+    const user = await this.userService.findOne('id', userId);
 
     if (!user) return next(new NotFoundError('User not found'));
 
-    const response = await this.userService.deleteUser(userId);
+    const response = await this.userService.delete(userId);
 
     if (response.affected) {
       this.logger.info('User deleted', {

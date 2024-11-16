@@ -1,4 +1,4 @@
-import { ERoles } from '@customTypes/auth.types';
+import { ERoles } from '@utils/constants';
 import {
   Column,
   CreateDateColumn,

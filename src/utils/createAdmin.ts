@@ -1,5 +1,5 @@
 import { AppDataSource, Config, logger } from '@config';
-import { ERoles } from '@customTypes/auth.types';
+import { ERoles } from '@utils/constants';
 import { User } from '@entity';
 import bcrypt from 'bcryptjs';
 

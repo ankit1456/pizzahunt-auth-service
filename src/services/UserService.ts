@@ -17,7 +17,7 @@ export default class UserService {
     private readonly credentialService: CredentialService
   ) {}
 
-  async createUser(user: TUser) {
+  async create(user: TUser) {
     const { firstName, lastName, email, role, tenantId } = user;
 
     const userExists = await this.userRepository.findOneBy({
@@ -40,54 +40,49 @@ export default class UserService {
     });
   }
 
-  findByEmail(email: string, options?: { includePassword?: boolean }) {
+  findOne(
+    filterBy: keyof User,
+    value: string | undefined,
+    options?: { includePassword?: boolean }
+  ) {
     const queryOptions: FindOneOptions<User> = {
-      where: { email }
+      where: { [filterBy]: value },
+      relations: { tenant: true },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        password: options?.includePassword,
+        role: true,
+        createdAt: true,
+        tenant:
+          filterBy === 'email'
+            ? {
+                id: true
+              }
+            : {
+                name: true,
+                address: true
+              }
+      }
     };
 
-    if (options?.includePassword) {
-      queryOptions.select = [
-        'id',
-        'firstName',
-        'lastName',
-        'email',
-        'password',
-        'role',
-        'createdAt'
-      ];
-    }
     return this.userRepository.findOne(queryOptions);
   }
 
-  findById(id: string | undefined) {
-    return this.userRepository.findOne({
-      where: {
-        id
-      },
-      relations: {
-        tenant: true
-      },
-      select: {
-        tenant: {
-          name: true,
-          address: true
-        }
-      }
-    });
-  }
-
-  getAllUsers(queryParams: TQueryParams) {
+  getAll(queryParams: TQueryParams) {
     let queryBuilder = this.userRepository.createQueryBuilder('user');
 
     queryBuilder = this.filterUsers(queryBuilder, queryParams);
     return paginate<User>(queryBuilder, queryParams);
   }
 
-  deleteUser(userId: string | undefined) {
+  delete(userId: string | undefined) {
     return this.userRepository.delete({ id: userId });
   }
 
-  updateUser(
+  update(
     userId: string | undefined,
     updateUserPayload: Omit<TUser, 'password'>
   ) {
