@@ -1,5 +1,5 @@
 import { logger } from '@config';
-import { EStatus } from '@customTypes/common';
+import { EStatus } from '@utils/constants';
 import { UnAuthorizedError, ValidationError } from '@utils/errors';
 import { NextFunction, Request, Response } from 'express';
 import { UnauthorizedError as UnauthorizedErrorExpressJwt } from 'express-jwt';

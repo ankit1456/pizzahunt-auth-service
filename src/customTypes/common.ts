@@ -10,9 +10,3 @@ export type TQueryParams = {
 export interface TGenericBodyRequest<T> extends Request {
   body: T;
 }
-
-export const enum EStatus {
-  SUCCESS = 'success',
-  FAIL = 'fail',
-  ERROR = 'error'
-}

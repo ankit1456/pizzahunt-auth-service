@@ -2,8 +2,8 @@ import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
-import { ERoles } from '../../src/customTypes/auth.types';
 import { RefreshToken, User } from '../../src/entity';
+import { ERoles } from '../../src/utils/constants';
 import { createUser, getUsers, isJwt } from '../utils';
 
 describe('POST /api/auth/register', () => {

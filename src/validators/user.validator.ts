@@ -1,4 +1,5 @@
-import { ERoles, roles, TUpdateUserRequest } from '@customTypes/auth.types';
+import { TUpdateUserRequest } from '@customTypes/auth.types';
+import { ERoles, roles } from '@utils/constants';
 import { formatEnumMessage } from '@utils/formatEnumMessage';
 import { checkSchema as validationSchema } from 'express-validator';
 

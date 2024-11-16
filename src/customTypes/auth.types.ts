@@ -1,5 +1,7 @@
 import { Request } from 'express';
 import { TGenericBodyRequest } from './common';
+import { JwtPayload } from 'jsonwebtoken';
+import { ERoles } from '@utils/constants';
 
 export type TUser = {
   firstName: string;
@@ -19,9 +21,10 @@ export type TRegisterUserRequest = TGenericBodyRequest<TUser>;
 export type TLoginUserRequest = TGenericBodyRequest<TCredentials>;
 
 type TRequestAuthPayload = {
-  id?: string;
   sub: string;
-  role: string;
+  role: ERoles;
+  id?: string;
+  tenantId?: string;
 };
 
 export type TAuthRequest = Request & {
@@ -45,10 +48,4 @@ export type TUpdateUserRequest = TGenericBodyRequest<
   auth: TRequestAuthPayload;
 };
 
-export const enum ERoles {
-  CUSTOMER = 'customer',
-  MANAGER = 'manager',
-  ADMIN = 'admin'
-}
-
-export const roles: ERoles[] = [ERoles.CUSTOMER, ERoles.MANAGER, ERoles.ADMIN];
+export type TJwtPayload = TRequestAuthPayload & JwtPayload;

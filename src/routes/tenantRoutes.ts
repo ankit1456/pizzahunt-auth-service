@@ -1,6 +1,6 @@
 import { AppDataSource, logger } from '@config';
 import { TenantController } from '@controllers';
-import { ERoles } from '@customTypes/auth.types';
+import { ERoles } from '@utils/constants';
 import { Tenant } from '@entity';
 import { authenticate, canAccess, sanitizeRequest } from '@middlewares';
 import {

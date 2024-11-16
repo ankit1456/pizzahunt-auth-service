@@ -1,4 +1,5 @@
-import { ERoles, TAuthRequest } from '@customTypes/auth.types';
+import { TAuthRequest } from '@customTypes/auth.types';
+import { ERoles } from '@utils/constants';
 import { ForbiddenError } from '@utils/errors';
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 
