@@ -4,10 +4,10 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { User } from '../../src/entity';
-import { ERoles, EStatus } from '../../src/utils/constants';
+import { API_ROUTE_PREFIX, ERoles, EStatus } from '../../src/utils/constants';
 import { createUser } from '../utils';
 
-describe('GET /api/users', () => {
+describe(`GET ${API_ROUTE_PREFIX}/users`, () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let adminToken: string;
@@ -41,7 +41,7 @@ describe('GET /api/users', () => {
       await createUser(connection.getRepository(User));
 
       const response = await request(app)
-        .get('/api/users')
+        .get(`${API_ROUTE_PREFIX}/users`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send();
 
@@ -54,7 +54,7 @@ describe('GET /api/users', () => {
       await createUser(connection.getRepository(User));
 
       const response = await request(app)
-        .get('/api/users?q=ankit&role=customer')
+        .get(`${API_ROUTE_PREFIX}/users?q=ankit&role=customer`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send();
 
@@ -65,7 +65,9 @@ describe('GET /api/users', () => {
   });
   describe('failure cases', () => {
     it('should return 401 if user is not authenticated', async () => {
-      const response = await request(app).get('/api/users').send();
+      const response = await request(app)
+        .get(`${API_ROUTE_PREFIX}/users`)
+        .send();
 
       expect(response.statusCode).toBe(401);
       expect(response.body).toHaveProperty('ref');
@@ -78,7 +80,7 @@ describe('GET /api/users', () => {
       });
 
       const response = await request(app)
-        .get('/api/users')
+        .get(`${API_ROUTE_PREFIX}/users`)
         .set('Cookie', [`accessToken=${nonAdminToken};`])
         .send();
 

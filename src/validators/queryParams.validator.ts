@@ -1,3 +1,4 @@
+import { DEFAULT_PAGE_SIZE } from '@utils/constants';
 import { checkSchema as validationSchema } from 'express-validator';
 
 export default validationSchema(
@@ -11,7 +12,8 @@ export default validationSchema(
     limit: {
       toInt: true,
       customSanitizer: {
-        options: (value: number) => (Number.isNaN(value) ? 8 : value)
+        options: (value: number) =>
+          Number.isNaN(value) ? DEFAULT_PAGE_SIZE : value
       }
     },
     q: {

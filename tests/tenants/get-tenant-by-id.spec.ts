@@ -4,10 +4,10 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { Tenant } from '../../src/entity';
-import { ERoles, EStatus } from '../../src/utils/constants';
+import { API_ROUTE_PREFIX, ERoles, EStatus } from '../../src/utils/constants';
 import { createTenant } from '../utils';
 
-describe('GET /api/tenants/:tenantId', () => {
+describe(`GET ${API_ROUTE_PREFIX}/tenants/:tenantId`, () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let adminToken: string;
@@ -42,7 +42,7 @@ describe('GET /api/tenants/:tenantId', () => {
       const { id } = await createTenant(connection.getRepository(Tenant));
 
       const response = await request(app)
-        .get(`/api/tenants/${id}`)
+        .get(`${API_ROUTE_PREFIX}/tenants/${id}`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send();
 
@@ -52,7 +52,7 @@ describe('GET /api/tenants/:tenantId', () => {
     });
     it('should return 404 status code if tenant not found', async () => {
       const response = await request(app)
-        .get('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
+        .get(`${API_ROUTE_PREFIX}/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send();
 
@@ -63,7 +63,9 @@ describe('GET /api/tenants/:tenantId', () => {
   describe('failure cases', () => {
     it('should return 401 if user is not logged in', async () => {
       const response = await request(app)
-        .get('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
+        .get(
+          `${API_ROUTE_PREFIX}/api/auth/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`
+        )
         .send();
 
       expect(response.statusCode).toBe(401);
@@ -77,7 +79,9 @@ describe('GET /api/tenants/:tenantId', () => {
       });
 
       const response = await request(app)
-        .get('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
+        .get(
+          `${API_ROUTE_PREFIX}/api/auth/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`
+        )
         .set('Cookie', [`accessToken=${nonAdminToken}`])
         .send();
 
@@ -86,7 +90,7 @@ describe('GET /api/tenants/:tenantId', () => {
     });
     it('should return 400 if id is not a valid uuid', async () => {
       const response = await request(app)
-        .get(`/api/tenants/fwef`)
+        .get(`${API_ROUTE_PREFIX}/tenants/fwef`)
         .set('Cookie', [`accessToken=${adminToken}`])
         .send();
 

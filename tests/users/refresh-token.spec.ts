@@ -10,8 +10,9 @@ import {
   generateRefreshToken,
   isJwt
 } from '../utils';
+import { API_ROUTE_PREFIX } from '../../src/utils/constants';
 
-describe('POST /api/auth/refresh', () => {
+describe(`POST ${API_ROUTE_PREFIX}/refresh`, () => {
   let connection: DataSource;
 
   beforeAll(async () => {
@@ -47,7 +48,7 @@ describe('POST /api/auth/refresh', () => {
       });
 
       const response = await request(app)
-        .post('/api/auth/refresh')
+        .post(`${API_ROUTE_PREFIX}/refresh`)
         .set('Cookie', [`refreshToken=${refreshToken};`])
         .send();
 
@@ -80,7 +81,9 @@ describe('POST /api/auth/refresh', () => {
   });
   describe('Failure cases', () => {
     it('should return 401 if refresh token is missing', async () => {
-      const response = await request(app).post('/api/auth/refresh').send();
+      const response = await request(app)
+        .post(`${API_ROUTE_PREFIX}/refresh`)
+        .send();
 
       expect(response.unauthorized).toBeTruthy();
       expect(response.body.type).toBe('UnauthorizedError');
@@ -108,7 +111,7 @@ describe('POST /api/auth/refresh', () => {
       await refreshTokenRepository.delete({ id: refreshTokenDocument.id });
 
       const response = await request(app)
-        .post('/api/auth/refresh')
+        .post(`${API_ROUTE_PREFIX}/refresh`)
         .set('Cookie', [`refreshToken=${refreshToken};`])
         .send();
 

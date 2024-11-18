@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { RefreshToken, User } from '../../src/entity';
-import { ERoles } from '../../src/utils/constants';
+import { API_ROUTE_PREFIX, ERoles } from '../../src/utils/constants';
 import {
   createUser,
   generateRefreshToken,
@@ -13,7 +13,7 @@ import {
   persistRefreshToken
 } from '../utils';
 
-describe('POST /api/auth/logout', () => {
+describe(`POST ${API_ROUTE_PREFIX}/logout`, () => {
   let connection: DataSource;
   let jwks: JWKSMock;
 
@@ -59,7 +59,7 @@ describe('POST /api/auth/logout', () => {
       });
 
       const response = await request(app)
-        .post('/api/auth/logout')
+        .post(`${API_ROUTE_PREFIX}/logout`)
         .set('Cookie', [
           `refreshToken=${refreshToken};accessToken=${accessToken}`
         ])
@@ -100,7 +100,7 @@ describe('POST /api/auth/logout', () => {
       const accessToken = jwks.token(payload);
 
       const response = await request(app)
-        .post('/api/auth/logout')
+        .post(`${API_ROUTE_PREFIX}/logout`)
         .set('Cookie', [`accessToken=${accessToken}`])
         .send();
 

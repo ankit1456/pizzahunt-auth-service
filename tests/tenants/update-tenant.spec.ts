@@ -4,10 +4,10 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { Tenant } from '../../src/entity';
-import { ERoles, EStatus } from '../../src/utils/constants';
+import { API_ROUTE_PREFIX, ERoles, EStatus } from '../../src/utils/constants';
 import { createTenant } from '../utils';
 
-describe('PATCH /api/tenants/:tenantId', () => {
+describe(`PATCH ${API_ROUTE_PREFIX}/tenants/:tenantId`, () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let adminToken: string;
@@ -48,7 +48,7 @@ describe('PATCH /api/tenants/:tenantId', () => {
       const { id } = await createTenant(tenantRepository);
 
       const response = await request(app)
-        .patch(`/api/tenants/${id}`)
+        .patch(`${API_ROUTE_PREFIX}/tenants/${id}`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(tenantData);
 
@@ -61,7 +61,9 @@ describe('PATCH /api/tenants/:tenantId', () => {
 
     it('should return 404 status code if tenant not found', async () => {
       const response = await request(app)
-        .patch('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
+        .patch(
+          `${API_ROUTE_PREFIX}/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`
+        )
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(tenantData);
 
@@ -72,7 +74,9 @@ describe('PATCH /api/tenants/:tenantId', () => {
   describe('failure cases', () => {
     it('should return 401 if user is not logged in', async () => {
       const response = await request(app)
-        .patch('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
+        .patch(
+          `${API_ROUTE_PREFIX}/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`
+        )
         .send(tenantData);
 
       expect(response.unauthorized).toBeTruthy();
@@ -86,7 +90,9 @@ describe('PATCH /api/tenants/:tenantId', () => {
       });
 
       const response = await request(app)
-        .patch('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
+        .patch(
+          `${API_ROUTE_PREFIX}/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`
+        )
         .set('Cookie', [`accessToken=${nonAdminToken}`])
         .send(tenantData);
 
@@ -95,7 +101,7 @@ describe('PATCH /api/tenants/:tenantId', () => {
 
     it('should return 400 if id is not a valid uuid', async () => {
       const response = await request(app)
-        .patch(`/api/tenants/fwef`)
+        .patch(`${API_ROUTE_PREFIX}/tenants/fwef`)
         .set('Cookie', [`accessToken=${adminToken}`])
         .send(tenantData);
 
@@ -108,7 +114,9 @@ describe('PATCH /api/tenants/:tenantId', () => {
         name: ''
       };
       const response = await request(app)
-        .patch(`/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`)
+        .patch(
+          `${API_ROUTE_PREFIX}/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`
+        )
         .set('Cookie', [`accessToken=${adminToken}`])
         .send(tenantData);
 

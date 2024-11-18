@@ -3,10 +3,10 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { RefreshToken, User } from '../../src/entity';
-import { ERoles } from '../../src/utils/constants';
+import { API_ROUTE_PREFIX, ERoles } from '../../src/utils/constants';
 import { createUser, getUsers, isJwt } from '../utils';
 
-describe('POST /api/auth/register', () => {
+describe(`POST ${API_ROUTE_PREFIX}/register`, () => {
   let connection: DataSource;
 
   beforeAll(async () => {
@@ -35,7 +35,7 @@ describe('POST /api/auth/register', () => {
     it('should return 201 statusCode', async () => {
       //   A -> Act
       const response = await request(app)
-        .post('/api/auth/register')
+        .post(`${API_ROUTE_PREFIX}/register`)
         .send(userData);
 
       //   A -> Assert
@@ -45,7 +45,7 @@ describe('POST /api/auth/register', () => {
 
     it('should return a valid json', async () => {
       const response = await request(app)
-        .post('/api/auth/register')
+        .post(`${API_ROUTE_PREFIX}/register`)
         .send(userData);
 
       expect(response.headers['content-type']).toEqual(
@@ -54,7 +54,7 @@ describe('POST /api/auth/register', () => {
     });
 
     it('should persist the user in the database', async () => {
-      await request(app).post('/api/auth/register').send(userData);
+      await request(app).post(`${API_ROUTE_PREFIX}/register`).send(userData);
 
       const users = await getUsers(connection);
 
@@ -64,7 +64,7 @@ describe('POST /api/auth/register', () => {
 
     it('should return created user and role should be customer', async () => {
       const response = await request(app)
-        .post('/api/auth/register')
+        .post(`${API_ROUTE_PREFIX}/register`)
         .send(userData);
 
       const users = await getUsers(connection);
@@ -77,7 +77,7 @@ describe('POST /api/auth/register', () => {
     });
 
     it('should store hashed password', async () => {
-      await request(app).post('/api/auth/register').send(userData);
+      await request(app).post(`${API_ROUTE_PREFIX}/register`).send(userData);
 
       const userRespository = connection.getRepository(User);
       const users = await userRespository.find({
@@ -93,7 +93,7 @@ describe('POST /api/auth/register', () => {
       await createUser(connection.getRepository(User));
 
       const response = await request(app)
-        .post('/api/auth/register')
+        .post(`${API_ROUTE_PREFIX}/register`)
         .send(userData);
 
       const users = await getUsers(connection);
@@ -105,7 +105,7 @@ describe('POST /api/auth/register', () => {
 
     it('should return the access token and refresh token inside a cookie', async () => {
       const response = await request(app)
-        .post('/api/auth/register')
+        .post(`${API_ROUTE_PREFIX}/register`)
         .send(userData);
 
       interface Headers {
@@ -135,7 +135,7 @@ describe('POST /api/auth/register', () => {
 
     it('should store the refresh token in the database', async () => {
       const response = await request(app)
-        .post('/api/auth/register')
+        .post(`${API_ROUTE_PREFIX}/register`)
         .send(userData);
 
       const refreshTokenRepository = connection.getRepository(RefreshToken);
@@ -163,7 +163,7 @@ describe('POST /api/auth/register', () => {
       const users = await getUsers(connection);
 
       const response = await request(app)
-        .post('/api/auth/register')
+        .post(`${API_ROUTE_PREFIX}/register`)
         .send(userData);
 
       expect(response.statusCode).toBe(400);
@@ -181,7 +181,7 @@ describe('POST /api/auth/register', () => {
       const users = await getUsers(connection);
 
       const response = await request(app)
-        .post('/api/auth/register')
+        .post(`${API_ROUTE_PREFIX}/register`)
         .send(userData);
 
       expect(response.statusCode).toBe(400);
@@ -200,7 +200,7 @@ describe('POST /api/auth/register', () => {
         password: 'test1234'
       };
 
-      await request(app).post('/api/auth/register').send(userData);
+      await request(app).post(`${API_ROUTE_PREFIX}/register`).send(userData);
 
       const users = await getUsers(connection);
 
@@ -218,7 +218,7 @@ describe('POST /api/auth/register', () => {
       };
 
       const response = await request(app)
-        .post('/api/auth/register')
+        .post(`${API_ROUTE_PREFIX}/register`)
         .send(userData);
 
       const users = await getUsers(connection);
@@ -237,7 +237,7 @@ describe('POST /api/auth/register', () => {
       };
 
       const response = await request(app)
-        .post('/api/auth/register')
+        .post(`${API_ROUTE_PREFIX}/register`)
         .send(userData);
 
       const users = await getUsers(connection);
@@ -256,7 +256,7 @@ describe('POST /api/auth/register', () => {
       };
 
       const response = await request(app)
-        .post('/api/auth/register')
+        .post(`${API_ROUTE_PREFIX}/register`)
         .send(userData);
 
       const users = await getUsers(connection);

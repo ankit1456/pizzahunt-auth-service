@@ -4,10 +4,10 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { User } from '../../src/entity';
-import { ERoles, EStatus } from '../../src/utils/constants';
+import { API_ROUTE_PREFIX, ERoles, EStatus } from '../../src/utils/constants';
 import { createUser, getUsers } from '../utils';
 
-describe('PATCH /api/users/:userId', () => {
+describe(`PATCH ${API_ROUTE_PREFIX}/users/:userId`, () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let adminToken: string;
@@ -41,7 +41,7 @@ describe('PATCH /api/users/:userId', () => {
       const { id } = await createUser(connection.getRepository(User));
 
       const response = await request(app)
-        .patch(`/api/users/${id}`)
+        .patch(`${API_ROUTE_PREFIX}/users/${id}`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send({ role: ERoles.CUSTOMER, firstName: 'Ankit Kumar' });
 
@@ -62,7 +62,7 @@ describe('PATCH /api/users/:userId', () => {
       });
 
       const response = await request(app)
-        .patch(`/api/users/${id}`)
+        .patch(`${API_ROUTE_PREFIX}/users/${id}`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send({ role: ERoles.CUSTOMER });
 
@@ -77,7 +77,7 @@ describe('PATCH /api/users/:userId', () => {
       const { id } = await createUser(connection.getRepository(User));
 
       const response = await request(app)
-        .patch(`/api/users/${id}`)
+        .patch(`${API_ROUTE_PREFIX}/users/${id}`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send({ firstName: 'Ankit Kumar', password: 'test' });
 
@@ -86,7 +86,7 @@ describe('PATCH /api/users/:userId', () => {
     });
     it('should return 401 if user is not authenticated', async () => {
       const response = await request(app)
-        .patch('/api/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560')
+        .patch(`${API_ROUTE_PREFIX}/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560`)
         .send({ role: ERoles.CUSTOMER });
 
       expect(response.unauthorized).toBeTruthy();
@@ -100,7 +100,7 @@ describe('PATCH /api/users/:userId', () => {
       });
 
       const response = await request(app)
-        .patch('/api/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560')
+        .patch(`${API_ROUTE_PREFIX}/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560`)
         .set('Cookie', [`accessToken=${nonAdminToken};`])
         .send({ role: ERoles.CUSTOMER });
 
@@ -110,7 +110,7 @@ describe('PATCH /api/users/:userId', () => {
 
     it('should return 400 if id is not a valid uuid', async () => {
       const response = await request(app)
-        .patch('/api/users/wfwef')
+        .patch(`${API_ROUTE_PREFIX}/users/wfwef`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send({ role: ERoles.CUSTOMER });
 
@@ -119,7 +119,7 @@ describe('PATCH /api/users/:userId', () => {
     });
     it('should return 404 if user not found', async () => {
       const response = await request(app)
-        .patch('/api/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560')
+        .patch(`${API_ROUTE_PREFIX}/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send();
 
@@ -134,7 +134,7 @@ describe('PATCH /api/users/:userId', () => {
       };
 
       const response = await request(app)
-        .patch('/api/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560')
+        .patch(`${API_ROUTE_PREFIX}/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(userData);
 
