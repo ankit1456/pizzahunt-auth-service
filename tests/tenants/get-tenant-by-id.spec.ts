@@ -63,9 +63,7 @@ describe(`GET ${API_ROUTE_PREFIX}/tenants/:tenantId`, () => {
   describe('failure cases', () => {
     it('should return 401 if user is not logged in', async () => {
       const response = await request(app)
-        .get(
-          `${API_ROUTE_PREFIX}/api/auth/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`
-        )
+        .get(`${API_ROUTE_PREFIX}/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`)
         .send();
 
       expect(response.statusCode).toBe(401);
@@ -79,9 +77,7 @@ describe(`GET ${API_ROUTE_PREFIX}/tenants/:tenantId`, () => {
       });
 
       const response = await request(app)
-        .get(
-          `${API_ROUTE_PREFIX}/api/auth/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`
-        )
+        .get(`${API_ROUTE_PREFIX}/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`)
         .set('Cookie', [`accessToken=${nonAdminToken}`])
         .send();
 

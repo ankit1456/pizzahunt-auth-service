@@ -21,11 +21,11 @@ app.use(express.static('public'));
 app.use(cookieParser());
 app.use(express.json());
 
-// routes
+// route middlewares
 app.use(`${API_ROUTE_PREFIX}/health`, healthRouter);
-app.use(`${API_ROUTE_PREFIX}`, authRouter);
 app.use(`${API_ROUTE_PREFIX}/tenants`, tenantRouter);
 app.use(`${API_ROUTE_PREFIX}/users`, userRouter);
+app.use(`${API_ROUTE_PREFIX}`, authRouter);
 
 app.all('*', (req, res, next) =>
   next(new NotFoundError(`Can't find ${req.url} on the server`))

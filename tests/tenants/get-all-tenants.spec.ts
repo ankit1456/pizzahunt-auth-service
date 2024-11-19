@@ -39,7 +39,7 @@ describe(`GET ${API_ROUTE_PREFIX}/tenants`, () => {
       expect(response.body.data).toHaveLength(1);
     });
 
-    it('should return all tenants with 200 status code', async () => {
+    it('should return all tenants with 200 status code with search query', async () => {
       await createTenant(connection.getRepository(Tenant));
 
       const response = await request(app)
