@@ -11,3 +11,6 @@ export const enum ERoles {
 }
 
 export const roles: ERoles[] = [ERoles.CUSTOMER, ERoles.MANAGER, ERoles.ADMIN];
+
+export const DEFAULT_PAGE_SIZE = 8;
+export const API_ROUTE_PREFIX = '/api/auth';

@@ -4,10 +4,10 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { User } from '../../src/entity';
-import { ERoles, EStatus } from '../../src/utils/constants';
+import { API_ROUTE_PREFIX, ERoles, EStatus } from '../../src/utils/constants';
 import { createUser } from '../utils';
 
-describe('GET /api/users/:userId', () => {
+describe(`GET ${API_ROUTE_PREFIX}/:userId`, () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let adminToken: string;
@@ -41,7 +41,7 @@ describe('GET /api/users/:userId', () => {
       const { id } = await createUser(connection.getRepository(User));
 
       const response = await request(app)
-        .get(`/api/users/${id}`)
+        .get(`${API_ROUTE_PREFIX}/users/${id}`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send();
 
@@ -53,7 +53,7 @@ describe('GET /api/users/:userId', () => {
   describe('failure cases', () => {
     it('should return 401 if user is not authenticated', async () => {
       const response = await request(app)
-        .get('/api/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560')
+        .get(`${API_ROUTE_PREFIX}/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560`)
         .send();
 
       expect(response.statusCode).toBe(401);
@@ -69,7 +69,7 @@ describe('GET /api/users/:userId', () => {
       });
 
       const response = await request(app)
-        .get('/api/users')
+        .get(`${API_ROUTE_PREFIX}/users`)
         .set('Cookie', [`accessToken=${nonAdminToken};`])
         .send();
 
@@ -81,7 +81,7 @@ describe('GET /api/users/:userId', () => {
 
     it('should return 400 if id is not a valid uuid', async () => {
       const response = await request(app)
-        .get('/api/users/wfwef')
+        .get(`${API_ROUTE_PREFIX}/users/wfwef`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send();
 
@@ -90,7 +90,7 @@ describe('GET /api/users/:userId', () => {
     });
     it('should return 404 if user not found', async () => {
       const response = await request(app)
-        .get('/api/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560')
+        .get(`${API_ROUTE_PREFIX}/users/fa72c1dc-00d1-42f4-9e87-fe03afab0560`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send();
 

@@ -2,11 +2,11 @@ import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
-import { EStatus } from '../../src/utils/constants';
+import { API_ROUTE_PREFIX, EStatus } from '../../src/utils/constants';
 import { Tenant } from '../../src/entity';
 import { createTenant } from '../utils';
 
-describe('GET /api/tenants', () => {
+describe(`GET ${API_ROUTE_PREFIX}/tenants`, () => {
   let connection: DataSource;
 
   beforeAll(async () => {
@@ -30,17 +30,21 @@ describe('GET /api/tenants', () => {
     it('should return all tenants with 200 status code', async () => {
       await createTenant(connection.getRepository(Tenant));
 
-      const response = await request(app).get('/api/tenants').send();
+      const response = await request(app)
+        .get(`${API_ROUTE_PREFIX}/tenants`)
+        .send();
 
       expect(response.statusCode).toBe(200);
       expect(response.body.status).toBe(EStatus.SUCCESS);
       expect(response.body.data).toHaveLength(1);
     });
 
-    it('should return all tenants with 200 status code', async () => {
+    it('should return all tenants with 200 status code with search query', async () => {
       await createTenant(connection.getRepository(Tenant));
 
-      const response = await request(app).get('/api/tenants?q=name').send();
+      const response = await request(app)
+        .get(`${API_ROUTE_PREFIX}/tenants?q=name`)
+        .send();
 
       expect(response.body.data).toHaveLength(1);
       expect(response.body.data[0].name).toBe(tenantData.name);

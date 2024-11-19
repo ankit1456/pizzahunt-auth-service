@@ -4,8 +4,9 @@ import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { User } from '../../src/entity';
 import { createUser, isJwt } from '../utils';
+import { API_ROUTE_PREFIX } from '../../src/utils/constants';
 
-describe('POST /api/auth/login', () => {
+describe(` POST ${API_ROUTE_PREFIX}/login`, () => {
   let connection: DataSource;
 
   beforeAll(async () => {
@@ -31,14 +32,18 @@ describe('POST /api/auth/login', () => {
     };
 
     it('should return 200 status code', async () => {
-      const response = await request(app).post('/api/auth/login').send(creds);
+      const response = await request(app)
+        .post(`${API_ROUTE_PREFIX}/login`)
+        .send(creds);
 
       expect(response.statusCode).toBe(200);
       expect(response.body).not.toHaveProperty('password');
     });
 
     it('should return accessToken and refreshToken and should be jwt', async () => {
-      const response = await request(app).post('/api/auth/login').send(creds);
+      const response = await request(app)
+        .post(`${API_ROUTE_PREFIX}/login`)
+        .send(creds);
 
       interface Headers {
         'set-cookie': string[];
@@ -72,7 +77,9 @@ describe('POST /api/auth/login', () => {
         password: ''
       };
 
-      const response = await request(app).post('/api/auth/login').send(creds);
+      const response = await request(app)
+        .post(`${API_ROUTE_PREFIX}/login`)
+        .send(creds);
 
       expect(response.statusCode).toBe(400);
       expect(response.body.errors).toHaveLength(3);
@@ -84,7 +91,9 @@ describe('POST /api/auth/login', () => {
         password: 'test1234'
       };
 
-      const response = await request(app).post('/api/auth/login').send(creds);
+      const response = await request(app)
+        .post(`${API_ROUTE_PREFIX}/login`)
+        .send(creds);
 
       expect(response.statusCode).toBe(400);
       expect(response.body.errors).toHaveLength(1);
@@ -96,7 +105,9 @@ describe('POST /api/auth/login', () => {
         password: 'test12345'
       };
 
-      const response = await request(app).post('/api/auth/login').send(creds);
+      const response = await request(app)
+        .post(`${API_ROUTE_PREFIX}/login`)
+        .send(creds);
 
       expect(response.statusCode).toBe(400);
       expect(response.body.message).toBe('Email or Password is incorrect');
@@ -108,7 +119,9 @@ describe('POST /api/auth/login', () => {
         password: 'test12345'
       };
 
-      const response = await request(app).post('/api/auth/login').send(creds);
+      const response = await request(app)
+        .post(`${API_ROUTE_PREFIX}/login`)
+        .send(creds);
 
       expect(response.statusCode).toBe(400);
       expect(response.body).toHaveProperty('ref');

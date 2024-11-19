@@ -3,11 +3,11 @@ import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
-import { ERoles, EStatus } from '../../src/utils/constants';
+import { ERoles, EStatus, API_ROUTE_PREFIX } from '../../src/utils/constants';
 import { Tenant } from '../../src/entity';
 import { createTenant } from '../utils';
 
-describe('DELETE /api/tenants/:tenantId', () => {
+describe(`DELETE ${API_ROUTE_PREFIX}/tenants/:tenantId`, () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let adminToken: string;
@@ -44,7 +44,7 @@ describe('DELETE /api/tenants/:tenantId', () => {
       const { id } = await createTenant(tenantRepository);
 
       const response = await request(app)
-        .delete(`/api/tenants/${id}`)
+        .delete(`${API_ROUTE_PREFIX}/tenants/${id}`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send();
 
@@ -54,9 +54,12 @@ describe('DELETE /api/tenants/:tenantId', () => {
       expect(response.statusCode).toBe(200);
       expect(response.body.status).toBe(EStatus.SUCCESS);
     });
+
     it('should return 404 status code if tenant not found', async () => {
       const response = await request(app)
-        .delete('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
+        .delete(
+          `${API_ROUTE_PREFIX}/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`
+        )
         .set('Cookie', [`accessToken=${adminToken};`])
         .send();
 
@@ -67,7 +70,9 @@ describe('DELETE /api/tenants/:tenantId', () => {
   describe('failure cases', () => {
     it('should return 401 if user is not logged in', async () => {
       const response = await request(app)
-        .delete('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
+        .delete(
+          `${API_ROUTE_PREFIX}/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`
+        )
         .send();
 
       expect(response.statusCode).toBe(401);
@@ -81,7 +86,9 @@ describe('DELETE /api/tenants/:tenantId', () => {
       });
 
       const response = await request(app)
-        .delete('/api/tenants/bb7972d1-4642-4612-927f-c70afbdcba89')
+        .delete(
+          `${API_ROUTE_PREFIX}/tenants/bb7972d1-4642-4612-927f-c70afbdcba89`
+        )
         .set('Cookie', [`accessToken=${nonAdminToken}`])
         .send();
 
@@ -91,7 +98,7 @@ describe('DELETE /api/tenants/:tenantId', () => {
 
     it('should return 400 if id is not a valid uuid', async () => {
       const response = await request(app)
-        .delete(`/api/tenants/fwef`)
+        .delete(`${API_ROUTE_PREFIX}/tenants/fwef`)
         .set('Cookie', [`accessToken=${adminToken}`])
         .send();
 

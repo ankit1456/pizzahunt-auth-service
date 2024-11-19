@@ -1,6 +1,7 @@
 import { Config } from '@config';
 import { globalErrorHandler } from '@middlewares';
 import { authRouter, healthRouter, tenantRouter, userRouter } from '@routes';
+import { API_ROUTE_PREFIX } from '@utils/constants';
 import { NotFoundError } from '@utils/errors';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -20,11 +21,11 @@ app.use(express.static('public'));
 app.use(cookieParser());
 app.use(express.json());
 
-// routes
-app.use('/health', healthRouter);
-app.use('/api/auth', authRouter);
-app.use('/api/tenants', tenantRouter);
-app.use('/api/users', userRouter);
+// route middlewares
+app.use(`${API_ROUTE_PREFIX}/health`, healthRouter);
+app.use(`${API_ROUTE_PREFIX}/tenants`, tenantRouter);
+app.use(`${API_ROUTE_PREFIX}/users`, userRouter);
+app.use(`${API_ROUTE_PREFIX}`, authRouter);
 
 app.all('*', (req, res, next) =>
   next(new NotFoundError(`Can't find ${req.url} on the server`))

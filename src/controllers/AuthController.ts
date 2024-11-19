@@ -108,7 +108,7 @@ export default class AuthController {
 
     this.logger.info('User has been logged in', { id: user.id });
 
-    responseWithCookies.status(200).json({
+    return responseWithCookies.status(200).json({
       status: EStatus.SUCCESS,
       user: { ...user, tenant: undefined, password: undefined }
     });
@@ -121,7 +121,7 @@ export default class AuthController {
 
     if (!user) return next(new NotFoundError('User not found'));
 
-    res.json({ status: EStatus.SUCCESS, user });
+    return res.json({ status: EStatus.SUCCESS, user });
   }
 
   async refresh(_req: Request, res: Response, next: NextFunction) {
@@ -147,7 +147,7 @@ export default class AuthController {
       accessToken,
       refreshToken
     );
-    responseWithCookies.json({ status: EStatus.SUCCESS, id: user.id });
+    return responseWithCookies.json({ status: EStatus.SUCCESS, id: user.id });
   }
 
   async generateAccessAndRefreshTokens(
@@ -200,7 +200,7 @@ export default class AuthController {
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
 
-    res.json({
+    return res.json({
       status: EStatus.SUCCESS,
       message: 'You have been logged out'
     });

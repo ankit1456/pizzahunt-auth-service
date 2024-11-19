@@ -5,8 +5,9 @@ import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { User } from '../../src/entity';
 import { createUser } from '../utils';
+import { API_ROUTE_PREFIX } from '../../src/utils/constants';
 
-describe('GET /api/auth/self', () => {
+describe(`GET ${API_ROUTE_PREFIX}/self`, () => {
   let connection: DataSource;
   let jwks: JWKSMock;
 
@@ -36,7 +37,7 @@ describe('GET /api/auth/self', () => {
       const accessToken = jwks.token({ sub: user.id, role: user.role });
 
       const response = await request(app)
-        .get('/api/auth/self')
+        .get(`${API_ROUTE_PREFIX}/self`)
         .set('Cookie', [`accessToken=${accessToken};`])
         .send();
 
@@ -50,7 +51,7 @@ describe('GET /api/auth/self', () => {
       const accessToken = jwks.token({ sub: user.id, role: user.role });
 
       const response = await request(app)
-        .get('/api/auth/self')
+        .get(`${API_ROUTE_PREFIX}/self`)
         .set('Cookie', [`accessToken=${accessToken};`])
         .send();
 
@@ -60,7 +61,9 @@ describe('GET /api/auth/self', () => {
 
   describe('Failure cases', () => {
     it("should return 401 statuscode if token doesn't exist", async () => {
-      const response = await request(app).get('/api/auth/self').send();
+      const response = await request(app)
+        .get(`${API_ROUTE_PREFIX}/self`)
+        .send();
 
       expect(response.statusCode).toBe(401);
     });
@@ -72,7 +75,7 @@ describe('GET /api/auth/self', () => {
       });
 
       const response = await request(app)
-        .get('/api/auth/self')
+        .get(`${API_ROUTE_PREFIX}/self`)
         .set('Cookie', [`accessToken=${accessToken};`])
         .send();
 

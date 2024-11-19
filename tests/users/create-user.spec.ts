@@ -4,10 +4,10 @@ import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { Tenant, User } from '../../src/entity';
-import { ERoles, EStatus } from '../../src/utils/constants';
+import { API_ROUTE_PREFIX, ERoles, EStatus } from '../../src/utils/constants';
 import { createTenant, createUser, getUsers } from '../utils';
 
-describe('POST /api/users', () => {
+describe(`POST ${API_ROUTE_PREFIX}/users`, () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let adminToken: string;
@@ -50,7 +50,7 @@ describe('POST /api/users', () => {
       };
 
       const response = await request(app)
-        .post('/api/users')
+        .post(`${API_ROUTE_PREFIX}/users`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(userData);
 
@@ -71,7 +71,7 @@ describe('POST /api/users', () => {
       };
 
       await request(app)
-        .post('/api/users')
+        .post(`${API_ROUTE_PREFIX}/users`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(userData);
 
@@ -96,7 +96,9 @@ describe('POST /api/users', () => {
       };
 
       const users = await getUsers(connection);
-      const response = await request(app).post('/api/users').send(userData);
+      const response = await request(app)
+        .post(`${API_ROUTE_PREFIX}/users`)
+        .send(userData);
 
       expect(response.statusCode).toBe(401);
       expect(response.body.type).toBe('UnauthorizedError');
@@ -112,7 +114,7 @@ describe('POST /api/users', () => {
       };
 
       const response = await request(app)
-        .post('/api/users')
+        .post(`${API_ROUTE_PREFIX}/users`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(userData);
 
@@ -133,7 +135,7 @@ describe('POST /api/users', () => {
         password: 'test1234'
       };
       const response = await request(app)
-        .post('/api/users')
+        .post(`${API_ROUTE_PREFIX}/users`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(userData);
 
@@ -157,7 +159,7 @@ describe('POST /api/users', () => {
       };
 
       const response = await request(app)
-        .post('/api/users')
+        .post(`${API_ROUTE_PREFIX}/users`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(userData);
 
@@ -186,7 +188,7 @@ describe('POST /api/users', () => {
       const users = await getUsers(connection);
 
       const response = await request(app)
-        .post('/api/users')
+        .post(`${API_ROUTE_PREFIX}/users`)
         .set('Cookie', [`accessToken=${nonAdminToken};`])
         .send(userData);
 

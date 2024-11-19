@@ -3,10 +3,10 @@ import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
-import { ERoles, EStatus } from '../../src/utils/constants';
+import { ERoles, EStatus, API_ROUTE_PREFIX } from '../../src/utils/constants';
 import { getTenants } from '../utils';
 
-describe('POST /api/tenants', () => {
+describe(`POST ${API_ROUTE_PREFIX}/tenants`, () => {
   let connection: DataSource;
   let jwks: JWKSMock;
   let adminToken: string;
@@ -44,7 +44,7 @@ describe('POST /api/tenants', () => {
 
     it('should return 201 status code', async () => {
       const response = await request(app)
-        .post('/api/tenants')
+        .post(`${API_ROUTE_PREFIX}/tenants`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(tenantData);
 
@@ -54,7 +54,7 @@ describe('POST /api/tenants', () => {
 
     it('should create a tenant in the database', async () => {
       await request(app)
-        .post('/api/tenants')
+        .post(`${API_ROUTE_PREFIX}/tenants`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(tenantData);
 
@@ -73,7 +73,9 @@ describe('POST /api/tenants', () => {
     };
 
     it('should return 401 if user is not authenticated', async () => {
-      const response = await request(app).post('/api/tenants').send(tenantData);
+      const response = await request(app)
+        .post(`${API_ROUTE_PREFIX}/tenants`)
+        .send(tenantData);
 
       const tenants = await getTenants(connection);
 
@@ -88,7 +90,7 @@ describe('POST /api/tenants', () => {
       });
 
       const response = await request(app)
-        .post('/api/tenants')
+        .post(`${API_ROUTE_PREFIX}/tenants`)
         .set('Cookie', [`accessToken=${managerToken};`])
         .send(tenantData);
 
@@ -105,7 +107,7 @@ describe('POST /api/tenants', () => {
       };
 
       const response = await request(app)
-        .post('/api/tenants')
+        .post(`${API_ROUTE_PREFIX}/tenants`)
         .set('Cookie', [`accessToken=${adminToken};`])
         .send(tenantData);
 

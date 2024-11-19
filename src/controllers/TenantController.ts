@@ -22,11 +22,7 @@ export default class TenantController {
     this.deleteTenant = this.deleteTenant.bind(this);
   }
 
-  async createTenant(
-    req: TCreateTenantRequest,
-    res: Response,
-    next: NextFunction
-  ) {
+  async createTenant(req: TCreateTenantRequest, res: Response) {
     const { name, address } = req.body;
     this.logger.debug('Creating a tenant', {
       name,
@@ -43,7 +39,7 @@ export default class TenantController {
     res.status(201).json({ status: EStatus.SUCCESS, tenant: newTenant });
   }
 
-  async getAllTenants(req: Request, res: Response, next: NextFunction) {
+  async getAllTenants(req: Request, res: Response) {
     const queryParams = matchedData<TQueryParams>(req, {
       onlyValidData: true
     });
@@ -51,7 +47,7 @@ export default class TenantController {
     const tenants = await this.tenantService.getAll(queryParams);
     this.logger.info('Fetched all tenants');
 
-    res.json({ status: EStatus.SUCCESS, ...tenants });
+    return res.json({ status: EStatus.SUCCESS, ...tenants });
   }
 
   async getTenantById(req: Request, res: Response, next: NextFunction) {
@@ -64,7 +60,7 @@ export default class TenantController {
       id: tenant.id
     });
 
-    res.json({ status: EStatus.SUCCESS, tenant });
+    return res.json({ status: EStatus.SUCCESS, tenant });
   }
 
   async updateTenant(
@@ -89,7 +85,7 @@ export default class TenantController {
       id: tenantId
     });
 
-    res.json({ status: EStatus.SUCCESS, id: tenantId });
+    return res.json({ status: EStatus.SUCCESS, id: tenantId });
   }
 
   async deleteTenant(req: Request, res: Response, next: NextFunction) {
@@ -104,8 +100,6 @@ export default class TenantController {
     this.logger.info('Tenant deleted', {
       id: tenantId
     });
-    if (response.affected) {
-      res.json({ status: EStatus.SUCCESS });
-    }
+    if (response.affected) return res.json({ status: EStatus.SUCCESS });
   }
 }
