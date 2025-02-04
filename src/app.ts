@@ -5,15 +5,15 @@ import { API_ROUTE_PREFIX } from '@utils/constants';
 import { NotFoundError } from '@utils/errors';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express from 'express';
+import express, { Application } from 'express';
 import 'reflect-metadata';
 
-const app = express();
+const app: Application = express();
 
 // middlewares
 app.use(
   cors({
-    origin: [Config.WHITELIST_ORIGIN!],
+    origin: [Config.WHITELIST_ORIGIN!, 'http://localhost:3000'],
     credentials: true
   })
 );

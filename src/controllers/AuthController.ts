@@ -50,7 +50,10 @@ export default class AuthController {
 
     const payload: TJwtPayload = {
       sub: newUser.id,
-      role: newUser.role
+      role: newUser.role,
+      firstName,
+      lastName,
+      email
     };
 
     const [accessToken, refreshToken] =
@@ -94,7 +97,10 @@ export default class AuthController {
     const payload: TJwtPayload = {
       sub: user.id,
       role: user.role,
-      tenantId: user.tenant?.id
+      tenantId: user.tenant?.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email
     };
 
     const [accessToken, refreshToken] =
@@ -127,10 +133,14 @@ export default class AuthController {
   async refresh(_req: Request, res: Response, next: NextFunction) {
     const req = _req as TAuthRequest;
 
+    const { sub, role, firstName, lastName, email, tenantId } = req.auth;
     const payload: TJwtPayload = {
-      sub: req.auth.sub,
-      role: req.auth.role,
-      tenantId: req.auth.tenantId
+      sub,
+      role,
+      firstName,
+      lastName,
+      email,
+      tenantId
     };
 
     const user = await this.userService.findOne('id', req.auth.sub);
@@ -171,8 +181,10 @@ export default class AuthController {
       domain: 'localhost',
       sameSite: 'strict',
       maxAge: 1000 * 60 * 60, //1 hour
+      // maxAge: 30 * 1000,
       httpOnly: true
     });
+
     res.cookie('refreshToken', refreshToken, {
       domain: 'localhost',
       sameSite: 'strict',

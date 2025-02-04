@@ -24,6 +24,9 @@ type TRequestAuthPayload = {
   sub: string;
   role: ERoles;
   id?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
   tenantId?: string;
 };
 

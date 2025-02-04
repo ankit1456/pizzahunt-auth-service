@@ -62,6 +62,7 @@ export default class UserService {
                 id: true
               }
             : {
+                id: true,
                 name: true,
                 address: true
               }

@@ -23,8 +23,8 @@ export default expressjwt({
 
       if (token) return token;
     }
-
     const { accessToken } = req.cookies as TAuthCookies;
-    return accessToken;
+
+    if (accessToken) return accessToken;
   }
 }) as RequestHandler;

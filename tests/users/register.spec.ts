@@ -1,6 +1,6 @@
+import app from '../../src/app';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
-import app from '../../src/app';
 import { AppDataSource } from '../../src/config';
 import { RefreshToken, User } from '../../src/entity';
 import { API_ROUTE_PREFIX, ERoles } from '../../src/utils/constants';

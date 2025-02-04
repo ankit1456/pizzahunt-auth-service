@@ -15,6 +15,7 @@ export default class TokenService {
     const accessToken = sign(payload, privateKey, {
       algorithm: 'RS256',
       expiresIn: Config.ACCESS_TOKEN_EXPIRES_IN,
+      // expiresIn: '30s',
       issuer: Config.SERVICE_NAME
     });
 
@@ -26,7 +27,7 @@ export default class TokenService {
       algorithm: 'HS256',
       expiresIn: Config.REFRESH_TOKEN_EXPIRES_IN,
       issuer: Config.SERVICE_NAME,
-      jwtid: String(payload.id)
+      jwtid: payload.id
     });
     return refreshToken;
   }

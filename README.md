@@ -11,3 +11,7 @@
 # Pizzahunt Auth Service
 
 Authentication service for food delivery app(pizzahunt).
+
+<!-- if attribute's widget type is switch then available options can be "Yes" or "No" -->
+<!-- transform user's name ,tenant's name and product's name and category's name and topping's name capitalize -->
+<!-- add a field to user for active or isActive -->

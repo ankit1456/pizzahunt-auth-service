@@ -26,7 +26,6 @@ router.get(
   queryParamsValidator,
   catchAsync(tenantController.getAllTenants)
 );
-
 router.use(authenticate, canAccess(ERoles.ADMIN));
 
 router.post(

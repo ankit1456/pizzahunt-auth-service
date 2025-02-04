@@ -11,13 +11,13 @@ process.on('uncaughtException', (err) => {
 
 let server: Server;
 const startServer = async () => {
-  const { PORT = 4000, NODE_ENV } = Config;
+  const { PORT = 5000 } = Config;
 
   try {
     await AppDataSource.initialize();
     logger.info('Database connected successfully 😊');
 
-    if (NODE_ENV !== 'test') await createAdmin();
+    await createAdmin();
 
     server = app.listen(PORT, () =>
       logger.info(`Auth Service running on port ${PORT}`, {

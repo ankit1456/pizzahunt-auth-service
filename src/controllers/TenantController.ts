@@ -45,7 +45,7 @@ export default class TenantController {
     });
 
     const tenants = await this.tenantService.getAll(queryParams);
-    this.logger.info('Fetched all tenants');
+    this.logger.info('Fetched all tenants', queryParams);
 
     return res.json({ status: EStatus.SUCCESS, ...tenants });
   }

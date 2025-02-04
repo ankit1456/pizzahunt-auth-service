@@ -53,7 +53,7 @@ export default class UserController {
 
     const users = await this.userService.getAll(queryParams);
 
-    this.logger.info('All users fetched');
+    this.logger.info('All users fetched', queryParams);
     res.json({ status: EStatus.SUCCESS, ...users });
   }
 
